@@ -1,0 +1,26 @@
+name: Import SD Alpha3 source snapshot
+on:
+  workflow_dispatch:
+permissions: {}
+jobs:
+  import:
+    if: github.repository == 'bobsixsixsix-boop/pocketds-linux-kit' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 1
+      - name: Verify the reviewed importer
+        run: echo 'acff43dfefba8c3b87379839bc9d3b53873bb7c8106f312e6bbc7773bf6fb6a8  import-alpha3-source.py' | sha256sum --check --strict
+      - name: Verify and import the fixed Alpha3 archive
+        run: python3 import-alpha3-source.py
+      - name: Commit the Alpha3 source snapshot
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add --all
+          git commit -m 'Update Pocket DS SD Alpha3 source snapshot b7f5e71'
+          git push origin HEAD:main
