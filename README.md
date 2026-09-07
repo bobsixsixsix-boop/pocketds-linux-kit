@@ -2,92 +2,67 @@
 
 让 AYANEO Pocket DS 的双屏、触摸、手柄和 Linux 桌面一起好用。
 
-这里维护下屏控制面板、触摸键盘、手柄模式，以及显示、音频和电源的设备适配源码。
-项目已在维护者的 Pocket DS 上持续使用和实测。当前公开范围是**源码预览**：
-可以阅读、修改和运行离线测试；安装面向已经工作的 Pocket DS Linux 环境。
-不提供可刷写系统镜像或普通 Fedora 的通用安装包。
+这里公开下屏 Panel、屏幕键盘、触控板、手柄模式，以及显示、音频、风扇、电源和合盖相关的系统修复源码。配套内核与设备树补丁、软件包修补和 SD 镜像构建工具也在仓库中。
 
-[![Pocket DS 实机下屏控制面板：系统状态、双屏亮度、音量、性能与输入入口](docs/screenshots/panel-home.png)](docs/screenshots/panel-home.png)
+**当前提供源码。Fedora 44 KDE / AArch64 的 SD Alpha2 镜像已在本地构建，尚未提供二进制下载，也尚未完成 Pocket DS 实机开机验收。** 镜像的第三方源码与许可材料正在补齐；后续下载以 [Releases 页面](https://github.com/bobsixsixsix-boop/pocketds-linux-kit/releases)实际发布的附件为准。
 
-下屏控制面板，将系统状态、双屏亮度、音量和常用操作放在手边。
-截图采集于 **2026-09-08**，点击可查看原图；[采集版本与来源说明](docs/screenshots/README.md)。
+[安装已有系统](docs/INSTALL.md) · [语音 API 配置](docs/VOICE-API.md) · [支持与已知限制](docs/SUPPORT.md) · [开发说明](docs/DEVELOPMENT.md)
 
-## 功能
+[![Pocket DS 实机下屏控制面板](docs/screenshots/panel-home.png)](docs/screenshots/panel-home.png)
 
-| 部分 | 功能 |
-|---|---|
-| 下屏 Panel | 双屏亮度、音量、无线连接、性能档、充放电功率、帧率与合盖设置 |
-| 触摸键盘 | 中文输入、终端快捷键、下屏应用窗口移到上屏、可选语音输入 |
-| 触摸板 | 指针移动、独立左右键、多指滚动与拖动；与键盘切换 |
-| 手柄 | 手柄／鼠标模式切换、按键测试与实时反馈、游戏输入集成 |
-| 双屏与电源 | 屏幕状态恢复、独立亮度保持、受内核和运行状态检查约束的合盖睡眠 |
-| 音频 | 扬声器与内置麦克风配置、蓝牙／USB 麦克风录音路径 |
-| 桌面与游戏 | Fcitx5/Rime、Steam、ES-DE、Moonlight 等外部程序的启动和输入集成 |
+截图采集于 2026-09-08，展示已有设备上的版本。[截图来源](docs/screenshots/README.md)记录了采集版本，不代表新 SD 镜像已经实机验收。
 
-语音使用用户自备的 [OpenAI 兼容转写 API](docs/VOICE-API.md)，自行配置地址、API Key 与模型。
-项目没有默认语音服务或共享密钥。Codex 登录、游戏运行时、ROM、BIOS、模型与个人壁纸
-同样由使用者自行准备。
-集成功能不代表这些服务或内容随项目分发。没有语音授权时，普通键盘输入仍可使用。
+## 公开范围
 
-## 实机界面
+| 部分 | 内容 |
+| --- | --- |
+| 下屏 Panel | 系统状态、双屏亮度、音量、无线连接、性能档与常用操作 |
+| 键盘与触控板 | 中文输入、终端快捷键、窗口移上屏、指针、滚动、拖动和独立左右键 |
+| 手柄 | 手柄／鼠标模式切换、实体按键测试与游戏输入集成 |
+| 系统适配与修复 | 显示恢复、音频、风扇、电源与合盖策略；对应内核、设备树和用户空间补丁 |
+| 构建与维护 | 安装、升级、撤回、离线测试、软件包修补和 SD 镜像构建工具 |
+| 可选集成 | 用户自备语音 API，以及外部桌面应用和游戏运行时入口 |
 
-### 键盘与触摸板
+各组件保留自己的验证状态。实验目录中尚未验收的补丁，不表示已安装到日用设备或默认启用于 SD 镜像；具体范围见 [SUPPORT.md](docs/SUPPORT.md) 与 [KNOWN-ISSUES.md](docs/KNOWN-ISSUES.md)。
 
-| 触摸键盘 | 触摸板 |
-|---|---|
-| [![实机触摸键盘，包含终端、移上屏和语音输入快捷键](docs/screenshots/keyboard.png)](docs/screenshots/keyboard.png) | [![实机触摸板，包含大面积触摸区和独立左右键](docs/screenshots/touchpad.png)](docs/screenshots/touchpad.png) |
-| 中文输入、终端快捷键，一键把下屏应用窗口移到上屏。 | 大面积触摸区与独立左右键，随时切回键盘或 Panel。 |
+## 语音与个人配置
 
-### 手柄测试
+语音使用用户自备的 [OpenAI 兼容音频转写 API](docs/VOICE-API.md)。按说明配置自己的完整 HTTPS 转写地址、模型和 API Key；项目不预置语音服务或共享密钥，普通键盘无需配置语音即可使用。
 
-从 Panel 的“实体按键”打开，临时接管手柄输入，按下实体按键即可查看对应位置的反馈。
-下面展示测试页打开后的待输入状态。
+公开仓库从审阅后的干净源码导出建立新的 Git 历史，不携带维护者原私有开发历史。个人语音服务配置、密钥、登录资料、Wi-Fi 记录和存档不随项目提供。
 
-[![实机手柄测试页，显示已接管状态、肩键、摇杆、方向键和 ABXY 按键布局](docs/screenshots/controller-test.png)](docs/screenshots/controller-test.png)
+Steam、ES-DE、Moonlight 等集成入口不代表这些应用已随项目分发。外部账号、游戏、ROM、BIOS、模型与个人壁纸由使用者自行准备。
 
-## 支持范围
+## 使用源码
 
-当前验证基线是 **AYANEO Pocket DS、Fedora 44/aarch64、KDE Plasma Wayland**，
-配套 Pocket DS 定制内核和硬件支持包。安装器还依赖既有的 `pocketds` 桌面账户与布局。
-具体前提见 [安装、升级与撤回](docs/INSTALL.md)。
+当前适配基线是 **AYANEO Pocket DS、Fedora 44 / AArch64、KDE Plasma Wayland**，配套 Pocket DS 定制内核与设备支持包。
 
-维护者设备已有双屏、触摸、输入模式、合盖唤醒、语音和重启后中文输入的实测记录。
-另一台设备从头安装、其他发行版和全部外设组合尚未完成验证。长期待机、历史 GPU
-故障和一次晚期关机停顿仍有未决范围，见 [支持与已知限制](docs/SUPPORT.md)。
+已有可正常工作的 Pocket DS Linux 环境，可按[安装、升级与撤回](docs/INSTALL.md)更新 Kit。安装器依赖既有 `pocketds` 桌面账户和布局，执行前请核对指南中的依赖与改动范围。
 
-## 开始使用
+| 需要 | 入口 |
+| --- | --- |
+| 理解组件和调用关系 | [架构](docs/ARCHITECTURE.md) |
+| 运行测试、修改代码 | [开发说明](docs/DEVELOPMENT.md)、[贡献指南](CONTRIBUTING.md) |
+| 阅读 SD 镜像构建流程 | [构建说明](packaging/sd-image/README.md) |
+| 更新设备支持包 | [更新策略](docs/UPDATE-POLICY.md) |
+| 报告问题 | [报告问题](CONTRIBUTING.md#报告问题)；敏感信息按 [SECURITY.md](SECURITY.md)处理 |
 
-| 你想做什么 | 从这里开始 |
-|---|---|
-| 阅读代码、尝试修改 | [架构](docs/ARCHITECTURE.md)、[开发说明](docs/DEVELOPMENT.md)、[贡献指南](CONTRIBUTING.md) |
-| 在电脑上先检查源码 | [最小离线检查](docs/INSTALL.md#最小离线检查)；不需要设备或访问码 |
-| 更新已有 Pocket DS Linux 环境 | [安装、升级与撤回](docs/INSTALL.md)，先核对基线与改动范围 |
-| 更新发行版或设备支持包 | [更新策略](docs/UPDATE-POLICY.md) |
-| 报告问题 | [贡献指南](CONTRIBUTING.md#报告问题)；敏感问题按 [SECURITY.md](SECURITY.md) 处理 |
-| 准备发布 | [源码公开清单](docs/release/SOURCE-RELEASE.md)；系统镜像另按 [镜像发行清单](docs/RELEASE-CHECKLIST.md) 验收 |
+具备依赖的 Linux 开发环境可运行 `make lint`、`make test`。完整检查包含 Linux 专用 C/C++ 代码；macOS 可运行安装指南列出的最小 Python／模拟测试。实际触摸、音频和睡眠行为仍需设备验证。
 
-具备依赖的 Linux 开发环境可运行 `make lint`、`make test`。完整检查包含 Linux
-专用 C/C++ 代码；macOS 可运行指南列出的最小 Python/模拟测试。`make check` 还会在
-Pocket DS 上检查运行状态。这些检查均不替代实际触摸、音频和睡眠验收。
+## SD Alpha2 进度
 
-## 目录
+本地 Alpha2 是完整的 Fedora 44 KDE 系统，集成上述桌面组件和已选定的系统适配。它从干净系统构建；首次进入桌面设置本机密码，保留本地自动登录，SSH 和深度睡眠默认关闭。使用时需要 **16 GB 或更大的备用 SD 卡**，设备预先安装支持 Linux 的 ROCKNIX ABL；单独写卡不会安装 ABL。
 
-| 目录 | 内容 |
-|---|---|
-| `components/control-panel`、`components/keyboard`、`components/touchpad` | 下屏界面与输入 |
-| `components/inputplumber`、`components/game-runtime` | 手柄、鼠标模式与游戏会话 |
-| `components/audio`、`components/fan`、`components/system` | 音频、性能、显示与系统策略 |
-| `components/locale`、`components/codex-quota` | 中文输入与可选额度显示 |
-| `components/emulation`、`components/steam`、`components/moonlight` 等 | 外部程序集成 |
-| `scripts`、`tests` | 安装、检查、恢复工具与自动测试 |
-| `docs/research`、`experiments`、`tools/kernel-ab` | 调查和设备实验，使用前核对日期与适用基线 |
-| `packaging` | 软件包和系统镜像的构建与验签工作 |
+镜像构建源码基线为 `f8d633ae1335f6837b09236930b71e47d680c0a8`。该基线的测试报告包含 **1,799 项 Python 测试，其中 5 项因环境条件跳过**，另有脚本检查通过。分区、文件系统、启动文件和运行文件清单已通过离线审计；首次设密与锁定账户自动登录认证已在隔离系统中验证。
 
-## 许可证与发布边界
+317 个基础内核模块与既有验收文件逐字节一致；额外 RFCOMM 蓝牙模块是新构建文件，静态接口检查通过，仍需实机复测。整张镜像的 SD 启动、首次桌面与密码窗口、双屏触摸、音频、无线连接、重启和恢复尚未实机验收。
 
-项目原创内容默认采用 **GPL-3.0-or-later**，见 [LICENSE](LICENSE) 与 [NOTICE](NOTICE)。
-文件已有的许可声明及第三方许可证继续适用；来源与范围见 [THIRD-PARTY.md](THIRD-PARTY.md)。
+这些记录描述本地未签名的 Alpha 工程构建，不表示稳定版验收完成。Fedora/COPR 仓库不是不可变快照，因此不保证整张镜像逐字节复现。下载入口和附件会在实际发布后更新。
 
-公开候选从指定源码提交独立导出，排除个人访问码、个人壁纸、预编译观察器和维护机记录，
-不携带原私有 Git 历史。原始开发仓库曾包含个人配置，不能直接改成公开仓库。
-发布平台与正式下载入口另行确定；许可证选择不表示镜像或第三方二进制已经完成发行验收。
+## 许可证与来源
+
+项目原创代码与文档默认采用 **GPL-3.0-or-later**，见 [LICENSE](LICENSE) 与 [NOTICE](NOTICE)。文件已有许可声明、上游版权和补丁作者信息继续保留；第三方来源与范围见 [THIRD-PARTY.md](THIRD-PARTY.md)，对应许可证位于各组件目录和 [LICENSES](LICENSES)。
+
+内核、固件、Fedora 软件包及其他第三方程序分别适用原有授权条件；项目默认许可证不改变它们的 GPL 版本选项、MIT、BSD 等条款。
+
+`docs/release/` 和嵌入构建材料中的源码快照保留了准备过程与当时的发布状态；当前可用内容以本页及 Releases 实际附件为准。源码公开不表示第三方二进制的分发材料或稳定版验证已经完成。
