@@ -1,0 +1,68 @@
+name: Import reviewed source snapshot
+on:
+  workflow_dispatch:
+permissions: {}
+jobs:
+  import:
+    if: github.repository == 'bobsixsixsix-boop/pocketds-linux-kit' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 1
+      - name: Require a new, unimported snapshot
+        run: test ! -e .github/source-import-complete.json
+      - name: Verify and import the fixed reviewed archive
+        shell: bash
+        run: |
+          python3 <<'PYIMPORT'
+          import hashlib, json, os, tarfile
+          from pathlib import Path, PurePosixPath
+          archive=Path("source.tar.gz")
+          manifest=Path("source-manifest.json")
+          assert hashlib.sha256(archive.read_bytes()).hexdigest()=="c5a1e3615296cab80e0cc8bd0b8e1f9ca36be5f63f135b895227ebaa3ce48a4e"
+          assert hashlib.sha256(manifest.read_bytes()).hexdigest()=="086d9aca3b3964abbacce3b913cfda084ee46a36a36bb6cc6ce67cd49aed5afe"
+          m=json.loads(manifest.read_text())
+          assert m["source_commit"]=="f8d633ae1335f6837b09236930b71e47d680c0a8"
+          rows={r["path"]:r for r in m["files"]}
+          assert len(rows)==len(m["files"])==754
+          payload={}
+          with tarfile.open(archive,"r:gz") as t:
+              for item in t.getmembers():
+                  assert item.isfile() and item.name.startswith("source/")
+                  name=item.name.removeprefix("source/")
+                  path=PurePosixPath(name)
+                  assert not path.is_absolute() and not any(x in ("..",".git",".github") for x in path.parts)
+                  assert str(path)==name and name in rows and name not in payload
+                  content=t.extractfile(item).read()
+                  row=rows[name]
+                  assert len(content)==row["size"] and hashlib.sha256(content).hexdigest()==row["sha256"]
+                  assert item.mode==int(row["mode"],8) and row["mode"] in ("0644","0755")
+                  payload[name]=(content,item.mode)
+          assert set(payload)==set(rows)
+          for name,(content,mode) in payload.items():
+              dest=Path(name)
+              assert not dest.is_symlink() and not any(p.is_symlink() for p in dest.parents)
+              dest.parent.mkdir(parents=True,exist_ok=True)
+              dest.write_bytes(content)
+              dest.chmod(mode)
+          for name,row in rows.items():
+              assert hashlib.sha256(Path(name).read_bytes()).hexdigest()==row["sha256"]
+          receipt={"schema":"pocketds.public-source-import.v1","source_commit":m["source_commit"],"files_verified":754,"original_git_history_imported":False,"archive_sha256":m["archive"]["sha256"]}
+          Path(".github").mkdir(exist_ok=True)
+          Path(".github/source-import-complete.json").write_text(json.dumps(receipt,indent=2)+"\n")
+          Path("docs/release/source-preview-manifest.json").write_bytes(manifest.read_bytes())
+          archive.unlink()
+          manifest.unlink()
+          print("Imported and verified 754 reviewed files; no original Git history.")
+          PYIMPORT
+      - name: Commit the public snapshot
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add --all
+          git commit -m 'Import reviewed Pocket DS source snapshot f8d633a'
+          git push origin HEAD:main
