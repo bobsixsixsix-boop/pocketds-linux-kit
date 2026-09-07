@@ -161,6 +161,62 @@ class SealTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             seal.validate_privacy(self.root, {'files': [], 'links': [row | {'link': '/outside'}]})
 
+    def test_public_haptics_binds_both_preimages_and_rejects_other_old_copies(self):
+        source = self.base / 'source'
+        component = source / 'components/inputplumber'
+        component.mkdir(parents=True)
+        binary = self.base / 'new-inputplumber'
+        binary.write_bytes(b'public build')
+        old = b'old rpm executable'
+        sidecar = b'old sidecar executable'
+        destinations = {
+            'usr/bin/inputplumber': {'sha256': sha(old), 'size': len(old), 'origin': 'fixture RPM'},
+            'usr/local/libexec/pocketds-inputplumber-haptics': {
+                'sha256': sha(sidecar), 'size': len(sidecar), 'origin': 'fixture overlay'}}
+        rpm = self.file('usr/bin/inputplumber', old, 0o755)
+        self.file('usr/local/libexec/pocketds-inputplumber-haptics', sidecar, 0o755)
+        for name in ('pulse.patch', 'public.patch'):
+            (component / name).write_bytes(name.encode())
+        lock = {'binary_sha256': sha(binary.read_bytes()), 'binary_size': binary.stat().st_size,
+                'downstream_patch': 'pulse.patch', 'downstream_patch_sha256': sha(b'pulse.patch'),
+                'downstream_patch_size': 11, 'additional_patches': [
+                    {'source': 'public.patch', 'sha256': sha(b'public.patch'), 'size': 12}]}
+        lock_path = component / 'inputplumber-haptics-source-lock.json'
+        lock_path.write_text(json.dumps(lock))
+        with patch.object(seal, 'HAPTICS_SHA', sha(binary.read_bytes())), \
+                patch.object(seal, 'HAPTICS_DESTINATIONS', destinations):
+            _lock, overlays = seal.validate_haptics(self.root, source, binary)
+            self.assertEqual({r['path'] for r in overlays}, {'/' + p for p in destinations})
+            self.assertTrue(all(r['rpm_database_modified'] is False for r in overlays))
+            extra = self.file('opt/leftover-inputplumber', old)
+            with self.assertRaisesRegex(ValueError, 'Another retired'):
+                seal.validate_haptics(self.root, source, binary)
+            extra.unlink()
+            rpm.write_bytes(b'unexpected package')
+            with self.assertRaisesRegex(ValueError, 'Unexpected InputPlumber preimage'):
+                seal.validate_haptics(self.root, source, binary)
+            rpm.write_bytes(old)
+            (component / 'public.patch').write_bytes(b'changed')
+            with self.assertRaisesRegex(ValueError, 'source patch'):
+                seal.validate_haptics(self.root, source, binary)
+
+    def test_third_party_notice_inventory_is_staged_and_content_bound(self):
+        base = REPO / 'packaging/sd-image/third-party'
+        inventory = json.loads((base / 'NOTICE-INVENTORY.json').read_text())
+        staged = json.loads((REPO / 'packaging/sd-image/kit-files.json').read_text())
+        staged = {row['source']: row for row in staged['files']}
+        for row in inventory['files']:
+            path = base / row['path']
+            self.assertEqual((seal.digest(path), path.stat().st_size), (row['sha256'], row['size']))
+            source_name = str(path.relative_to(REPO))
+            destination = ('/usr/share/doc/pocketds-inputplumber-public/' + row['path'].removeprefix('inputplumber-public/')
+                           if row['path'].startswith('inputplumber-public/') else
+                           '/usr/share/doc/pocketds-linux-kit/third-party/' + row['path'])
+            self.assertEqual(staged[source_name]['target'], destination)
+        for required in ('fonts/Spleen-BSD-2-Clause.txt', 'rpm-source-access/SOURCE-RPM-LOCATIONS.tsv',
+                         'initramfs/splash-avfs-firmware/notices/LICENSE.qcom.txt'):
+            self.assertIn(required, {row['path'] for row in inventory['files']})
+
     def test_module_exact_allowlist_rejects_compressed_extra_and_metadata_drift(self):
         modules = self.base / 'modules'
         modules.mkdir()

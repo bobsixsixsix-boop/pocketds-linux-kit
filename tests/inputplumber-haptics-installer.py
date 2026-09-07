@@ -20,6 +20,7 @@ COMPONENT_FILES = (
     "org.pocketds.InputPlumber.Haptics.policy",
     "inputplumber-d3932cb4-pocketds-haptics.patch",
     "inputplumber-haptics-source-lock.json",
+    "inputplumber-d3932cb4-remove-unused-usb-deck.patch",
 )
 TARGETS = {
     "candidate": "/usr/local/libexec/pocketds-inputplumber-haptics",

@@ -30,5 +30,5 @@ assert "+            .map(|(code, value)| InputEvent::new(EventType::KEY.0, code
 assert "+        if let Err(error) = self.device.emit(&events) {" in text
 deployed = json.loads((COMPONENT / "inputplumber-haptics-source-lock.json").read_text())
 assert deployed["downstream_patch_sha256"] == lock["base_patch"]["sha256"]
-assert deployed["binary_sha256"] == "2c06a4cbfaa2aa93c923b1dc790bbaf15ae44e048662840cce0705bf2d7df244"
-print("  [OK] mouse-clear source candidate, exact builder and unchanged deployed binary binding")
+assert deployed["binary_sha256"] == "4dbb8a7dc494e27abdbe3b38191dabfaef54caa8f6f2c7357bc84008bbfb488b"
+print("  [OK] mouse-clear source candidate, exact builder and public haptics build binding")

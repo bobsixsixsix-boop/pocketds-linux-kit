@@ -196,6 +196,14 @@ def load_lock_and_payloads(binary: Path) -> tuple[dict, dict[str, bytes]]:
     ):
         raise Refused("downstream patch does not match lock")
 
+    additional = lock.get("additional_patches", [])
+    if len(additional) != 1 or additional[0].get("source") != "inputplumber-d3932cb4-remove-unused-usb-deck.patch":
+        raise Refused("unexpected public backend patch")
+    entry = additional[0]
+    patch = read_regular(COMPONENT / entry["source"], "public backend patch")[0]
+    if len(patch) != entry.get("size") or digest(patch) != entry.get("sha256"):
+        raise Refused("public backend patch does not match lock")
+
     candidate = read_regular(binary, "candidate binary")[0]
     if (
         len(candidate) != lock.get("binary_size")

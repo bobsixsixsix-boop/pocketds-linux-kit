@@ -1,0 +1,65 @@
+{
+  "arbitrary_path_bit_reproducibility_asserted": false,
+  "binary": {
+    "build_id": "507c2912284b219eefff40ecd687ac8795fb161a",
+    "elf": "ELF 64-bit LSB pie executable, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, BuildID[sha1]=507c2912284b219eefff40ecd687ac8795fb161a, for GNU/Linux 3.7.0, stripped",
+    "filename": "inputplumber-pocketds-pulse-no-usb-deck",
+    "sha256": "4dbb8a7dc494e27abdbe3b38191dabfaef54caa8f6f2c7357bc84008bbfb488b",
+    "size": 9377664
+  },
+  "build_log_sha256": "211d3b2f547bbfdaf51bab899e802f756447881dd599593cfca4db75836ed90d",
+  "build_script_sha256": "f47b00f564e4bc5c61d75c7998cb446896114bb5366d282ec2ed6edf50bc8a25",
+  "cargo": "cargo 1.98.0 (797e8a9bc 2026-08-05) (Fedora 1.98.0-1.fc44)",
+  "cargo_home_initially_empty": true,
+  "cargo_lock_sha256": "fc57f68e7dacf5e2a666d2c6835e66b27b07e75ec19a4d27f6b7efd6079c3f9f",
+  "dynamic_dependencies": [
+    "libudev.so.1",
+    "libiio.so.0",
+    "libgcc_s.so.1",
+    "libm.so.6",
+    "libc.so.6",
+    "ld-linux-aarch64.so.1"
+  ],
+  "exit_code": 0,
+  "focused_rustfmt_passed": true,
+  "focused_tests": [
+    {
+      "name": "input::target::public_build_tests::retains_pocketds_and_uhid_targets_without_usb_deck",
+      "passed": true
+    },
+    {
+      "name": "dbus::interface::force_feedback::tests::bounds_keyboard_pulse_strength_and_duration",
+      "passed": true
+    },
+    {
+      "name": "dbus::polkit_test::check_polkit_policies",
+      "passed": true
+    }
+  ],
+  "hardware_tested": false,
+  "offline_locked_build": true,
+  "packages": [
+    "rust-1.98.0-1.fc44.aarch64",
+    "cargo-1.98.0-1.fc44.aarch64",
+    "rustfmt-1.98.0-1.fc44.aarch64",
+    "gcc-c++-16.2.1-2.fc44.aarch64",
+    "clang-devel-22.1.8-4.fc44.aarch64",
+    "systemd-devel-259.8-1.fc44.aarch64",
+    "libiio-devel-0.26-8.fc44.aarch64",
+    "pkgconf-pkg-config-2.5.1-1.fc44.aarch64"
+  ],
+  "rustc": "rustc 1.98.0 (88d9e12ae 2026-08-18) (Fedora 1.98.0-1.fc44)\nbinary: rustc\ncommit-hash: 88d9e12ae178fab0fb5cc050a94da85685d449ea\ncommit-date: 2026-08-18\nhost: aarch64-unknown-linux-gnu\nrelease: 1.98.0\nLLVM version: 22.1.8",
+  "schema": "pocketds.inputplumber-public-build.v1",
+  "source_preparation_receipt_sha256": "f5d07cc4b9c5b8f9622f75953fed9b31d0ba30b8f3692b0a3f05592ada349359",
+  "virtual_usb_specific_binary_markers_absent": [
+    "virtual-usb-rs",
+    "virtual_usb.rs",
+    "No interface exists in config with index ",
+    "Unable to find nports attribute",
+    "Ensuring vhci_hcd kernel module is loaded"
+  ],
+  "warnings": [
+    "Unused MOUSE_DESCRIPTOR and KEYBOARD_DESCRIPTOR after removing USB backend",
+    "Pre-existing proc-macro-error2 future Rust incompatibility warning"
+  ]
+}

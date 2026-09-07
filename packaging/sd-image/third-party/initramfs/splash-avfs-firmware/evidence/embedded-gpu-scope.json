@@ -1,0 +1,58 @@
+[
+  {
+    "initramfs_path": "usr/lib/firmware/qcom/a740_sqe.fw",
+    "sha256": "2b49a17244c0527a2d9728af2e255d4b26d18111bb595f010f167823ce5c5c1f",
+    "size": 74804,
+    "source": "Pocket DS initramfs 74a81f951f1a58c90a35c2329fc6b629bac8f9c1; exact SRPM payload match independently recorded",
+    "official_linux_firmware_byte_match": false,
+    "applicability": "Pocket DS upstream OEM redistribution assertion; exact OEM license text/scope not supplied by the reviewed sources"
+  },
+  {
+    "initramfs_path": "usr/lib/firmware/qcom/gmu_gen70200.bin",
+    "sha256": "1a2a419c39046d3141fc5fed5aa7f971de2db40cc7a1d89693c3e26fad64dd98",
+    "size": 66844,
+    "source": "Pocket DS initramfs 74a81f951f1a58c90a35c2329fc6b629bac8f9c1; exact SRPM payload match independently recorded",
+    "official_linux_firmware_byte_match": true,
+    "applicability": "QTI license and WHENCE, exact file match"
+  },
+  {
+    "initramfs_path": "usr/lib/firmware/qcom/sm8550/a740_zap.b00",
+    "sha256": "2fb7b6afa4387a8ba81e1faf0c35ac1c6fd6294118426d5b45946d75f4e3e339",
+    "size": 148,
+    "source": "Pocket DS initramfs 74a81f951f1a58c90a35c2329fc6b629bac8f9c1; exact SRPM payload match independently recorded",
+    "official_linux_firmware_byte_match": false,
+    "applicability": "Pocket DS upstream OEM redistribution assertion; exact OEM license text/scope not supplied by the reviewed sources"
+  },
+  {
+    "initramfs_path": "usr/lib/firmware/qcom/sm8550/a740_zap.b01",
+    "sha256": "21c0afb7418fe901d688327bbc7423898cc3d6ca93d77adff8294c6fca30fbcd",
+    "size": 1072,
+    "source": "Pocket DS initramfs 74a81f951f1a58c90a35c2329fc6b629bac8f9c1; exact SRPM payload match independently recorded",
+    "official_linux_firmware_byte_match": false,
+    "applicability": "Pocket DS upstream OEM redistribution assertion; exact OEM license text/scope not supplied by the reviewed sources"
+  },
+  {
+    "initramfs_path": "usr/lib/firmware/qcom/sm8550/a740_zap.b02",
+    "sha256": "04e9f353950625f2934b45154603093864eaa08d8129569755205d74f8cad5a4",
+    "size": 3896,
+    "source": "Pocket DS initramfs 74a81f951f1a58c90a35c2329fc6b629bac8f9c1; exact SRPM payload match independently recorded",
+    "official_linux_firmware_byte_match": false,
+    "applicability": "Pocket DS upstream OEM redistribution assertion; exact OEM license text/scope not supplied by the reviewed sources"
+  },
+  {
+    "initramfs_path": "usr/lib/firmware/qcom/sm8550/a740_zap.mbn",
+    "sha256": "288b7b97367847d6ba1501ab2d720d741660c9465ad3778333f2f5af9b80c73d",
+    "size": 12088,
+    "source": "Pocket DS initramfs 74a81f951f1a58c90a35c2329fc6b629bac8f9c1; exact SRPM payload match independently recorded",
+    "official_linux_firmware_byte_match": false,
+    "applicability": "Pocket DS upstream OEM redistribution assertion; exact OEM license text/scope not supplied by the reviewed sources"
+  },
+  {
+    "initramfs_path": "usr/lib/firmware/qcom/sm8550/a740_zap.mdt",
+    "sha256": "93d8580d4324376fc1a93465d9ff65b3f111e11bae85ab48c1d27689770ce81b",
+    "size": 4044,
+    "source": "Pocket DS initramfs 74a81f951f1a58c90a35c2329fc6b629bac8f9c1; exact SRPM payload match independently recorded",
+    "official_linux_firmware_byte_match": false,
+    "applicability": "Pocket DS upstream OEM redistribution assertion; exact OEM license text/scope not supplied by the reviewed sources"
+  }
+]

@@ -1,0 +1,40 @@
+[
+  {
+    "path": "LICENSES/LICENSE.qcom",
+    "url": "https://gitlab.com/api/v4/projects/48890189/repository/files/LICENSES%2FLICENSE.qcom?ref=e71b7cf8733f36a7475c3fafec3332e253f8de92",
+    "revision": "e71b7cf8733f36a7475c3fafec3332e253f8de92",
+    "sha256": "be904cd28cb292b80cdb6cf412ab0d9159d431671e987ad433c1f62e0988a9bc",
+    "size": 13962,
+    "metadata": {
+      "file_name": "LICENSE.qcom",
+      "file_path": "LICENSES/LICENSE.qcom",
+      "size": 13962,
+      "encoding": "base64",
+      "content_sha256": "be904cd28cb292b80cdb6cf412ab0d9159d431671e987ad433c1f62e0988a9bc",
+      "ref": "e71b7cf8733f36a7475c3fafec3332e253f8de92",
+      "blob_id": "faacf9cf9e1f3638ad1f65f433db4081b8a6478f",
+      "commit_id": "e71b7cf8733f36a7475c3fafec3332e253f8de92",
+      "last_commit_id": "1221848f23764faab10ff63bc5d9ea5d5b39a506",
+      "execute_filemode": false
+    }
+  },
+  {
+    "path": "LICENSES/NOTICE.qcom",
+    "url": "https://gitlab.com/api/v4/projects/48890189/repository/files/LICENSES%2FNOTICE.qcom?ref=e71b7cf8733f36a7475c3fafec3332e253f8de92",
+    "revision": "e71b7cf8733f36a7475c3fafec3332e253f8de92",
+    "sha256": "fa43e1b9a13b341a07adca9dbe73d0f9072d7966fdfe811c01f0dd2872d7309a",
+    "size": 23966,
+    "metadata": {
+      "file_name": "NOTICE.qcom",
+      "file_path": "LICENSES/NOTICE.qcom",
+      "size": 23966,
+      "encoding": "base64",
+      "content_sha256": "fa43e1b9a13b341a07adca9dbe73d0f9072d7966fdfe811c01f0dd2872d7309a",
+      "ref": "e71b7cf8733f36a7475c3fafec3332e253f8de92",
+      "blob_id": "184f88f26c43eb488f20cb3e13d7462c976f8a7f",
+      "commit_id": "e71b7cf8733f36a7475c3fafec3332e253f8de92",
+      "last_commit_id": "1221848f23764faab10ff63bc5d9ea5d5b39a506",
+      "execute_filemode": false
+    }
+  }
+]

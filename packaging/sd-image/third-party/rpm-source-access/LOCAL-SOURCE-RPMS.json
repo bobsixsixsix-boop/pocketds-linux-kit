@@ -1,0 +1,18 @@
+[
+  {
+    "source_rpm": "powerdevil-6.7.3-1.fc44.pocketds1.src.rpm",
+    "provider": "Release build-materials attachment",
+    "location": "build-materials/artifacts/powerdevil-6.7.3-1.fc44.pocketds1.src.rpm",
+    "check": "local complete SHA-256",
+    "sha256": "389961d8c48652584c9af7fc663411894ca2b34e0c38cec36a39f90aa033399a",
+    "bytes": 1313401
+  },
+  {
+    "source_rpm": "pocketds-userspace-20260507-20260730174706.pds2.fc44.src.rpm",
+    "provider": "Release build-materials attachment",
+    "location": "build-materials/artifacts/pocketds-userspace-20260507-20260730174706.pds2.fc44.src.rpm",
+    "check": "local complete SHA-256",
+    "sha256": "14eb4f3b2d320ec0c7ececb905ac03df1c11f8878573ec2d54b569cd4be6b2ea",
+    "bytes": 86308
+  }
+]

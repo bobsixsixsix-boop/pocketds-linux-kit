@@ -68,3 +68,18 @@ required before changing `hardware_boot_tested` or publishing a stable release.
 No ABL installation, device writing or reboot is performed by these build tools.
 
 See `kit-integration.md` for the offline payload and optional runtime boundary.
+
+## Alpha3 overlays and notices
+
+The public InputPlumber build replaces both `/usr/bin/inputplumber` and the
+active `/usr/local/libexec/pocketds-inputplumber-haptics`. The seal binds exact
+preimages, both patch files, and the new artifact; RPM metadata remains unchanged
+and the two overlays are explicitly recorded. Old payload copies are rejected,
+download caches are cleared, and no RPM payload archives are retained.
+
+`kit-files.json` also installs `third-party/` under
+`/usr/share/doc/pocketds-linux-kit/third-party/`. This contains full notices,
+firmware scope evidence and exact source RPM access information. Original
+component terms and provenance limitations remain in those files. The export
+excludes GitHub bootstrap workflow/marker files and the earlier publication
+manifest. A new export and full image audit are required for each Alpha3 build.

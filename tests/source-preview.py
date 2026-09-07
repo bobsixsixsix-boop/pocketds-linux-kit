@@ -107,6 +107,9 @@ class ExportTests(unittest.TestCase):
         old.unlink()
         self.write("assets/wallpapers/private.png", secret)
         self.write("work/private-state.md", secret)
+        self.write(".github/workflows/import-reviewed-source.yml", secret)
+        self.write(".github/source-import-complete.json", secret)
+        self.write("docs/release/source-preview-manifest.json", secret)
         self.write("components/keyboard/private-personal-preset.json", secret)
         self.write("components/keyboard/asr-api/config.json", secret)
         self.write("components/keyboard/asr-api-config.json", secret)
@@ -119,7 +122,7 @@ class ExportTests(unittest.TestCase):
         paths = {record["path"] for record in result["files"]}
         self.assertIn("components/keyboard/licenses/C2PA.txt", paths)
         self.assertNotIn("old-private.txt", paths)
-        self.assertFalse(any(path.startswith(("assets/", "work/", "ignored/", ".git/")) for path in paths))
+        self.assertFalse(any(path.startswith(("assets/", "work/", "ignored/", ".git/", ".github/")) for path in paths))
         for path in MODULE.EXCLUDED_FILES:
             self.assertNotIn(path, paths)
         for path in self.output.rglob("*"):

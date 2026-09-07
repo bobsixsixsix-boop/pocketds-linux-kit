@@ -707,10 +707,11 @@ class PocketDSKeyboard:
         self.window.set_title("Pocket DS Touch Keyboard")
         self.window.set_wmclass("pocketds-keyboard", "pocketds-keyboard")
         self.window.set_decorated(False)
-        # KWin's forced DSI-2 rule owns the fixed geometry.  The microphone
-        # label stays constant across every ASR state, so GTK no longer
-        # republishes changing size hints while recording or recognizing.
-        self.window.set_resizable(False)
+        # Let KWin's forced DSI-2 rule own the size. A non-resizable GTK3
+        # window publishes its natural request as both minimum and maximum;
+        # rebuilding the symbol layout then shrinks the mixed-scale surface
+        # to that request, despite the compositor's forced geometry.
+        self.window.set_resizable(True)
         self.window.set_keep_above(True)
         self.window.set_skip_taskbar_hint(True)
         self.window.set_skip_pager_hint(True)

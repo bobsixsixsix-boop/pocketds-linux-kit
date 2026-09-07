@@ -1,0 +1,382 @@
+{
+  "results": [
+    {
+      "files": [
+        {
+          "path": "additional-license-notices/libiio-sys-0.4.1/LICENSE",
+          "sha256": "ae1a6b03ae3ff51f4216527111f9617cc1bfe4a4751d3911dddab8a1bff8764e",
+          "size": 1072,
+          "upstream_path": "LICENSE",
+          "url": "https://raw.githubusercontent.com/fpagliughi/rust-industrial-io/98c9edc1e9ea01bb4cdf0b8b4fb7ba0b586f90b1/LICENSE"
+        }
+      ],
+      "license_expression": "MIT",
+      "name": "libiio-sys",
+      "repository": "https://github.com/fpagliughi/rust-industrial-io",
+      "status": "retrieved",
+      "upstream_tree_url": "https://api.github.com/repos/fpagliughi/rust-industrial-io/git/trees/98c9edc1e9ea01bb4cdf0b8b4fb7ba0b586f90b1?recursive=1",
+      "vcs": {
+        "git": {
+          "sha1": "98c9edc1e9ea01bb4cdf0b8b4fb7ba0b586f90b1"
+        },
+        "path_in_vcs": "libiio-sys"
+      },
+      "version": "0.4.1"
+    },
+    {
+      "files": [
+        {
+          "path": "additional-license-notices/packed_struct-0.10.1/LICENSE",
+          "sha256": "a643894ab3729d253c687c181259a23ccd553edcea4953edde0e98d63d9bbf82",
+          "size": 1069,
+          "upstream_path": "LICENSE",
+          "url": "https://raw.githubusercontent.com/hashmismatch/packed_struct.rs/872aa4aa97caabd8420c63dce5e17b5d3877be02/LICENSE"
+        },
+        {
+          "path": "additional-license-notices/packed_struct-0.10.1/LICENSE-APACHE",
+          "sha256": "ce253df567d19ae8daded3c4adf2895a5f4a52fbef0e11110f021031e2998b53",
+          "size": 10762,
+          "upstream_path": "LICENSE-APACHE",
+          "url": "https://raw.githubusercontent.com/hashmismatch/packed_struct.rs/872aa4aa97caabd8420c63dce5e17b5d3877be02/LICENSE-APACHE"
+        },
+        {
+          "path": "additional-license-notices/packed_struct-0.10.1/LICENSE-MIT",
+          "sha256": "93667a6f27c8f892907ce1d127fd2d98b1ebaacfefbcc5e8f8a830474363e8cc",
+          "size": 1084,
+          "upstream_path": "LICENSE-MIT",
+          "url": "https://raw.githubusercontent.com/hashmismatch/packed_struct.rs/872aa4aa97caabd8420c63dce5e17b5d3877be02/LICENSE-MIT"
+        }
+      ],
+      "license_expression": "MIT OR Apache-2.0",
+      "name": "packed_struct",
+      "repository": "https://github.com/hashmismatch/packed_struct.rs",
+      "status": "retrieved",
+      "upstream_tree_url": "https://api.github.com/repos/hashmismatch/packed_struct.rs/git/trees/872aa4aa97caabd8420c63dce5e17b5d3877be02?recursive=1",
+      "vcs": {
+        "git": {
+          "sha1": "872aa4aa97caabd8420c63dce5e17b5d3877be02"
+        },
+        "path_in_vcs": "packed_struct"
+      },
+      "version": "0.10.1"
+    },
+    {
+      "files": [
+        {
+          "path": "additional-license-notices/packed_struct_codegen-0.10.1/LICENSE",
+          "sha256": "a643894ab3729d253c687c181259a23ccd553edcea4953edde0e98d63d9bbf82",
+          "size": 1069,
+          "upstream_path": "LICENSE",
+          "url": "https://raw.githubusercontent.com/hashmismatch/packed_struct.rs/872aa4aa97caabd8420c63dce5e17b5d3877be02/LICENSE"
+        },
+        {
+          "path": "additional-license-notices/packed_struct_codegen-0.10.1/LICENSE-APACHE",
+          "sha256": "ce253df567d19ae8daded3c4adf2895a5f4a52fbef0e11110f021031e2998b53",
+          "size": 10762,
+          "upstream_path": "LICENSE-APACHE",
+          "url": "https://raw.githubusercontent.com/hashmismatch/packed_struct.rs/872aa4aa97caabd8420c63dce5e17b5d3877be02/LICENSE-APACHE"
+        },
+        {
+          "path": "additional-license-notices/packed_struct_codegen-0.10.1/LICENSE-MIT",
+          "sha256": "93667a6f27c8f892907ce1d127fd2d98b1ebaacfefbcc5e8f8a830474363e8cc",
+          "size": 1084,
+          "upstream_path": "LICENSE-MIT",
+          "url": "https://raw.githubusercontent.com/hashmismatch/packed_struct.rs/872aa4aa97caabd8420c63dce5e17b5d3877be02/LICENSE-MIT"
+        }
+      ],
+      "license_expression": "MIT OR Apache-2.0",
+      "name": "packed_struct_codegen",
+      "repository": "https://github.com/hashmismatch/packed_struct.rs",
+      "status": "retrieved",
+      "upstream_tree_url": "https://api.github.com/repos/hashmismatch/packed_struct.rs/git/trees/872aa4aa97caabd8420c63dce5e17b5d3877be02?recursive=1",
+      "vcs": {
+        "git": {
+          "sha1": "872aa4aa97caabd8420c63dce5e17b5d3877be02"
+        },
+        "path_in_vcs": "packed_struct_codegen"
+      },
+      "version": "0.10.1"
+    },
+    {
+      "files": [],
+      "license_expression": "MIT OR Apache-2.0 OR LGPL-2.1-or-later",
+      "name": "r-efi",
+      "repository": "https://github.com/r-efi/r-efi",
+      "status": "none_in_exact_ancestor_paths",
+      "upstream_tree_url": "https://api.github.com/repos/r-efi/r-efi/git/trees/97b55bed1c2c91dcbf787674849f05337ff80b33?recursive=1",
+      "vcs": {
+        "git": {
+          "sha1": "97b55bed1c2c91dcbf787674849f05337ff80b33"
+        },
+        "path_in_vcs": ""
+      },
+      "version": "5.3.0"
+    },
+    {
+      "files": [
+        {
+          "path": "additional-license-notices/ratatui-0.30.0/LICENSE",
+          "sha256": "50eb43e8d742c9c61a9391e42b2184fce54dbd1893a1bb1c85b8c9ee217ab1f5",
+          "size": 1132,
+          "upstream_path": "LICENSE",
+          "url": "https://raw.githubusercontent.com/ratatui/ratatui/0a2a7c0363a4806b0cf05c1915bf7cdd438f756c/LICENSE"
+        }
+      ],
+      "license_expression": "MIT",
+      "name": "ratatui",
+      "repository": "https://github.com/ratatui/ratatui",
+      "status": "retrieved",
+      "upstream_tree_url": "https://api.github.com/repos/ratatui/ratatui/git/trees/0a2a7c0363a4806b0cf05c1915bf7cdd438f756c?recursive=1",
+      "vcs": {
+        "git": {
+          "sha1": "0a2a7c0363a4806b0cf05c1915bf7cdd438f756c"
+        },
+        "path_in_vcs": "ratatui"
+      },
+      "version": "0.30.0"
+    },
+    {
+      "files": [
+        {
+          "path": "additional-license-notices/ratatui-core-0.1.0/LICENSE",
+          "sha256": "50eb43e8d742c9c61a9391e42b2184fce54dbd1893a1bb1c85b8c9ee217ab1f5",
+          "size": 1132,
+          "upstream_path": "LICENSE",
+          "url": "https://raw.githubusercontent.com/ratatui/ratatui/0a2a7c0363a4806b0cf05c1915bf7cdd438f756c/LICENSE"
+        }
+      ],
+      "license_expression": "MIT",
+      "name": "ratatui-core",
+      "repository": "https://github.com/ratatui/ratatui",
+      "status": "retrieved",
+      "upstream_tree_url": "https://api.github.com/repos/ratatui/ratatui/git/trees/0a2a7c0363a4806b0cf05c1915bf7cdd438f756c?recursive=1",
+      "vcs": {
+        "git": {
+          "sha1": "0a2a7c0363a4806b0cf05c1915bf7cdd438f756c"
+        },
+        "path_in_vcs": "ratatui-core"
+      },
+      "version": "0.1.0"
+    },
+    {
+      "files": [
+        {
+          "path": "additional-license-notices/ratatui-crossterm-0.1.0/LICENSE",
+          "sha256": "50eb43e8d742c9c61a9391e42b2184fce54dbd1893a1bb1c85b8c9ee217ab1f5",
+          "size": 1132,
+          "upstream_path": "LICENSE",
+          "url": "https://raw.githubusercontent.com/ratatui/ratatui/0a2a7c0363a4806b0cf05c1915bf7cdd438f756c/LICENSE"
+        }
+      ],
+      "license_expression": "MIT",
+      "name": "ratatui-crossterm",
+      "repository": "https://github.com/ratatui/ratatui",
+      "status": "retrieved",
+      "upstream_tree_url": "https://api.github.com/repos/ratatui/ratatui/git/trees/0a2a7c0363a4806b0cf05c1915bf7cdd438f756c?recursive=1",
+      "vcs": {
+        "git": {
+          "sha1": "0a2a7c0363a4806b0cf05c1915bf7cdd438f756c"
+        },
+        "path_in_vcs": "ratatui-crossterm"
+      },
+      "version": "0.1.0"
+    },
+    {
+      "files": [
+        {
+          "path": "additional-license-notices/ratatui-termwiz-0.1.0/LICENSE",
+          "sha256": "50eb43e8d742c9c61a9391e42b2184fce54dbd1893a1bb1c85b8c9ee217ab1f5",
+          "size": 1132,
+          "upstream_path": "LICENSE",
+          "url": "https://raw.githubusercontent.com/ratatui/ratatui/0a2a7c0363a4806b0cf05c1915bf7cdd438f756c/LICENSE"
+        }
+      ],
+      "license_expression": "MIT",
+      "name": "ratatui-termwiz",
+      "repository": "https://github.com/ratatui/ratatui",
+      "status": "retrieved",
+      "upstream_tree_url": "https://api.github.com/repos/ratatui/ratatui/git/trees/0a2a7c0363a4806b0cf05c1915bf7cdd438f756c?recursive=1",
+      "vcs": {
+        "git": {
+          "sha1": "0a2a7c0363a4806b0cf05c1915bf7cdd438f756c"
+        },
+        "path_in_vcs": "ratatui-termwiz"
+      },
+      "version": "0.1.0"
+    },
+    {
+      "files": [
+        {
+          "path": "additional-license-notices/ratatui-widgets-0.3.0/LICENSE",
+          "sha256": "50eb43e8d742c9c61a9391e42b2184fce54dbd1893a1bb1c85b8c9ee217ab1f5",
+          "size": 1132,
+          "upstream_path": "LICENSE",
+          "url": "https://raw.githubusercontent.com/ratatui/ratatui/0a2a7c0363a4806b0cf05c1915bf7cdd438f756c/LICENSE"
+        }
+      ],
+      "license_expression": "MIT",
+      "name": "ratatui-widgets",
+      "repository": "https://github.com/ratatui/ratatui",
+      "status": "retrieved",
+      "upstream_tree_url": "https://api.github.com/repos/ratatui/ratatui/git/trees/0a2a7c0363a4806b0cf05c1915bf7cdd438f756c?recursive=1",
+      "vcs": {
+        "git": {
+          "sha1": "0a2a7c0363a4806b0cf05c1915bf7cdd438f756c"
+        },
+        "path_in_vcs": "ratatui-widgets"
+      },
+      "version": "0.3.0"
+    },
+    {
+      "files": [],
+      "license_expression": "MIT",
+      "name": "uhidrs-sys",
+      "repository": "https://github.com/flukejones/uhidrs-sys",
+      "status": "none_in_exact_ancestor_paths",
+      "upstream_tree_url": "https://api.github.com/repos/flukejones/uhidrs-sys/git/trees/967fafa4c11b25cd5374a4b3439d1e27d165889e?recursive=1",
+      "vcs": {
+        "git": {
+          "sha1": "967fafa4c11b25cd5374a4b3439d1e27d165889e"
+        },
+        "path_in_vcs": ""
+      },
+      "version": "1.0.4"
+    },
+    {
+      "license_expression": null,
+      "name": "virtual-usb",
+      "repository": null,
+      "status": "no_exact_vcs_identity_in_crate",
+      "vcs": null,
+      "version": "0.1.0"
+    },
+    {
+      "files": [
+        {
+          "path": "additional-license-notices/vtparse-0.6.2/LICENSE.md",
+          "sha256": "37db33bbbd7348969eda397b89a16f252d56c1ca7481b6ccaf56ccdcbab5dcca",
+          "size": 1529,
+          "upstream_path": "LICENSE.md",
+          "url": "https://raw.githubusercontent.com/wez/wezterm/edeae72b5fc55c7fa4aa1d08bbefd08c5493f757/LICENSE.md"
+        },
+        {
+          "path": "additional-license-notices/vtparse-0.6.2/licenses/ANGLE.md",
+          "sha256": "bf4da21bd20bcfb5b60b7ecc67fa864a79be049e21d6178076887f178dd6c71a",
+          "size": 1643,
+          "upstream_path": "licenses/ANGLE.md",
+          "url": "https://raw.githubusercontent.com/wez/wezterm/edeae72b5fc55c7fa4aa1d08bbefd08c5493f757/licenses/ANGLE.md"
+        },
+        {
+          "path": "additional-license-notices/vtparse-0.6.2/licenses/README.md",
+          "sha256": "268406dc3383fba9c7705c5b53c028f0e5d93a14086f0af96018ca27825e84ca",
+          "size": 117,
+          "upstream_path": "licenses/README.md",
+          "url": "https://raw.githubusercontent.com/wez/wezterm/edeae72b5fc55c7fa4aa1d08bbefd08c5493f757/licenses/README.md"
+        }
+      ],
+      "license_expression": "MIT",
+      "name": "vtparse",
+      "repository": "https://github.com/wez/wezterm",
+      "status": "retrieved",
+      "upstream_tree_url": "https://api.github.com/repos/wez/wezterm/git/trees/edeae72b5fc55c7fa4aa1d08bbefd08c5493f757?recursive=1",
+      "vcs": {
+        "git": {
+          "sha1": "edeae72b5fc55c7fa4aa1d08bbefd08c5493f757"
+        },
+        "path_in_vcs": "vtparse"
+      },
+      "version": "0.6.2"
+    },
+    {
+      "files": [
+        {
+          "path": "additional-license-notices/wasip2-1.0.1+wasi-0.2.4/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+          "size": 10847,
+          "upstream_path": "LICENSE-APACHE",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasi-rs/3da562c06214feafc14d37bf290671636caa6718/LICENSE-APACHE"
+        },
+        {
+          "path": "additional-license-notices/wasip2-1.0.1+wasi-0.2.4/LICENSE-Apache-2.0_WITH_LLVM-exception",
+          "sha256": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5",
+          "size": 12243,
+          "upstream_path": "LICENSE-Apache-2.0_WITH_LLVM-exception",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasi-rs/3da562c06214feafc14d37bf290671636caa6718/LICENSE-Apache-2.0_WITH_LLVM-exception"
+        },
+        {
+          "path": "additional-license-notices/wasip2-1.0.1+wasi-0.2.4/LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "size": 1023,
+          "upstream_path": "LICENSE-MIT",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasi-rs/3da562c06214feafc14d37bf290671636caa6718/LICENSE-MIT"
+        }
+      ],
+      "license_expression": "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT",
+      "name": "wasip2",
+      "repository": "https://github.com/bytecodealliance/wasi-rs",
+      "status": "retrieved",
+      "upstream_tree_url": "https://api.github.com/repos/bytecodealliance/wasi-rs/git/trees/3da562c06214feafc14d37bf290671636caa6718?recursive=1",
+      "vcs": {
+        "git": {
+          "sha1": "3da562c06214feafc14d37bf290671636caa6718"
+        },
+        "path_in_vcs": "crates/wasip2"
+      },
+      "version": "1.0.1+wasi-0.2.4"
+    },
+    {
+      "files": [
+        {
+          "path": "additional-license-notices/wezterm-input-types-0.1.0/LICENSE.md",
+          "sha256": "37db33bbbd7348969eda397b89a16f252d56c1ca7481b6ccaf56ccdcbab5dcca",
+          "size": 1529,
+          "upstream_path": "LICENSE.md",
+          "url": "https://raw.githubusercontent.com/wez/wezterm/d5ca5509b95edc31291ba29bd1fcbf3f0b12c92d/LICENSE.md"
+        },
+        {
+          "path": "additional-license-notices/wezterm-input-types-0.1.0/licenses/ANGLE.md",
+          "sha256": "bf4da21bd20bcfb5b60b7ecc67fa864a79be049e21d6178076887f178dd6c71a",
+          "size": 1643,
+          "upstream_path": "licenses/ANGLE.md",
+          "url": "https://raw.githubusercontent.com/wez/wezterm/d5ca5509b95edc31291ba29bd1fcbf3f0b12c92d/licenses/ANGLE.md"
+        },
+        {
+          "path": "additional-license-notices/wezterm-input-types-0.1.0/licenses/README.md",
+          "sha256": "268406dc3383fba9c7705c5b53c028f0e5d93a14086f0af96018ca27825e84ca",
+          "size": 117,
+          "upstream_path": "licenses/README.md",
+          "url": "https://raw.githubusercontent.com/wez/wezterm/d5ca5509b95edc31291ba29bd1fcbf3f0b12c92d/licenses/README.md"
+        }
+      ],
+      "license_expression": "MIT",
+      "name": "wezterm-input-types",
+      "repository": "https://github.com/wez/wezterm",
+      "status": "retrieved",
+      "upstream_tree_url": "https://api.github.com/repos/wez/wezterm/git/trees/d5ca5509b95edc31291ba29bd1fcbf3f0b12c92d?recursive=1",
+      "vcs": {
+        "git": {
+          "sha1": "d5ca5509b95edc31291ba29bd1fcbf3f0b12c92d"
+        },
+        "path_in_vcs": "wezterm-input-types"
+      },
+      "version": "0.1.0"
+    },
+    {
+      "license_expression": "MIT/Apache-2.0",
+      "name": "winapi-i686-pc-windows-gnu",
+      "repository": "https://github.com/retep998/winapi-rs",
+      "status": "no_exact_vcs_identity_in_crate",
+      "vcs": null,
+      "version": "0.4.0"
+    },
+    {
+      "license_expression": "MIT/Apache-2.0",
+      "name": "winapi-x86_64-pc-windows-gnu",
+      "repository": "https://github.com/retep998/winapi-rs",
+      "status": "no_exact_vcs_identity_in_crate",
+      "vcs": null,
+      "version": "0.4.0"
+    }
+  ],
+  "schema": 1
+}

@@ -1,0 +1,20 @@
+The init script (initramfs/init), helper functions (initramfs/functions),
+and supporting shell glue in this repository are GPL-2.0-or-later, derived
+from the ROCKNIX project's busybox initramfs at:
+
+    packages/sysutils/busybox/scripts/init
+
+The busybox, bash, fsck.*, and library binaries under initramfs/usr/ are
+redistributed under their respective upstream licenses (busybox: GPL-2.0,
+glibc/musl: LGPL-2.1+, e2fsprogs: GPL-2.0).
+
+The firmware blobs under initramfs/usr/lib/firmware/qcom/ are proprietary
+Qualcomm-signed binaries extracted from the AYANEO Pocket DS stock Android
+image (TurboX AR11 flat-build, vendor partition). They are redistributed
+under the OEM-redistributable terms Qualcomm grants to handheld vendors --
+the same terms ROCKNIX (and other distributions that ship handheld device
+support) follow. They are firmware blobs only -- no source code is
+included or implied.
+
+The packaging metadata in this repository (this LICENSE, README.md,
+make-tarball.sh, refresh-fw-from-ayaneo-zip.sh) is GPL-2.0-or-later.

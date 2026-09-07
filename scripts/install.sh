@@ -70,7 +70,7 @@ sudo -n true
 # which has no Pocket DS Pulse method.
 haptics_ready=1
 haptics_binary=/usr/local/libexec/pocketds-inputplumber-haptics
-haptics_sha256=2c06a4cbfaa2aa93c923b1dc790bbaf15ae44e048662840cce0705bf2d7df244
+haptics_sha256=4dbb8a7dc494e27abdbe3b38191dabfaef54caa8f6f2c7357bc84008bbfb488b
 if sudo test -f "$haptics_binary" && sudo test -x "$haptics_binary"; then
     read -r live_haptics_sha256 _ < <(sudo sha256sum -- "$haptics_binary")
     [[ $live_haptics_sha256 == "$haptics_sha256" ]] || haptics_ready=0

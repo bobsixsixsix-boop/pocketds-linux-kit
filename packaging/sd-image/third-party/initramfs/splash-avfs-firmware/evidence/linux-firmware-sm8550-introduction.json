@@ -1,0 +1,78 @@
+[
+  {
+    "path": "qcom/a740_sqe.fw",
+    "url": "https://gitlab.com/api/v4/projects/48890189/repository/files/qcom%2Fa740_sqe.fw?ref=30979b116b5c5857b72c4332db8db0ff1ca2dc08",
+    "revision": "30979b116b5c5857b72c4332db8db0ff1ca2dc08",
+    "sha256": "96fee336424b139100fc60b5b45a907360e4b3936d7e1d00406b9bd80ca48473",
+    "size": 76724,
+    "metadata": {
+      "file_name": "a740_sqe.fw",
+      "file_path": "qcom/a740_sqe.fw",
+      "size": 76724,
+      "encoding": "base64",
+      "content_sha256": "96fee336424b139100fc60b5b45a907360e4b3936d7e1d00406b9bd80ca48473",
+      "ref": "30979b116b5c5857b72c4332db8db0ff1ca2dc08",
+      "blob_id": "692657ccd54e617ea5cba7cb348075c33fbbf7f9",
+      "commit_id": "30979b116b5c5857b72c4332db8db0ff1ca2dc08",
+      "last_commit_id": "30979b116b5c5857b72c4332db8db0ff1ca2dc08",
+      "execute_filemode": false
+    }
+  },
+  {
+    "path": "qcom/gmu_gen70200.bin",
+    "url": "https://gitlab.com/api/v4/projects/48890189/repository/files/qcom%2Fgmu_gen70200.bin?ref=30979b116b5c5857b72c4332db8db0ff1ca2dc08",
+    "revision": "30979b116b5c5857b72c4332db8db0ff1ca2dc08",
+    "sha256": "1a2a419c39046d3141fc5fed5aa7f971de2db40cc7a1d89693c3e26fad64dd98",
+    "size": 66844,
+    "metadata": {
+      "file_name": "gmu_gen70200.bin",
+      "file_path": "qcom/gmu_gen70200.bin",
+      "size": 66844,
+      "encoding": "base64",
+      "content_sha256": "1a2a419c39046d3141fc5fed5aa7f971de2db40cc7a1d89693c3e26fad64dd98",
+      "ref": "30979b116b5c5857b72c4332db8db0ff1ca2dc08",
+      "blob_id": "b78e121bd9cdcf023b41aa34f32b2f9d44a16fba",
+      "commit_id": "30979b116b5c5857b72c4332db8db0ff1ca2dc08",
+      "last_commit_id": "30979b116b5c5857b72c4332db8db0ff1ca2dc08",
+      "execute_filemode": false
+    }
+  },
+  {
+    "path": "qcom/sm8550/a740_zap.mbn",
+    "url": "https://gitlab.com/api/v4/projects/48890189/repository/files/qcom%2Fsm8550%2Fa740_zap.mbn?ref=30979b116b5c5857b72c4332db8db0ff1ca2dc08",
+    "revision": "30979b116b5c5857b72c4332db8db0ff1ca2dc08",
+    "sha256": "386bbdc25ae94a9398e33e7580eecfdcef6c472682a1e3123e1374bcffe7cde3",
+    "size": 12088,
+    "metadata": {
+      "file_name": "a740_zap.mbn",
+      "file_path": "qcom/sm8550/a740_zap.mbn",
+      "size": 12088,
+      "encoding": "base64",
+      "content_sha256": "386bbdc25ae94a9398e33e7580eecfdcef6c472682a1e3123e1374bcffe7cde3",
+      "ref": "30979b116b5c5857b72c4332db8db0ff1ca2dc08",
+      "blob_id": "40a9cb949c13bbb59a0e7e8926f3e489ea7078e3",
+      "commit_id": "30979b116b5c5857b72c4332db8db0ff1ca2dc08",
+      "last_commit_id": "30979b116b5c5857b72c4332db8db0ff1ca2dc08",
+      "execute_filemode": false
+    }
+  },
+  {
+    "path": "WHENCE",
+    "url": "https://gitlab.com/api/v4/projects/48890189/repository/files/WHENCE?ref=30979b116b5c5857b72c4332db8db0ff1ca2dc08",
+    "revision": "30979b116b5c5857b72c4332db8db0ff1ca2dc08",
+    "sha256": "a28427c6e0463471b4026145a03a6be7d972ae023f0750c91885e21567ddefcf",
+    "size": 366816,
+    "metadata": {
+      "file_name": "WHENCE",
+      "file_path": "WHENCE",
+      "size": 366816,
+      "encoding": "base64",
+      "content_sha256": "a28427c6e0463471b4026145a03a6be7d972ae023f0750c91885e21567ddefcf",
+      "ref": "30979b116b5c5857b72c4332db8db0ff1ca2dc08",
+      "blob_id": "e6813f8c00d37eda03d37627bc83a0fb8e84818e",
+      "commit_id": "30979b116b5c5857b72c4332db8db0ff1ca2dc08",
+      "last_commit_id": "30979b116b5c5857b72c4332db8db0ff1ca2dc08",
+      "execute_filemode": false
+    }
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "schema": "pocketds.rpm-source-access.v1",
+  "checked_at": "2026-09-07T18:34:50.914970+00:00",
+  "installed_rpm_records": 1271,
+  "gpg_pubkey_records_without_srpm": 2,
+  "unique_source_rpms": 915,
+  "fedora_koji_urls_verified": 907,
+  "pocketds_copr_urls_verified": 6,
+  "local_modified_srpms_sha256_verified": 2,
+  "remote_check": "URL responds and first four bytes are RPM magic; remote full download SHA256 not checked",
+  "package_database_vs_overlay": "New image overlays including kernel/modules and InputPlumber are separately described by the final image source lock, artifact inventory and source supplements."
+}

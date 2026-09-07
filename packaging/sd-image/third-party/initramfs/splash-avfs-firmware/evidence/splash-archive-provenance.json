@@ -1,0 +1,7 @@
+{
+  "url": "https://github.com/ROCKNIX/distribution-sources/releases/download/sources-v2/rocknix-splash-9d295bcb74be2282e32c6b614efbea6036974ba8.tar.gz",
+  "sha256": "ffa718a9bbcbf69857b91acf854abaf4cc00a7802f61d531341517546c26e635",
+  "matches_recipe_sha256": true,
+  "source_recipe_ref": "13628e7c15798b8f9e4a8c21d975768d4e09dfa6",
+  "binary_source_correspondence": "candidate recipe pin, not rebuilt binary proof"
+}

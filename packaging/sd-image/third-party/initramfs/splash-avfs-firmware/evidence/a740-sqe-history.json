@@ -1,0 +1,21 @@
+[
+  {
+    "id": "30979b116b5c5857b72c4332db8db0ff1ca2dc08",
+    "short_id": "30979b11",
+    "created_at": "2025-12-11T21:13:18.000+05:30",
+    "parent_ids": [
+      "1304566db9cc447ec4192f50e7d4053426b0c295"
+    ],
+    "title": "qcom: Add firmwares for sm8550 GPU",
+    "message": "qcom: Add firmwares for sm8550 GPU\n\nAdd the necessary GPU firmwares to support the GPU\npresent in sm8550 chipset.\n\nSigned-off-by: Rajesh Kemisetti <rajesh.kemisetti@oss.qualcomm.com>\n",
+    "author_name": "Rajesh Kemisetti",
+    "author_email": "rajesh.kemisetti@oss.qualcomm.com",
+    "authored_date": "2025-12-11T20:27:33.000+05:30",
+    "committer_name": "Rajesh Kemisetti",
+    "committer_email": "rajesh.kemisetti@oss.qualcomm.com",
+    "committed_date": "2025-12-11T21:13:18.000+05:30",
+    "trailers": {},
+    "extended_trailers": {},
+    "web_url": "https://gitlab.com/kernel-firmware/linux-firmware/-/commit/30979b116b5c5857b72c4332db8db0ff1ca2dc08"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "path": "LICENSE.md",
+    "url": "https://raw.githubusercontent.com/ROCKNIX/distribution/13628e7c15798b8f9e4a8c21d975768d4e09dfa6/LICENSE.md",
+    "revision": "13628e7c15798b8f9e4a8c21d975768d4e09dfa6",
+    "blob_sha1": "f2c57de61413dafa86982513f7c80e049df562d6",
+    "sha256": "61a24be2b0bc521542d0fa0a22f3452242609fd7570d982e17712a284de79ab4",
+    "size": 2503
+  },
+  {
+    "path": "licenses/GPL-2.0-only.txt",
+    "url": "https://raw.githubusercontent.com/ROCKNIX/distribution/13628e7c15798b8f9e4a8c21d975768d4e09dfa6/licenses/GPL-2.0-only.txt",
+    "revision": "13628e7c15798b8f9e4a8c21d975768d4e09dfa6",
+    "blob_sha1": "3b6070fcd0c53e0e40d54f61cbe4e0e95b23a431",
+    "sha256": "b58671fb4d9e9efeb9a6af1bdba02e61ac69af654855b45a372efe8f52413f83",
+    "size": 17277
+  },
+  {
+    "path": "projects/ROCKNIX/devices/SM8550/config/kernel-firmware.dat",
+    "url": "https://raw.githubusercontent.com/ROCKNIX/distribution/13628e7c15798b8f9e4a8c21d975768d4e09dfa6/projects/ROCKNIX/devices/SM8550/config/kernel-firmware.dat",
+    "revision": "13628e7c15798b8f9e4a8c21d975768d4e09dfa6",
+    "blob_sha1": "1be3bbe55ee3b9465d98de1900a305bfa58394b7",
+    "sha256": "94e74671fee8aa561ead8af8ad809af61ad035e835c74c8500ef2a80147e6f4b",
+    "size": 133
+  }
+]

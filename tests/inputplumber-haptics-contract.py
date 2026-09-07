@@ -33,10 +33,14 @@ assert (len(patch), sha(patch)) == (
     lock["downstream_patch_size"],
     lock["downstream_patch_sha256"],
 )
-assert lock["binary_size"] == 9574272
+assert lock["binary_size"] == 9377664
 assert lock["binary_sha256"] == (
-    "2c06a4cbfaa2aa93c923b1dc790bbaf15ae44e048662840cce0705bf2d7df244"
+    "4dbb8a7dc494e27abdbe3b38191dabfaef54caa8f6f2c7357bc84008bbfb488b"
 )
+for entry in lock["additional_patches"]:
+    payload = read(entry["source"])
+    assert (len(payload), sha(payload)) == (entry["size"], entry["sha256"])
+assert lock["vendored_dependency_count"] == 343
 assert lock["rollback_binary"] == "/usr/bin/inputplumber"
 
 patch_text = patch.decode()

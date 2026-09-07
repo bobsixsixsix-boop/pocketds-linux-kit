@@ -8,9 +8,9 @@
   "downstream_patch": "inputplumber-d3932cb4-pocketds-haptics.patch",
   "downstream_patch_sha256": "bc22340bc8a5cd865c04a77e2a4df950341b10bb526028d73afee09abc7387e9",
   "downstream_patch_size": 4817,
-  "binary_filename": "inputplumber-pocketds-pulse",
-  "binary_sha256": "2c06a4cbfaa2aa93c923b1dc790bbaf15ae44e048662840cce0705bf2d7df244",
-  "binary_size": 9574272,
+  "binary_filename": "inputplumber-pocketds-pulse-no-usb-deck",
+  "binary_sha256": "4dbb8a7dc494e27abdbe3b38191dabfaef54caa8f6f2c7357bc84008bbfb488b",
+  "binary_size": 9377664,
   "install_payloads": {
     "device_profile": {
       "source": "01-ayaneo-controller-haptics.yaml",
@@ -40,8 +40,25 @@
     "Pulse duration clamped to 5..50 ms",
     "generic Rumble and game force feedback remain unchanged",
     "Pulse stops force feedback before returning",
-    "Pulse polkit action and boundary test"
+    "Pulse polkit action and boundary test",
+    "remove unused USB deck target and its virtual-usb dependency; deck-uhid shared configuration and math retained",
+    "Pocket DS device profiles, original Pulse patch and generic Rumble unchanged"
   ],
   "rollback_binary": "/usr/bin/inputplumber",
-  "rollback_package": "inputplumber-0.75.2-20260506235201.fc44.aarch64"
+  "rollback_package": "inputplumber-0.75.2-20260506235201.fc44.aarch64",
+  "additional_patches": [
+    {
+      "source": "inputplumber-d3932cb4-remove-unused-usb-deck.patch",
+      "sha256": "95f0ea9f100a5283420f0db7f1ffd0b5a11de5dd2e2b80aa35302ef097237abf",
+      "size": 62460
+    }
+  ],
+  "cargo_lock_sha256": "fc57f68e7dacf5e2a666d2c6835e66b27b07e75ec19a4d27f6b7efd6079c3f9f",
+  "vendored_dependency_count": 343,
+  "hardware_validated": false,
+  "sd_image_binary_paths": [
+    "/usr/bin/inputplumber",
+    "/usr/local/libexec/pocketds-inputplumber-haptics"
+  ],
+  "rollback_note": "The sidecar installer preserves the existing system executable; SD Alpha3 intentionally overlays that path with this same public build. RPM reinstall is a separate operator action."
 }

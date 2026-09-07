@@ -1,0 +1,22 @@
+{
+  "review_date": "2026-09-08",
+  "purpose": "Adjacent source and notice supplement; no image or binary modification",
+  "rocknix_candidate_commit": "13628e7c15798b8f9e4a8c21d975768d4e09dfa6",
+  "rocknix_source_build_commit_proven": false,
+  "rocknix_license_url": "https://github.com/ROCKNIX/distribution/blob/13628e7c15798b8f9e4a8c21d975768d4e09dfa6/LICENSE.md",
+  "avfs_source_url": "https://downloads.sourceforge.net/project/avf/avfs/1.1.5/avfs-1.1.5.tar.bz2",
+  "splash_source_url": "https://github.com/ROCKNIX/distribution-sources/releases/download/sources-v2/rocknix-splash-9d295bcb74be2282e32c6b614efbea6036974ba8.tar.gz",
+  "pocketds_initramfs_commit": "74a81f951f1a58c90a35c2329fc6b629bac8f9c1",
+  "pocketds_initramfs_license_url": "https://gitlab.com/linux-pocketds/pocketds-initramfs/-/blob/74a81f951f1a58c90a35c2329fc6b629bac8f9c1/LICENSE",
+  "pocketds_firmware_srpm_url": "https://download.copr.fedorainfracloud.org/results/linux4switch/pocketds/fedora-44-aarch64/10849192-pocketds-firmware/pocketds-firmware-20260811-20260811175327.fc44.src.rpm",
+  "pocketds_firmware_srpm_sha256": "74f967d58e83c2a918ccee1465f10c42eb7c5ad673b54f454868b3b7b07be001",
+  "linux_firmware_reference": "e71b7cf8733f36a7475c3fafec3332e253f8de92",
+  "claims": {
+    "all_seven_gpu_bytes_match_pocketds_upstream_and_srpm": true,
+    "generic_linux_firmware_matches_all_oem_bytes": false,
+    "different_binary_implies_no_redistribution_right": false,
+    "oem_specific_grant_demonstrated_by_attached_vendor_text": false,
+    "pocketds_upstream_explicitly_asserts_oem_redistributable_terms": true,
+    "all_corresponding_source_complete": false
+  }
+}

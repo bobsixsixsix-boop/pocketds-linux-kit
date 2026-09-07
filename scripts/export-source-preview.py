@@ -21,9 +21,10 @@ import subprocess
 import tarfile
 
 
-EXCLUDED_PREFIXES = ("assets/", "work/")
+EXCLUDED_PREFIXES = ("assets/", "work/", ".github/")
 EXCLUDED_FILES = (
     "components/game-runtime/pocketds-gamescope-observer",
+    "docs/release/source-preview-manifest.json",
 )
 EXCLUDED_GLOBS = ("*-personal-preset.json", "*/asr-api/config.json", "*/asr-api-config.json")
 ASSET_MANIFEST = "components/assets/ASSETS.json"

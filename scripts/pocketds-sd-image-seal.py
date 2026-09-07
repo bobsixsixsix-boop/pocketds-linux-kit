@@ -15,7 +15,15 @@ import tempfile
 
 VERSION = '7.1.12-pdsdiag.20260905.aarch64'
 BOOT_SHA = '57322cb6dc3bce822289bcd6bde5e5934362efc2547120ebc88be0eea7a89d92'
-HAPTICS_SHA = '2c06a4cbfaa2aa93c923b1dc790bbaf15ae44e048662840cce0705bf2d7df244'
+HAPTICS_SHA = '4dbb8a7dc494e27abdbe3b38191dabfaef54caa8f6f2c7357bc84008bbfb488b'
+HAPTICS_DESTINATIONS = {
+    'usr/local/libexec/pocketds-inputplumber-haptics': {
+        'sha256': '2c06a4cbfaa2aa93c923b1dc790bbaf15ae44e048662840cce0705bf2d7df244',
+        'size': 9574272, 'origin': 'prior Pocket DS Pulse overlay'},
+    'usr/bin/inputplumber': {
+        'sha256': 'f76a1a1f531fe28e3a2ebc76d8040c134ed15374c93512cf5ad0e69069dbd11d',
+        'size': 9507728, 'origin': 'inputplumber-0.75.2-20260506235201.fc44.aarch64'},
+}
 RFCOMM_SHA = 'bd0a0116dd66f0d0c73f92c62ada06b2961266f44384aeaa88841056d4af576b'
 MODULE_MANIFEST_SHA = 'ac32f54308ed35c238d62aa0e6907c58d3a9f009754edf5e667211d9fc78348a'
 RFCOMM = 'kernel/net/bluetooth/rfcomm/rfcomm.ko'
@@ -294,6 +302,54 @@ def validate_privacy(root, staged):
             raise ValueError('Unexpected network or Bluetooth identity')
 
 
+def validate_haptics(root, source_root, binary):
+    lock = json_file(checked(source_root, 'components/inputplumber/inputplumber-haptics-source-lock.json'))
+    checksum = digest(binary)
+    if (checksum != HAPTICS_SHA or checksum != lock['binary_sha256']
+            or regular(binary).st_size != lock['binary_size']
+            or checksum in {row['sha256'] for row in HAPTICS_DESTINATIONS.values()}):
+        raise ValueError('The public InputPlumber binary does not match its new source lock')
+    patches = [{'source': lock['downstream_patch'], 'sha256': lock['downstream_patch_sha256'],
+                'size': lock['downstream_patch_size']}] + lock.get('additional_patches', [])
+    if len(patches) != 2:
+        raise ValueError('Both the Pulse and public backend patches are required')
+    for row in patches:
+        source = checked(source_root, 'components/inputplumber/' + row['source'])
+        if digest(source) != row['sha256'] or regular(source).st_size != row['size']:
+            raise ValueError('InputPlumber source patch differs from the source lock')
+    overlays = []
+    for name, expected in HAPTICS_DESTINATIONS.items():
+        path = checked(root, name)
+        before = None
+        if path.exists():
+            if digest(path) != expected['sha256'] or regular(path).st_size != expected['size']:
+                raise ValueError('Unexpected InputPlumber preimage; inspect the selected base root')
+            before = expected.copy()
+        elif name == 'usr/bin/inputplumber':
+            raise ValueError('The selected base is missing its InputPlumber RPM executable')
+        overlays.append({'path': '/' + name, 'preimage': before, 'sha256': checksum,
+                         'size': regular(binary).st_size, 'mode': '0755',
+                         'source_lock_sha256': digest(checked(source_root,
+                             'components/inputplumber/inputplumber-haptics-source-lock.json')),
+                         'rpm_database_modified': False})
+    reject_retired_haptics(root, allowed=set(HAPTICS_DESTINATIONS))
+    return lock, overlays
+
+
+def reject_retired_haptics(root, allowed=()):
+    """Find other exact old payload copies without following directory/file links."""
+    sizes = {row['size'] for row in HAPTICS_DESTINATIONS.values()}
+    hashes = {row['sha256'] for row in HAPTICS_DESTINATIONS.values()}
+    for base, _directories, files in os.walk(root, followlinks=False):
+        for leaf in files:
+            path = Path(base) / leaf
+            if path.is_symlink() or not path.is_file():
+                continue
+            name = str(path.relative_to(root))
+            if name not in allowed and path.stat().st_size in sizes and digest(path) in hashes:
+                raise ValueError('Another retired InputPlumber payload remains: ' + name)
+
+
 def prepare(args):
     root = args.root
     staged = validate_root(root)
@@ -312,13 +368,11 @@ def prepare(args):
     rows = validate_firstboot(root)
     validate_privacy(root, staged)
     copies = []
-    for path, expected, dest, mode in (
-        (args.boot_image, BOOT_SHA, 'boot/Image', 0o644),
-        (args.haptics_binary, HAPTICS_SHA, 'usr/local/libexec/pocketds-inputplumber-haptics', 0o755)):
-        if digest(path) != expected:
-            raise ValueError('Boot or haptics artifact hash mismatch')
-        copies.append((path, dest, mode))
-    haptics = json_file(checked(args.source_root, 'components/inputplumber/inputplumber-haptics-source-lock.json'))
+    if digest(args.boot_image) != BOOT_SHA:
+        raise ValueError('Boot artifact hash mismatch')
+    copies.append((args.boot_image, 'boot/Image', 0o644))
+    haptics, overlays = validate_haptics(root, args.source_root, args.haptics_binary)
+    copies.extend((args.haptics_binary, name, 0o755) for name in HAPTICS_DESTINATIONS)
     for item in haptics['install_payloads'].values():
         source = checked(args.source_root, 'components/inputplumber/' + item['source'])
         if digest(source) != item['sha256'] or regular(source).st_size != item['size']:
@@ -344,7 +398,7 @@ def prepare(args):
                  'usr/share/pocketds-linux-kit/rpm-sources.tsv',
                  'usr/share/pocketds-linux-kit/image-seal.json'):
         checked(root, name)
-    return staged, export, module_files, rows, copies, deletes
+    return staged, export, module_files, rows, copies, deletes, overlays
 
 
 def write(root, name, *, source=None, data=None, mode=0o644, allow_link=False):
@@ -379,16 +433,18 @@ def main():
     args = parser.parse_args()
     if os.geteuid() != 0:
         raise ValueError('Run only inside the isolated image builder as root')
-    staged, export, modules, shadow, copies, deletes = prepare(args)
+    staged, export, modules, shadow, copies, deletes, overlays = prepare(args)
     if args.plan:
-        print(json.dumps({'planned': True, 'files': len(copies), 'module_files_verified': len(modules)}))
+        print(json.dumps({'planned': True, 'files': len(copies), 'module_files_verified': len(modules),
+                          'binary_overlays': overlays}))
         return
     receipt = {'schema': 'pocketds.sd-image-sealed.v1', 'kernel': VERSION,
                'accepted_modules_verified': 317, 'extra_modules': [RFCOMM],
                'module_files_verified': len(modules), 'module_manifest_sha256': digest(args.module_manifest),
                'source_export_manifest_sha256': digest(args.export_manifest), 'source_commit': export['source_commit'],
                'hardware_boot_tested': False, 'public_release_ready': False,
-               'source_archive_sha256': digest(args.source_archive), 'files': []}
+               'source_archive_sha256': digest(args.source_archive), 'files': [],
+               'binary_overlays': overlays}
     root = args.root
     for source, destination, mode in copies:
         path = write(root, destination, source=source, mode=mode, allow_link=(destination == 'boot/Image'))
@@ -425,13 +481,19 @@ def main():
                 path.unlink()
             else:
                 shutil.rmtree(path)
+    reject_retired_haptics(root)
+    remaining_rpms = [str(path.relative_to(root)) for path in root.rglob('*.rpm')
+                      if path.is_file() and not path.is_symlink()]
+    if remaining_rpms:
+        raise ValueError('Unexpected RPM payload archives remain in the sealed root')
     packages = subprocess.check_output(
         ['/usr/bin/rpm', '--root', str(root), '-qa', '--qf',
          '%{NAME}\t%{EPOCHNUM}:%{VERSION}-%{RELEASE}.%{ARCH}\t%{SOURCERPM}\n'], text=True)
     manifest = write(root, 'usr/share/pocketds-linux-kit/rpm-sources.tsv',
                      data=''.join(sorted(packages.splitlines(keepends=True))).encode())
     receipt.update(rpm_manifest_sha256=digest(manifest), rpm_package_count=len(packages.splitlines()),
-                   passwords_locked=True, machine_identity_empty=True, api_configured=False, firstboot_ready=True)
+                   passwords_locked=True, machine_identity_empty=True, api_configured=False, firstboot_ready=True,
+                   retired_inputplumber_payloads_absent=True, rpm_payload_archive_count=0)
     write(root, 'usr/share/pocketds-linux-kit/image-seal.json',
           data=(json.dumps(receipt, indent=2, sort_keys=True) + '\n').encode())
     checked(root, 'etc/pocketds-image-build-root').unlink()
