@@ -1,0 +1,62 @@
+#!/bin/sh
+set -eu
+
+usage() {
+    echo 'usage: pocketds-gmu-runtime on|auto|status' >&2
+    echo '       pocketds-gmu-runtime --test-root PATH on|auto|status' >&2
+}
+
+if [ "$#" -eq 3 ] && [ "$1" = --test-root ]; then
+    power_dir=$2
+    action=$3
+elif [ "$#" -eq 1 ]; then
+    [ "$(id -u)" -eq 0 ] || {
+        echo 'Changing the GMU runtime policy requires root.' >&2
+        exit 1
+    }
+    power_dir=/sys/devices/platform/soc@0/3d6a000.gmu/power
+    action=$1
+else
+    usage
+    exit 2
+fi
+
+control=$power_dir/control
+runtime_status=$power_dir/runtime_status
+
+[ -r "$control" ] || {
+    echo "GMU runtime control is unavailable: $control" >&2
+    exit 1
+}
+
+case $action in
+    on|auto)
+        [ -w "$control" ] || {
+            echo "GMU runtime control is not writable: $control" >&2
+            exit 1
+        }
+        printf '%s\n' "$action" >"$control"
+        current=$(cat "$control")
+        [ "$current" = "$action" ] || {
+            echo "GMU runtime policy readback mismatch: wanted $action, got $current" >&2
+            exit 1
+        }
+        ;;
+    status)
+        current=$(cat "$control")
+        printf 'control=%s\n' "$current"
+        if [ -r "$runtime_status" ]; then
+            printf 'runtime_status=%s\n' "$(cat "$runtime_status")"
+        fi
+        exit 0
+        ;;
+    *)
+        usage
+        exit 2
+        ;;
+esac
+
+printf 'control=%s\n' "$current"
+if [ -r "$runtime_status" ]; then
+    printf 'runtime_status=%s\n' "$(cat "$runtime_status")"
+fi

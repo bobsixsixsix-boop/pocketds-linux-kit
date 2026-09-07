@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "artifact": {
+    "source_lock_sha256": "2d7d8fd968daefa5b09d344c2ff594263560e159c34c57550cf0a7e577384b81",
+    "build_lock_sha256": "49cc77046b045ec44dca0b1659270deb4ca82ed7ea6b6df22b6f77026d4f7578",
+    "archive_lock_sha256": "308324e557cb366e7adfe5afd74d74332ed53972489f32f07a84d5625e01d085",
+    "binary_rpm_sha256": "457ee254ff2ae15b9a0cee2a839077b02e990da1015dbdcfbc4207b654c25cdf"
+  },
+  "builder": {
+    "distro": "fedora-44",
+    "architecture": "aarch64",
+    "dnf5_nvr": "dnf5-5.4.1.0-1.fc44.aarch64",
+    "host_config_read_only": true,
+    "all_repositories_disabled": true,
+    "plugins_disabled": true,
+    "cache_only": true,
+    "local_archives_only": true
+  },
+  "installed_stage": {
+    "package_count": 322,
+    "package_manifest_sha256": "7cdf60c9f647186250a05c0b643d7e6d1cd4b0dac861e15bf97a03035f7ce0d0",
+    "dnf_check": "pass"
+  },
+  "installed_contract": {
+    "rpm_verify_output": [],
+    "legacy_packages_absent": [
+      "onboard",
+      "onboard-data"
+    ],
+    "legacy_paths_absent": [
+      "/etc/sudoers.d/10-wheel-nopasswd",
+      "/usr/bin/pocketds-onboard",
+      "/usr/bin/pocketds-osk-toggle",
+      "/usr/bin/pocketds-osk-listener",
+      "/usr/lib/systemd/user/pocketds-osk-listener.service",
+      "/usr/lib/systemd/user/graphical-session.target.wants/pocketds-osk-listener.service",
+      "/usr/share/inputplumber/devices/05-ignore-onboard-osk.yaml",
+      "/usr/share/onboard/themes/Switch.theme",
+      "/usr/share/onboard/themes/SwitchColor.colors",
+      "/usr/share/glib-2.0/schemas/95-pocketds-onboard.gschema.override",
+      "/etc/skel/.config/kwinrulesrc",
+      "/usr/local/share/dbus-1/services/org.onboard.Onboard.service"
+    ],
+    "critical_payload_paths": [
+      "/usr/bin/pocketds-fancontrol",
+      "/usr/lib/systemd/system/pocketds-fancontrol.service",
+      "/usr/share/alsa/ucm2/Qualcomm/sm8550/APS/HiFi.conf"
+    ],
+    "system_wants": {
+      "pocketds-fancontrol.service": "/usr/lib/systemd/system/pocketds-fancontrol.service",
+      "pocketds-fs-resize.service": "/usr/lib/systemd/system/pocketds-fs-resize.service",
+      "pocketds-mode-listener.service": "/usr/lib/systemd/system/pocketds-mode-listener.service"
+    }
+  }
+}

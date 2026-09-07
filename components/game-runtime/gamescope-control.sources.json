@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "upstream": "https://github.com/ValveSoftware/gamescope",
+  "verified_revision": "9f537fada5e51abf6df4da1c4caa24482ea7586b",
+  "verification_date": "2026-09-07",
+  "original_copy_revision": null,
+  "import_kind": "fresh fixed-revision import",
+  "local_file": "components/game-runtime/gamescope-control.xml",
+  "source": {
+    "path": "protocol/gamescope-control.xml",
+    "url": "https://raw.githubusercontent.com/ValveSoftware/gamescope/9f537fada5e51abf6df4da1c4caa24482ea7586b/protocol/gamescope-control.xml",
+    "sha256": "9f732cd790dbc0d263462e4693fff67f89f3ec210301660933cc0484f12ba1ca"
+  },
+  "license": "MIT",
+  "license_notice": "Complete Valve copyright and permission notice embedded in the XML.",
+  "interface": "gamescope_control",
+  "interface_version": 6,
+  "behavior_change": "None: only screenshot_taken.path documentation differs from the preceding local file; wire names, order, types, versions and enums are unchanged."
+}

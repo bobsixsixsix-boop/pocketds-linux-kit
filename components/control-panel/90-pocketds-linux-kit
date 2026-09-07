@@ -1,0 +1,3 @@
+# Allow the wheel user to call only the validated Pocket DS panel helpers.
+Cmnd_Alias POCKETDS_PANEL = /usr/local/libexec/pocketds-panel-root *, /usr/libexec/pocketds-fancontrol-set-profile *
+%wheel ALL=(root) NOPASSWD: POCKETDS_PANEL

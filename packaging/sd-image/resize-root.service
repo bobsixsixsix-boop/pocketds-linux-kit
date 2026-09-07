@@ -1,0 +1,16 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+[Unit]
+Description=Expand the running Pocket DS SD-card root
+After=local-fs.target
+Before=display-manager.service
+ConditionPathExists=/var/lib/pocketds-firstboot/resize-pending
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/libexec/pocketds-resize-root --apply
+# Never kill a filesystem writer merely because a slow SD card exceeds a timer.
+TimeoutStartSec=infinity
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

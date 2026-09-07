@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "package": {
+    "name": "pocketds-userspace",
+    "version": "20260507",
+    "release": "20260730174706.pds1.fc44",
+    "arch": "noarch",
+    "source_result": {
+      "filename": "pocketds-userspace-20260507-20260730174706.pds1.fc44.src.rpm",
+      "size": 95537,
+      "sha256": "b01ba6ad22d275e1631af1c2ede751a15a530dc8974ee62d486d5f89a38e2a52",
+      "payload_sha256": "70efce37d47a4a33e8745a7f16e850ac809fcc5ee07c341fb12903007c7da8f2"
+    },
+    "binary_result": {
+      "filename": "pocketds-userspace-20260507-20260730174706.pds1.fc44.noarch.rpm",
+      "size": 61723,
+      "sha256": "cd60625fca2f668d828d6cee119afc6a370925ce77302362f373d4373e4944d4",
+      "payload_sha256": "b7929976bc326cec4f99aa5af85a7c584a40c9c3266cd95b0405f81874f90f5e"
+    }
+  },
+  "builder": {
+    "distro": "fedora-44",
+    "architecture": "aarch64",
+    "mock_config": "fedora-44-aarch64",
+    "mock_nvr": "mock-6.8-1.fc44.noarch",
+    "offline_rebuild": true,
+    "independent_result_count": 2,
+    "macros": {
+      "_buildhost": "pocketds-build.invalid",
+      "use_source_date_epoch_as_buildtime": 1
+    },
+    "buildtime": 1787875200,
+    "installed_packages": {
+      "filename": "installed_pkgs.log",
+      "size": 11414,
+      "sha256": "1937b96a0770d17505b84726853863ca809efdc81ace45d155628cde64bb3ae8"
+    }
+  },
+  "payload_audit": {
+    "file_count": 71,
+    "manifest_sha256": "fdd27a685c5488d6c04eeb8867e4c6e0741a5a996b792aee0b09b67e9725006d",
+    "scriptlet_count": 3,
+    "scriptlets_sha256": "e40e3b03d3df7041b59bf15933548499d4f27a13bf98ce23ec230e04d16615d8",
+    "fan_controller_sha256": "9f04ff7113a3e2ea8412fca17a44cd728c20f6cbb7ab5cd463d8f66dd006f0fe"
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "schema": 1,
+  "id": "pds017-sm8550-charge-unit",
+  "status": "source-only-full-build-verified",
+  "default_install": false,
+  "must_not_combine_with": [
+    "pds002-a740-ifpc-revert"
+  ],
+  "downstream_source": {
+    "repository": "https://gitlab.com/linux-pocketds/linux.git",
+    "ref": "refs/heads/pocketds/v7.1-rc2",
+    "commit": "a4975ce7c8eec079bd0cf7ec3890e100e016813f",
+    "archive_sha256": "715b639c67d31b7abd4a3ccc02ad644e780ef369d4b4a27101698211272866bf",
+    "driver_path": "drivers/power/supply/qcom_battmgr.c",
+    "driver_sha256": "9315d81b08488a921348a4bc5abb85b3fc7d6ce506e4a0138e54e51ecf834425",
+    "driver_git_blob": "92a9729e93d5041f61c8f17b6f33e4b6f12fb296"
+  },
+  "upstream_source": {
+    "repository": "https://github.com/torvalds/linux.git",
+    "ref": "refs/heads/master",
+    "commit": "1b78070aaef63512688aebfbc82365ef9d6660f1",
+    "driver_sha256": "9591a420f5af384d37bf96dfe95b6a92a2e983dec15fe79ecb9731272ab69ea8"
+  },
+  "android_protocol_reference": {
+    "repository": "https://github.com/LineageOS/android_kernel_qcom_sm8550.git",
+    "ref": "refs/heads/lineage-21",
+    "commit": "095667a874b8f2218347ec9dd87f58c9e1175359",
+    "driver_path": "drivers/power/supply/qti_battery_charger.c",
+    "driver_sha256": "2434dd354448310de8742f78f3dbe0db1e623fe6835b6b3389bd3da75186f6cb",
+    "contract": [
+      "BATT_CHG_FULL_DESIGN maps to POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN",
+      "BATT_CHG_FULL maps to POWER_SUPPLY_PROP_CHARGE_FULL",
+      "non-special battery properties return the firmware value unchanged"
+    ]
+  },
+  "upower_reference": {
+    "repository": "https://gitlab.freedesktop.org/upower/upower.git",
+    "tag": "v1.91.3",
+    "commit": "3dc5323bf9f8f84b0a038f5f36c34d49e480ee3c",
+    "installed_package": "upower-1.91.3-1.fc44.aarch64",
+    "files": {
+      "src/linux/up-device-supply-battery.c": "1678ee184ef0e8fe491a391617a27fda4588f29589bae09abbb8a62185c45823",
+      "src/up-device-battery.c": "9d9a076305049e4352c8140e4d652bf972a68555080378df4836538a7bf4c438",
+      "src/up-device-battery.h": "123192935c4d127087e8628381170a6d847282143ebd99dd743b664249af8a3d"
+    },
+    "contract": [
+      "energy_full below 0.01 falls back to charge_full and selects charge units",
+      "charge full/current/rate values are converted to energy by multiplying by the selected design voltage",
+      "missing voltage_max_design and voltage_min_design falls back to voltage_now",
+      "missing charge_now is inferred from energy_full multiplied by capacity percentage"
+    ]
+  },
+  "patch": {
+    "path": "0001-power-supply-qcom-battmgr-initialize-property-unit.patch",
+    "sha256": "e8ee6eae20ab3514918838d448a32cff893f8145a3fd8e817b627990ae081867",
+    "patched_driver_sha256": "6500dc7085a1092e5eb4a4ec08e84dd72f1fbbf10b556edf4274646d3a077e17",
+    "patched_driver_git_blob": "88db4c507bd9504b2ca0de4bcffa6c636c7bc830"
+  },
+  "isolated_arm64_build": {
+    "system": "Fedora Linux 44",
+    "architecture": "aarch64",
+    "gcc": "16.2.1-2.fc44",
+    "make": "4.4.1-12.fc44",
+    "input_config_sha256": "5414bbb75c971adfc7410ca259994ce8a3c7013530105ea79a04500c7f750755",
+    "prepared_config_sha256": "df4410b621b4007f84a69763d80a5cf3295ccc85b95fb4f0cad378495d3aab20",
+    "object": "drivers/power/supply/qcom_battmgr.o",
+    "object_sha256": "5e95e440408e3f4b7f7e5855941bdd6d89333670d0c5a4013264b339a2e3cb22",
+    "object_format": "ELF 64-bit LSB relocatable, ARM aarch64",
+    "full_kernel_built": true,
+    "full_build": {
+      "targets": [
+        "Image",
+        "modules",
+        "dtbs"
+      ],
+      "kernel_release": "7.1.0-rc2",
+      "config_sha256": "2626327b303dab192d41350849f7c8976890998ed6d394fcf8f8c18cd70cfbf2",
+      "config_delta_from_running": [
+        "compiler identity refreshed from GCC 16.1.1 to GCC 16.2.1 by olddefconfig",
+        "CONFIG_INITRAMFS_SOURCE cleared because the running config names an absent RPM buildroot input",
+        "olddefconfig removed the now-inapplicable initramfs root UID/GID and compression selections"
+      ],
+      "image_sha256": "a0ec4394cc9888cd6bf8e0f4e82f9aba2f5ae164f7c5c2e115c6bec7a06a1e14",
+      "image_size": 31304192,
+      "vmlinux_sha256": "512e017e24596de51183d75f04aaf25314a8267848411bcc158663da2ff207b8",
+      "vmlinux_build_id": "b93cb1c138551e4f62e5efa29fb5bb405c04951f",
+      "system_map_sha256": "17e70be1b1b2b1dfc58f798f97ca1b7ee45ec01284086035575f2c621059ec7e",
+      "module_symvers_sha256": "364496ebe6e4dea60e4028dd2f36fcab535fdf656c9f73c433bdfce51c06bda0",
+      "module_count": 319,
+      "module_tree_sha256": "44afe9f2a7ede839e5800a5ebd421a88b9931ca8f257b3b9f01c84f4840480a9",
+      "candidate_module_sha256": "79e6a5e4156bdd0d87ac2cc1f312d166a9657c248462855f8ff3f13650e67b1e",
+      "candidate_module_build_id": "ff78dc50b6f78b2a9a10a264d2a2440393bdb5fa",
+      "candidate_module_vermagic": "7.1.0-rc2 SMP preempt mod_unload aarch64",
+      "dtb_count": 417,
+      "pocketds_dtb_sha256": "0557cee113d4e34fcae274c69400a8a53653e60229a1f333eafde83b2dfe6994",
+      "release_artifact": false
+    }
+  },
+  "live_read_only_observation": {
+    "kernel_release": "7.1.0-100.20260730172655.pocketds.fc44.aarch64",
+    "power_supply": "battery",
+    "compatible": "qcom,sm8550-pmic-glink",
+    "model_name": "GRAPH_6000MAH_60W",
+    "charge_counter_uah": 6641000,
+    "charge_now": "ABSENT",
+    "charge_full": "ENODATA",
+    "charge_full_design": "ENODATA",
+    "energy_full": "ABSENT",
+    "energy_full_design": "ABSENT",
+    "voltage_now_uv": 4374309,
+    "voltage_min_design": "ABSENT",
+    "voltage_max_design": "ABSENT"
+  },
+  "validation": {
+    "applies_to_pinned_downstream_source": true,
+    "arm64_driver_object_compiled": true,
+    "upower_source_contract": true,
+    "full_kernel_built": true,
+    "runtime_sysfs": false,
+    "upower": false,
+    "charge_discharge": false,
+    "suspend_resume": false
+  }
+}

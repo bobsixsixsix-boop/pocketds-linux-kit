@@ -1,0 +1,26 @@
+[Unit]
+Description=Pocket DS lower-screen touch keyboard
+After=plasma-workspace-wayland.target
+PartOf=graphical-session.target
+
+[Service]
+Type=notify
+NotifyAccess=main
+Environment=GDK_BACKEND=x11
+Environment=DISPLAY=:0
+Environment=POCKETDS_KEYBOARD_HAPTIC=1
+ExecStart=%h/.local/bin/pocketds-keyboard.py
+ExecReload=/bin/kill -USR1 $MAINPID
+ReadOnlyPaths=-%h/.config/pocketds-keyboard/asr-api
+UMask=0077
+LimitCORE=0
+CoredumpFilter=0x0
+RuntimeDirectory=pocketds-keyboard
+RuntimeDirectoryMode=0700
+RuntimeDirectoryPreserve=no
+Restart=on-failure
+RestartSec=2
+TimeoutStartSec=15
+
+[Install]
+WantedBy=graphical-session.target

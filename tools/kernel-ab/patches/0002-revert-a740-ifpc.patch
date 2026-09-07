@@ -1,0 +1,41 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: PocketDS Linux Kit <pocketds-linux-kit@localhost>
+Date: Fri, 28 Aug 2026 00:00:00 +0900
+Subject: [PATCH] Revert "drm/msm/a6xx: Enable IFPC on Adreno 740 Same
+ as overclocked Adreno 741"
+
+This is the single experimental variable for PDS-002.  Official msm-next does
+not advertise IFPC for chip ID 0x43050a01, and the shared register list is
+documented as applicable to X185 and A750.  Keep firmware and every other
+kernel change identical between control and candidate.
+
+This reverts commit d84f65cc8cd7af0bf62cca52d13583394851cfe8.
+---
+ drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+index 0a93068bd85c..550ff3a9b82e 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+@@ -1511,8 +1511,7 @@ static const struct adreno_info a7xx_gpus[] = {
+ 		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
+ 		.quirks = ADRENO_QUIRK_HAS_CACHED_COHERENT |
+ 			  ADRENO_QUIRK_HAS_HW_APRIV |
+-			  ADRENO_QUIRK_PREEMPTION |
+-			  ADRENO_QUIRK_IFPC,
++			  ADRENO_QUIRK_PREEMPTION,
+ 		.funcs = &a7xx_gpu_funcs,
+ 		.zapfw = "a740_zap.mdt",
+ 		.a6xx = &(const struct a6xx_info) {
+@@ -1520,7 +1519,6 @@ static const struct adreno_info a7xx_gpus[] = {
+ 			.protect = &a730_protect,
+ 			.pwrup_reglist = &a7xx_pwrup_reglist,
+ 			.dyn_pwrup_reglist = &a7xx_dyn_pwrup_reglist,
+-			.ifpc_reglist = &a750_ifpc_reglist,
+ 			.gbif_cx = a640_gbif,
+ 			.gmu_chipid = 0x7020100,
+ 			.gmu_cgc_mode = 0x00020202,
+-- 
+2.50.1
+

@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "expected_source_commit": "a4975ce7c8eec079bd0cf7ec3890e100e016813f",
+  "expected_source_tree_sha256": "9b2742727cc804f9d3f2727025155f074ea807a48f97ef35aaa2b2c082241404",
+  "expected_signing_fingerprint": "CB2323A20EBAFB6D02D625B76AAF40A74B7FF931",
+  "copr_build_id": 10794847,
+  "package_nevra": "kernel-7.1.0-100.20260730172655.pocketds.fc44.aarch64",
+  "srpm_archive_root": "linux-pocketds-v7.1-rc2",
+  "commit_archive_root": "linux-a4975ce7c8eec079bd0cf7ec3890e100e016813f",
+  "artifacts": {
+    "repomd": {
+      "filename": "repomd.xml",
+      "sha256": "ccbf55008c7103e128d5cb1fa729605fae4e68248ebf6bfaffc35537dc9e037b",
+      "size": 1568
+    },
+    "primary": {
+      "filename": "primary.xml.gz",
+      "sha256": "06feeadee2e39774e5d9b5ca2ada653a3caff2a7b0cf708b0ad9783c4dd5bcd1",
+      "size": 1064408
+    },
+    "binary_rpm": {
+      "filename": "kernel-7.1.0-100.20260730172655.pocketds.fc44.aarch64.rpm",
+      "sha256": "3d1502c7995fbd4b496796dc66777242c373240209902290899f38160efe2cb9",
+      "size": 37131042
+    },
+    "source_rpm": {
+      "filename": "kernel-7.1.0-100.20260730172655.pocketds.fc44.src.rpm",
+      "sha256": "03076822c95a0ec0315d0d400ac0163e86c1ef46eb783bc72621e99f0fed7c03",
+      "size": 259026310
+    },
+    "srpm_source_archive": {
+      "filename": "linux-7.1-rc2.tar.gz",
+      "sha256": "715b639c67d31b7abd4a3ccc02ad644e780ef369d4b4a27101698211272866bf",
+      "size": 262099891
+    },
+    "commit_archive": {
+      "filename": "linux-a4975ce7c8eec079bd0cf7ec3890e100e016813f.tar.gz",
+      "sha256": "969c26e7c1778aebc262690317687c60bd81aff4cbf572b0d259df369f0b727a",
+      "size": 262256950
+    },
+    "lid_source_patch": {
+      "filename": "0001-arm64-dts-qcom-pocketds-native-lid.patch",
+      "sha256": "0eb0b3f8f928fdf4d6b62ce5f1e429f1b4b8062ce550e119290a261443ee7453",
+      "size": 1156
+    },
+    "copr_keyring": {
+      "filename": "pubkey.gpg",
+      "sha256": "dc65f34bb568e624a6d5dce1e81eabe11072d4c74e27c7b6b46be9cc061185fc",
+      "size": 1022
+    },
+    "sqv": {
+      "filename": "sqv",
+      "sha256": "d28e0095695c9a1deab29692e598b91ea2f26b693c5d6641435424b4d5e1efda",
+      "size": 4688288
+    },
+    "rebuilt_dtb": {
+      "filename": "qcs8550-ayaneo-pocketds-native-lid.dtb",
+      "sha256": "195345de379195df466b999cf7c7ba53764dfd9c0bb12b18214083e530979556",
+      "size": 135820
+    }
+  }
+}

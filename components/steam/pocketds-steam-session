@@ -1,0 +1,159 @@
+#!/usr/bin/env bash
+# Start one managed Steam/Gamescope session, or forward a new Steam URI to the
+# already-running Steam client without trying to acquire a second game session.
+set -Eeuo pipefail
+
+supervisor=${POCKETDS_GAME_SESSION_SUPERVISOR:-/usr/local/libexec/pocketds-game-session}
+game_runtime=${POCKETDS_GAME_RUNTIME:-"$HOME/.local/bin/pocketds-game-runtime"}
+steam_launcher=${POCKETDS_STEAM_LAUNCHER:-"$HOME/.local/bin/steam"}
+steam_root=${POCKETDS_STEAM_ROOT:-"$HOME/.local/share/Steam"}
+steam_client=${POCKETDS_STEAM_CLIENT:-"$steam_root/steamrtarm64/steam"}
+pgrep_bin=${POCKETDS_PGREP:-/usr/bin/pgrep}
+systemd_run=${POCKETDS_SYSTEMD_RUN:-/usr/bin/systemd-run}
+systemctl_bin=${POCKETDS_SYSTEMCTL:-/usr/bin/systemctl}
+uid=${POCKETDS_STEAM_UID:-$(id -u)}
+
+if [[ ! $uid =~ ^[0-9]+$ ]]; then
+    echo 'Steam session UID is invalid.' >&2
+    exit 1
+fi
+for executable in \
+    "$supervisor" "$game_runtime" "$pgrep_bin" "$systemd_run" "$systemctl_bin"; do
+    if [[ ! -x $executable || -L $executable ]]; then
+        echo "Required Steam session component is missing or unsafe: $executable" >&2
+        exit 1
+    fi
+done
+if [[ ! -x $steam_launcher ]]; then
+    echo "Steam launcher is unavailable: $steam_launcher" >&2
+    exit 1
+fi
+
+# Every Steam client owned by the managed Gamescope session must be a genuine
+# Deck-mode client.  Steam can remember "start in Big Picture" and enter that UI
+# without a `-gamepadui` argument; preserving a launcher's false environment in
+# that case shows the Deck power menu without executing steamos-session-select.
+# The independent desktop service is the only supported false-mode owner.
+# Restart desktop-to-gamepad transitions outside the dying Gamescope cgroup so
+# the new singleton is genuinely in Deck mode and reaches our selector.
+if [[ ${1:-} == --pocketds-gamepad-restart ]]; then
+    if (($# != 1)); then
+        echo 'Invalid managed Steam gamepad restart request.' >&2
+        exit 2
+    fi
+    for _attempt in {1..120}; do
+        set +e
+        "$supervisor" probe --name steam >/dev/null
+        probe_status=$?
+        "$pgrep_bin" -u "$uid" -x steam >/dev/null 2>&1
+        steam_process_status=$?
+        set -e
+        if ((probe_status == 3 && steam_process_status == 1)); then
+            exec env STEAMDECK_MODE=true "$0" -gamepadui
+        fi
+        if ((probe_status != 0 && probe_status != 3 && probe_status != 75)); then
+            echo 'Managed Steam cleanup could not be validated.' >&2
+            exit "$probe_status"
+        fi
+        if ((steam_process_status != 0 && steam_process_status != 1)); then
+            echo 'Steam process state could not be checked.' >&2
+            exit 1
+        fi
+        sleep 0.25
+    done
+    echo 'Timed out waiting to start Steam gamepad mode.' >&2
+    exit 75
+fi
+
+gamepad_requested=false
+for argument in "$@"; do
+    if [[ $argument == -gamepadui ]]; then
+        gamepad_requested=true
+    fi
+done
+
+queue_gamepad_restart() {
+    "$systemd_run" --user \
+        --unit=pocketds-steam-gamepad \
+        --collect \
+        --property=Type=exec \
+        --property=SuccessExitStatus=143 \
+        --setenv=STEAMDECK_MODE=true \
+        "$0" --pocketds-gamepad-restart
+}
+
+# Direct IPC is allowed only when the secure supervisor record says that the
+# one live managed session is Steam.  An old/unmanaged Steam process therefore
+# cannot route around a different game's global session lock.
+set +e
+"$supervisor" probe --name steam >/dev/null
+probe_status=$?
+set -e
+if ((probe_status == 75)); then
+    echo 'Another managed game session is already active.' >&2
+    exit 75
+fi
+if ((probe_status != 0 && probe_status != 3)); then
+    echo 'The current managed game session could not be validated.' >&2
+    exit "$probe_status"
+fi
+
+set +e
+"$pgrep_bin" -u "$uid" -x steam >/dev/null 2>&1
+steam_process_status=$?
+set -e
+if ((steam_process_status != 0 && steam_process_status != 1)); then
+    echo 'The Steam process state could not be checked safely.' >&2
+    exit 1
+fi
+
+if ((probe_status == 0)); then
+    if ((steam_process_status != 0)); then
+        echo 'The managed Steam session is still starting or stopping; retry shortly.' >&2
+        exit 75
+    fi
+    if [[ ! -x $steam_client ]]; then
+        echo "Running Steam client cannot be reached safely: $steam_client" >&2
+        exit 1
+    fi
+
+    if [[ $gamepad_requested == true && ${STEAMDECK_MODE:-false} == true ]]; then
+        queue_gamepad_restart
+        exec "$supervisor" stop
+    fi
+
+    # Call the real client directly.  Re-entering launch-steam.sh would create
+    # another long-lived Switchdeck watcher even though Steam only needs IPC.
+    steam_library_path="$steam_root/steamrtarm64"
+    shopt -s nullglob
+    runtime_roots=(
+        "$steam_root"/steamrtarm64/pv-runtime/steam-runtime-steamrt-arm64/steamrt3c_platform_*/files
+    )
+    shopt -u nullglob
+    if (( ${#runtime_roots[@]} > 0 )); then
+        steam_library_path+=":${runtime_roots[0]}/lib/aarch64-linux-gnu:${runtime_roots[0]}/lib"
+    fi
+    if [[ -n ${LD_LIBRARY_PATH:-} ]]; then
+        steam_library_path+=":$LD_LIBRARY_PATH"
+    fi
+    export LD_LIBRARY_PATH=$steam_library_path
+    exec "$steam_client" -ifrunning "$@"
+fi
+if ((steam_process_status == 0)); then
+    if [[ $gamepad_requested == true && ${STEAMDECK_MODE:-false} == true ]]; then
+        if ! "$systemctl_bin" --user is-active --quiet \
+            pocketds-steam-desktop.service; then
+            echo 'An unmanaged Steam client is running outside the Pocket DS desktop unit.' >&2
+            exit 75
+        fi
+        queue_gamepad_restart
+        exec "$systemctl_bin" --user stop pocketds-steam-desktop.service
+    fi
+    echo 'An unmanaged Steam client is still running; exit it fully before relaunching.' >&2
+    exit 75
+fi
+
+exec env STEAMDECK_MODE=true "$supervisor" run \
+    --backend native \
+    --name steam \
+    -- "$game_runtime" --steam -- "$steam_launcher" "$@"

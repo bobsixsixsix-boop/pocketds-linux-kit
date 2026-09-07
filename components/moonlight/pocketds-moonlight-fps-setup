@@ -1,0 +1,287 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Build and configure the private Moonlight presentation-FPS preload hook.
+set -Eeuo pipefail
+
+script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
+source_file="$script_dir/pocketds-moonlight-fps-hook.c"
+app_id=${POCKETDS_MOONLIGHT_APP_ID:-com.moonlight_stream.Moonlight}
+flatpak_bin=${POCKETDS_FLATPAK:-flatpak}
+compiler=${CC:-cc}
+readelf_bin=${POCKETDS_READELF:-readelf}
+app_root="$HOME/.var/app/$app_id"
+library_dir="$app_root/data/pocketds-linux-kit/moonlight-fps"
+state_dir="$app_root/data/pocketds-linux-kit/moonlight-fps-state"
+library="$library_dir/libpocketds-moonlight-fps-hook.so"
+runtime_dir=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}
+output="$runtime_dir/app/$app_id/pocketds-rendered-fps"
+user_data_dir=${XDG_DATA_HOME:-$HOME/.local/share}
+user_override_file="$user_data_dir/flatpak/overrides/$app_id"
+original_absent_file="$state_dir/original-user-override.absent"
+configured_override_file="$state_dir/configured-user-override"
+
+usage() {
+    cat <<EOF
+usage: $0 [install|uninstall|status]
+
+Builds the FPS hook and changes only this app's per-user LD_PRELOAD and
+POCKETDS_MOONLIGHT_FPS_FILE overrides. Moonlight must be restarted after a
+change. The default action is install.
+EOF
+}
+
+die() {
+    printf 'Moonlight FPS setup: %s\n' "$*" >&2
+    exit 1
+}
+
+require_safe_targets() {
+    [[ -n ${HOME:-} && $HOME == /* && $HOME != / ]] || die 'HOME is unsafe.'
+    [[ $app_id =~ ^[A-Za-z0-9._-]+$ ]] || die 'Flatpak app id is unsafe.'
+    [[ $app_root == "$HOME/.var/app/$app_id" ]] || die 'app path mismatch.'
+    [[ $library == "$app_root/data/pocketds-linux-kit/moonlight-fps/"* ]] ||
+        die 'library path mismatch.'
+    [[ $runtime_dir == /* && $runtime_dir != / &&
+       $output == "$runtime_dir/app/$app_id/pocketds-rendered-fps" ]] ||
+        die 'output path mismatch.'
+    [[ $user_override_file == "$user_data_dir/flatpak/overrides/$app_id" ]] ||
+        die 'override path mismatch.'
+}
+
+safe_user_override_file() {
+    local owner links mode
+
+    [[ -f $user_override_file && ! -L $user_override_file ]] || return 1
+    read -r owner links mode < <(stat -Lc '%u %h %a' "$user_override_file") ||
+        return 1
+    [[ $owner == "$EUID" && $links == 1 && $mode =~ ^[0-7]{3,4}$ ]] ||
+        return 1
+    (( (8#$mode & 0022) == 0 ))
+}
+
+override_environment_value() {
+    local scope=$1
+    local key=$2
+    local line in_environment=0
+
+    while IFS= read -r line; do
+        if [[ $line == \[*\] ]]; then
+            [[ $line == '[Environment]' ]] && in_environment=1 ||
+                in_environment=0
+            continue
+        fi
+        if ((in_environment)) && [[ $line == "$key="* ]]; then
+            printf '%s' "${line#*=}"
+            return 0
+        fi
+    done < <("$flatpak_bin" override "$scope" --show "$app_id" 2>/dev/null || true)
+    return 1
+}
+
+without_hook() {
+    local value=${1:-}
+    local token result=
+    local -a tokens=()
+
+    value=${value//:/ }
+    read -r -a tokens <<<"$value"
+    for token in "${tokens[@]}"; do
+        [[ -n $token && $token != "$library" ]] || continue
+        if [[ -n $result ]]; then
+            result+=:
+        fi
+        result+="$token"
+    done
+    printf '%s' "$result"
+}
+
+atomic_text_file() {
+    local destination=$1
+    local value=$2
+    local temporary
+
+    temporary=$(mktemp "$state_dir/.state.XXXXXXXX")
+    chmod 0600 "$temporary"
+    printf '%s' "$value" >"$temporary"
+    mv -f -T -- "$temporary" "$destination"
+}
+
+find_app_scope() {
+    if "$flatpak_bin" info --user "$app_id" >/dev/null 2>&1; then
+        printf '%s' --user
+    elif "$flatpak_bin" info --system "$app_id" >/dev/null 2>&1; then
+        printf '%s' --system
+    else
+        return 1
+    fi
+}
+
+glibc_versions_fit_runtime() {
+    "$readelf_bin" --version-info "$1" | awk '
+        /Name: GLIBC_[0-9]/ {
+            version = $3
+            sub(/^GLIBC_/, "", version)
+            split(version, part, ".")
+            major = part[1] + 0
+            minor = part[2] + 0
+            seen = 1
+            if (major > 2 || (major == 2 && minor > 42)) bad = 1
+        }
+        END { exit (!seen || bad) ? 1 : 0 }
+    '
+}
+
+install_hook() {
+    local app_scope user_value= system_value= base_value configured_value
+    local user_value_without_hook fresh_install=0
+    local user_value_present=0 temporary_build= temporary_library
+
+    cleanup_build() {
+        if [[ -n $temporary_library &&
+              $temporary_library == "$library_dir/.hook."* ]]; then
+            rm -f -- "$temporary_library"
+        fi
+        if [[ -n $temporary_build && -d $temporary_build ]]; then
+            rm -rf -- "$temporary_build"
+        fi
+    }
+
+    [[ -r $source_file && ! -L $source_file ]] || die 'hook source is missing or unsafe.'
+    command -v "$flatpak_bin" >/dev/null 2>&1 || die 'flatpak is unavailable.'
+    command -v "$compiler" >/dev/null 2>&1 || die 'a C compiler is unavailable.'
+    command -v "$readelf_bin" >/dev/null 2>&1 || die 'readelf is unavailable.'
+    app_scope=$(find_app_scope) || die "Flatpak $app_id is not installed."
+    if [[ -e $original_absent_file || -e $configured_override_file ]]; then
+        [[ -f $original_absent_file && -f $configured_override_file ]] ||
+            die 'the saved override transaction is incomplete.'
+        safe_user_override_file &&
+            cmp -s "$user_override_file" "$configured_override_file" ||
+            die 'the Moonlight user override changed after installation; refusing.'
+    else
+        [[ ! -e $user_override_file && ! -L $user_override_file ]] ||
+            die 'an existing Moonlight user override must be reviewed before installation.'
+        fresh_install=1
+    fi
+
+    temporary_build=$(mktemp -d)
+    trap cleanup_build EXIT
+    "$compiler" -std=c11 -O2 -fPIC -shared -fvisibility=hidden \
+        -Wall -Wextra -Werror \
+        -o "$temporary_build/libpocketds-moonlight-fps-hook.so" \
+        "$source_file" -ldl -pthread
+    glibc_versions_fit_runtime \
+        "$temporary_build/libpocketds-moonlight-fps-hook.so" ||
+        die 'the hook requires a GLIBC version newer than Moonlight runtime 2.42.'
+
+    mkdir -p -- "$library_dir" "$state_dir"
+    chmod 0700 "$library_dir" "$state_dir"
+    temporary_library=$(mktemp "$library_dir/.hook.XXXXXXXX")
+    install -m 0600 "$temporary_build/libpocketds-moonlight-fps-hook.so" \
+        "$temporary_library"
+
+    "$flatpak_bin" run "$app_scope" --command=sh \
+        --env="LD_PRELOAD=$temporary_library" \
+        --env="POCKETDS_MOONLIGHT_FPS_FILE=$output" \
+        --env="POCKETDS_MOONLIGHT_HOOK_PROBE=$temporary_library" \
+        "$app_id" -c \
+        'grep -F -- "$POCKETDS_MOONLIGHT_HOOK_PROBE" /proc/$$/maps >/dev/null' || {
+        rm -f -- "$temporary_library"
+        die 'the hook did not load in the Moonlight Flatpak runtime.'
+    }
+    mv -f -T -- "$temporary_library" "$library"
+    temporary_library=
+    if ((fresh_install)); then
+        atomic_text_file "$original_absent_file" 1
+    fi
+
+    if user_value=$(override_environment_value --user LD_PRELOAD); then
+        user_value_present=1
+    fi
+    if system_value=$(override_environment_value --system LD_PRELOAD); then
+        :
+    else
+        system_value=
+    fi
+
+    user_value_without_hook=$(without_hook "$user_value")
+    if ((user_value_present)); then
+        base_value=$user_value_without_hook
+    else
+        base_value=$(without_hook "$system_value")
+    fi
+    configured_value=$base_value
+    if [[ -n $configured_value ]]; then
+        configured_value+=:
+    fi
+    configured_value+="$library"
+
+    "$flatpak_bin" override --user \
+        --env="LD_PRELOAD=$configured_value" \
+        --env="POCKETDS_MOONLIGHT_FPS_FILE=$output" \
+        "$app_id"
+    safe_user_override_file ||
+        die 'Flatpak created an unsafe or missing Moonlight user override.'
+    install -m 0600 "$user_override_file" "$configured_override_file"
+    rm -f -- "$output"
+    cleanup_build
+    temporary_build=
+    trap - EXIT
+    printf 'Moonlight FPS hook installed. Restart Moonlight to activate it.\n'
+    printf 'Telemetry path: %s\n' "$output"
+}
+
+uninstall_hook() {
+    command -v "$flatpak_bin" >/dev/null 2>&1 || die 'flatpak is unavailable.'
+    [[ -f $original_absent_file && -f $configured_override_file ]] ||
+        die 'the saved override transaction is missing or incomplete.'
+    safe_user_override_file &&
+        cmp -s "$user_override_file" "$configured_override_file" ||
+        die 'the Moonlight user override changed after installation; refusing rollback.'
+
+    "$flatpak_bin" override --user --reset "$app_id"
+    [[ ! -e $user_override_file && ! -L $user_override_file ]] ||
+        die 'Flatpak did not remove the Moonlight user override.'
+
+    rm -f -- "$library" "$output" "$original_absent_file" \
+        "$configured_override_file"
+    rmdir -- "$library_dir" "$state_dir" 2>/dev/null || true
+    printf 'Moonlight FPS hook removed. Restart Moonlight to finish.\n'
+}
+
+show_status() {
+    local current_value=
+
+    if current_value=$(override_environment_value --user LD_PRELOAD); then
+        :
+    fi
+    if [[ -f $library && :$current_value: == *:"$library":* ]]; then
+        printf 'installed\n'
+    else
+        printf 'not installed\n'
+    fi
+    printf 'library: %s\n' "$library"
+    printf 'telemetry: %s\n' "$output"
+}
+
+require_safe_targets
+case ${1:-install} in
+    install)
+        (($# <= 1)) || { usage >&2; exit 2; }
+        install_hook
+        ;;
+    uninstall)
+        (($# == 1)) || { usage >&2; exit 2; }
+        uninstall_hook
+        ;;
+    status)
+        (($# == 1)) || { usage >&2; exit 2; }
+        show_status
+        ;;
+    -h|--help)
+        usage
+        ;;
+    *)
+        usage >&2
+        exit 2
+        ;;
+esac

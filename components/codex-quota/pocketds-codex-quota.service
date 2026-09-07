@@ -1,0 +1,6 @@
+[Unit]
+Description=Refresh Pocket DS Codex quota cache
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/pocketds-codex-quota

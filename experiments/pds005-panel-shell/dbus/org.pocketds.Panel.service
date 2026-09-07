@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=org.pocketds.Panel
+Exec=/usr/libexec/pocketds-panel-shell
+SystemdService=pocketds-panel-shell.service

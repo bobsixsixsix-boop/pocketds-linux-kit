@@ -1,0 +1,7 @@
+--- kernel.spec
++++ kernel.spec
+@@ -70,0 +71 @@
++Patch0:         0002-revert-a740-ifpc.patch
+@@ -116,0 +118,2 @@
++
++patch --batch --fuzz=0 --reject-file=- -p1 < %{PATCH0}

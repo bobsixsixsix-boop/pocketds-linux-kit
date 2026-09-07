@@ -1,0 +1,15 @@
+#!/usr/bin/bash
+set -e
+
+readonly chromium_root=/opt/pocketds-chromium-v4l2-151.0.7922.137
+export LD_LIBRARY_PATH="${chromium_root}/compat/usr/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
+export CHROME_WRAPPER=/usr/local/bin/pocketds-chromium-v4l2
+export CHROME_DESKTOP=chromium-browser.desktop
+export CHROME_VERSION_EXTRA='Arch Linux ARM V4L2 build'
+
+exec "${chromium_root}/usr/lib/chromium/chromium" \
+  --ozone-platform=wayland \
+  --lang=zh-CN \
+  --force-renderer-accessibility=form-controls \
+  --enable-features=AcceleratedVideoDecoder,AcceleratedVideoDecodeLinuxGL \
+  "$@"

@@ -1,0 +1,19 @@
+{
+  "KPackageStructure": "Plasma/Applet",
+  "KPlugin": {
+    "Authors": [
+      {
+        "Email": "local@pocketds",
+        "Name": "Pocket DS Local"
+      }
+    ],
+    "Category": "System Information",
+    "Description": "Low-overhead lower-screen control center for Pocket DS",
+    "Icon": "speedometer",
+    "Id": "org.pocketds.controlpanel.v3",
+    "License": "GPL-2.0-or-later",
+    "Name": "Pocket DS 控制台",
+    "Version": "1.2.0"
+  },
+  "X-Plasma-API-Minimum-Version": "6.0"
+}

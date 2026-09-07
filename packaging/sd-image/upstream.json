@@ -1,0 +1,42 @@
+{
+  "repository": "https://gitlab.com/linux-pocketds/fedora-pocketds-image-builder",
+  "commit": "b5383937e04f5b9dcdee0edcbd2bdf2b1872c028",
+  "source_files_description": "Hashes identify the pristine upstream files at the pinned commit; local recipe changes are described separately below.",
+  "source_files": [
+    {
+      "path": "mkosi.repart/10-rocknix.conf",
+      "sha256": "a366b62be9ffb3a43e3750e9564ce0c58b453cfe53cb1077902162463f1ab464"
+    },
+    {
+      "path": "mkosi.repart/20-storage.conf",
+      "sha256": "fa8466c11c9f05d68e747d9679729fa6b5f71ce91e4a4bce02afb60d71408df7"
+    },
+    {
+      "path": "mkosi.sandbox/etc/dnf/repos.override.d/99-pocketds-no-fedora-kernel.repo",
+      "sha256": "07a1481b443dd3789e31b1600a9de293e309af34e17deb07eb41e91c908050b0"
+    },
+    {
+      "path": "mkosi.sandbox/etc/yum.repos.d/linux4switch-pocketds.repo",
+      "sha256": "1817b7183af66ac1daf3ac91db2395a88c37fc07cf33bc9a69e7c86db3bb3ef7"
+    },
+    {
+      "path": "mkosi.skeleton/etc/sysconfig/pocketds-image-info",
+      "sha256": "9601875dc7123cb7e5c6c75b842e7a8b3ae029077afea1ce5aa2f54936e0dfb5"
+    },
+    {
+      "path": "mkosi.skeleton/etc/systemd/network/20-wired.network",
+      "sha256": "0485d9a1e28dfca5d8c812962a9c2241b3dc5e6cc1729bfc0dfe1a287315edd7"
+    },
+    {
+      "path": "mkosi.skeleton/etc/yum.repos.d/linux4switch-pocketds.repo",
+      "sha256": "1817b7183af66ac1daf3ac91db2395a88c37fc07cf33bc9a69e7c86db3bb3ef7"
+    }
+  ],
+  "downstream_changes": [
+    "KDE directory composition plus explicit Kit dependencies and locally audited RPMs",
+    "Add marked offline Kit staging and one-use password setup",
+    "Replace label-selected resize with mounted SD-root validation",
+    "Preserve upstream512-byte GPT and 512MiBROCKNIX/8GiBminimumSTORAGE partitions",
+    "Add one narrow FAT copy from staged /boot/PocketDS-Switch-to-Linux.sh to FAT-root /PocketDS-Switch-to-Linux.sh so mounting the FAT at /boot preserves the runtime helper path; retain /boot/Image and exclude EFI loaders"
+  ]
+}

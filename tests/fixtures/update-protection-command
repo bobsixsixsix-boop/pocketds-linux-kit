@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+case ${0##*/} in
+    sudo)
+        [[ ${1:-} == -n ]] && shift
+        exec "$@"
+        ;;
+    dnf5)
+        [[ ${1:-} == --dump-main-config ]]
+        case ${POCKETDS_MOCK_DNF_RESULT:-bad} in
+            good|partial|partial-boot)
+                python3 - "$POCKETDS_DNF_PROTECTION_TARGET" "$POCKETDS_MOCK_DNF_RESULT" <<'PY'
+from configparser import ConfigParser
+import sys
+parser = ConfigParser(interpolation=None, strict=True)
+parser.read(sys.argv[1])
+patterns = parser['main']['excludepkgs'].split(',')
+if sys.argv[2] == 'partial':
+    patterns.remove('vulkan*')
+elif sys.argv[2] == 'partial-boot':
+    patterns.remove('systemd*')
+print('excludepkgs = ' + ','.join(patterns))
+PY
+                ;;
+            *)
+                echo 'excludepkgs = unrelated*'
+                ;;
+        esac
+        ;;
+    install)
+        [[ ${1:-} == -D && ${2:-} == -m && ${3:-} == 0644 && $# -eq 5 ]]
+        mkdir -p "$(dirname "$5")"
+        cp "$4" "$5"
+        chmod 0644 "$5"
+        ;;
+    *)
+        echo "unexpected mock command: ${0##*/}" >&2
+        exit 2
+        ;;
+esac

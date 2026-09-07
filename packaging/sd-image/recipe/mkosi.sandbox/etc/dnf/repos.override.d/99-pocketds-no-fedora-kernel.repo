@@ -1,0 +1,43 @@
+# dnf5 repos.override.d drop-in: keep Fedora's stock kernel (and its
+# matched perf / kernel-tools / debuginfo packages) out of update
+# resolution. The COPR linux4switch:pocketds rebuild ships its own
+# matching set tuned for the Pocket DS hardware (qcs8550-ayaneo-pocket
+# device tree, switchroot-style joymouse, etc.); pulling Fedora's
+# generic aarch64 kernel on `dnf upgrade` would silently downgrade /
+# replace it and brick boot.
+#
+# Pattern set tracks the COPR's kernel.spec output exactly:
+#   kernel kernel-core kernel-debug* kernel-debuginfo* kernel-devel*
+#   kernel-modules* kernel-tools* kernel-uki-* libperf* perf
+#   perf-debuginfo python3-kernel-tools python3-perf*
+#
+# Applied to all 9 fedora-repos sections (main + debuginfo + source,
+# enabled or not) so a future `dnf config-manager --enable` of e.g.
+# updates-testing can't sneak the stock kernel back in.
+
+[fedora]
+excludepkgs=kernel kernel-core kernel-debug* kernel-debuginfo* kernel-devel* kernel-modules* kernel-tools* kernel-uki-* libperf* perf perf-debuginfo python3-kernel-tools python3-perf*
+
+[fedora-debuginfo]
+excludepkgs=kernel kernel-core kernel-debug* kernel-debuginfo* kernel-devel* kernel-modules* kernel-tools* kernel-uki-* libperf* perf perf-debuginfo python3-kernel-tools python3-perf*
+
+[fedora-source]
+excludepkgs=kernel kernel-core kernel-debug* kernel-debuginfo* kernel-devel* kernel-modules* kernel-tools* kernel-uki-* libperf* perf perf-debuginfo python3-kernel-tools python3-perf*
+
+[updates]
+excludepkgs=kernel kernel-core kernel-debug* kernel-debuginfo* kernel-devel* kernel-modules* kernel-tools* kernel-uki-* libperf* perf perf-debuginfo python3-kernel-tools python3-perf*
+
+[updates-debuginfo]
+excludepkgs=kernel kernel-core kernel-debug* kernel-debuginfo* kernel-devel* kernel-modules* kernel-tools* kernel-uki-* libperf* perf perf-debuginfo python3-kernel-tools python3-perf*
+
+[updates-source]
+excludepkgs=kernel kernel-core kernel-debug* kernel-debuginfo* kernel-devel* kernel-modules* kernel-tools* kernel-uki-* libperf* perf perf-debuginfo python3-kernel-tools python3-perf*
+
+[updates-testing]
+excludepkgs=kernel kernel-core kernel-debug* kernel-debuginfo* kernel-devel* kernel-modules* kernel-tools* kernel-uki-* libperf* perf perf-debuginfo python3-kernel-tools python3-perf*
+
+[updates-testing-debuginfo]
+excludepkgs=kernel kernel-core kernel-debug* kernel-debuginfo* kernel-devel* kernel-modules* kernel-tools* kernel-uki-* libperf* perf perf-debuginfo python3-kernel-tools python3-perf*
+
+[updates-testing-source]
+excludepkgs=kernel kernel-core kernel-debug* kernel-debuginfo* kernel-devel* kernel-modules* kernel-tools* kernel-uki-* libperf* perf perf-debuginfo python3-kernel-tools python3-perf*

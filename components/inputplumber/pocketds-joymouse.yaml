@@ -1,0 +1,246 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/ShadowBlip/InputPlumber/main/rootfs/usr/share/inputplumber/schema/device_profile_v1.json
+version: 1
+kind: DeviceProfile
+name: Pocket DS — Joystick Mouse
+description: |
+  Joystick-as-mouse mode. Bindings were captured interactively
+  with /tmp/keymap_watch.py — the user pressed each physical
+  button in turn and named the action they wanted.
+
+  Desktop-first handheld layout:
+    Right stick → analog mouse motion
+    R1 / R2     → left / right click
+    Left stick  → keyboard navigation
+    L1 / L2     → scroll up / down
+    D-pad       → arrow keys
+
+mapping:
+  # ── face buttons (Xbox positional — South=A, East=B, West=X, North=Y) ──
+  - name: South (A) → Backspace
+    source_event:
+      gamepad:
+        button: South
+    target_events:
+      - keyboard: KeyBackspace
+
+  - name: East (B) → Enter
+    source_event:
+      gamepad:
+        button: East
+    target_events:
+      - keyboard: KeyEnter
+
+  - name: West (X) → Escape
+    source_event:
+      gamepad:
+        button: West
+    target_events:
+      - keyboard: KeyEsc
+
+  # Never synthesize modifier chords from a gamepad profile. InputPlumber can
+  # leave a modifier asserted if a profile/target transition races the button
+  # release. Route window actions over its D-Bus target instead; the desktop
+  # user service invokes the corresponding KWin global shortcut atomically.
+  - name: North (Y) → task switcher (dbus)
+    source_event:
+      gamepad:
+        button: North
+    target_events:
+      - dbus: ui_task_switcher
+
+  # ── d-pad → arrow keys ──
+  - name: D-Up
+    source_event:
+      gamepad:
+        button: DPadUp
+    target_events:
+      - keyboard: KeyUp
+  - name: D-Down
+    source_event:
+      gamepad:
+        button: DPadDown
+    target_events:
+      - keyboard: KeyDown
+  - name: D-Left
+    source_event:
+      gamepad:
+        button: DPadLeft
+    target_events:
+      - keyboard: KeyLeft
+  - name: D-Right
+    source_event:
+      gamepad:
+        button: DPadRight
+    target_events:
+      - keyboard: KeyRight
+
+  # ── right shoulder → primary / secondary mouse click ──
+  - name: Left Bumper (L1) → Scroll Up
+    source_event:
+      gamepad:
+        button: LeftBumper
+    target_events:
+      - mouse:
+          button: WheelUp
+
+  - name: Right Bumper (R1) → Mouse Left Click
+    source_event:
+      gamepad:
+        button: RightBumper
+    target_events:
+      - mouse:
+          button: Left
+
+  # ── analog triggers, deadzone-gated ──
+  - name: Left Trigger (L2) → Scroll Down
+    source_event:
+      gamepad:
+        trigger:
+          name: LeftTrigger
+          deadzone: 0.15
+    target_events:
+      - mouse:
+          button: WheelDown
+
+  - name: Right Trigger (R2) → Mouse Right Click
+    source_event:
+      gamepad:
+        trigger:
+          name: RightTrigger
+          deadzone: 0.15
+    target_events:
+      - mouse:
+          button: Right
+
+  # ── menu buttons ──
+  - name: Start → close focused window (dbus)
+    source_event:
+      gamepad:
+        button: Start
+    target_events:
+      - dbus: ui_window_close
+
+  # View is deferred so View + '=' can switch mode without first moving the
+  # focused window. A lone View release still invokes KWin's next-screen action.
+  - name: View → deferred chord input
+    source_event:
+      gamepad:
+        button: Select
+    target_events:
+      - dbus: ui_mode_view
+
+  # '=' is Guide/Home in gamepad mode. Defer it here too so View + '=' returns
+  # to gamepad without leaking a desktop action.
+  - name: Equals (Guide) → deferred chord input
+    source_event:
+      gamepad:
+        button: Guide
+    target_events:
+      - dbus: ui_mode_equals
+
+  # BTN5 / physical AYA uses the internal Keyboard gamepad slot. Consume it in
+  # joymouse: the desktop has no virtual gamepad target, and a global keyboard
+  # imitation would affect whichever non-Steam window happens to be focused.
+  - name: AYA internal slot → inert in joymouse
+    source_event:
+      gamepad:
+        button: Keyboard
+    target_events:
+      - dbus: ui_aya_qam_joymouse
+
+  # Preserve the device-local brightness routes in both input modes.
+  - name: QuickAccess (BTN_MODE) → ui_brightness_up
+    source_event:
+      gamepad:
+        button: QuickAccess
+    target_events:
+      - dbus: ui_brightness_up
+
+  - name: QuickAccess2 (BTN_2) → ui_brightness_down
+    source_event:
+      gamepad:
+        button: QuickAccess2
+    target_events:
+      - dbus: ui_brightness_down
+
+  # ── MCU extras (BTN_3/BTN_4 — see capability map) ──
+  # Preserve the existing raw-to-logical slots: physical BTN_3 is LC and
+  # BTN_4 is RC on this device.
+  - name: MCU BTN_3 (RightPaddle2 slot / physical LC) → fullscreen (dbus)
+    source_event:
+      gamepad:
+        button: RightPaddle2
+    target_events:
+      - dbus: ui_window_fullscreen
+
+  - name: MCU BTN_4 (LeftPaddle2 slot / physical RC) → toggle custom OSK (dbus ui_osk)
+    source_event:
+      gamepad:
+        button: LeftPaddle2
+    target_events:
+      - dbus: ui_osk
+
+  # ── sticks ──
+  # 1100 px/s crosses the 1920-wide upper display in about 1.7 seconds
+  # at full deflection, while the analog magnitude still provides fine
+  # control near center.  A small source deadzone removes cursor drift.
+  - name: Right stick → analog mouse motion
+    source_event:
+      gamepad:
+        axis:
+          name: RightStick
+          deadzone: 0.12
+    target_events:
+      - mouse:
+          motion:
+            speed_pps: 1100
+
+  - name: Right stick click → Mouse Middle Click
+    source_event:
+      gamepad:
+        button: RightStick
+    target_events:
+      - mouse:
+          button: Middle
+
+  # Left-stick navigation keeps long lists and menus usable without
+  # requiring the D-pad; the 45% threshold prevents accidental repeats.
+  - name: Left stick Up → Up
+    source_event:
+      gamepad:
+        axis:
+          name: LeftStick
+          direction: up
+          deadzone: 0.45
+    target_events:
+      - keyboard: KeyUp
+
+  - name: Left stick Down → Down
+    source_event:
+      gamepad:
+        axis:
+          name: LeftStick
+          direction: down
+          deadzone: 0.45
+    target_events:
+      - keyboard: KeyDown
+
+  - name: Left stick Left → Left
+    source_event:
+      gamepad:
+        axis:
+          name: LeftStick
+          direction: left
+          deadzone: 0.45
+    target_events:
+      - keyboard: KeyLeft
+
+  - name: Left stick Right → Right
+    source_event:
+      gamepad:
+        axis:
+          name: LeftStick
+          direction: right
+          deadzone: 0.45
+    target_events:
+      - keyboard: KeyRight

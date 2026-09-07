@@ -1,0 +1,9 @@
+[Unit]
+Description=Pocket DS bounded Plasma shell recovery worker
+
+[Service]
+Type=oneshot
+Slice=app.slice
+ExecStart=/usr/local/bin/pocketds-plasma-recovery --worker
+Restart=no
+TimeoutStartSec=60s

@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+# Make Steam's Deck-style "Switch to Desktop" action open the ordinary Steam
+# desktop client inside the existing KDE session. The current managed
+# Steam/Gamescope session must finish first; a detached user unit then starts
+# Steam without Gamescope or Deck flags. The packaged selector remains
+# available for the legacy login-session workflow.
+set -Eeuo pipefail
+
+supervisor=${POCKETDS_GAME_SESSION_SUPERVISOR:-/usr/local/libexec/pocketds-game-session}
+system_selector=${POCKETDS_SYSTEM_SESSION_SELECTOR:-/usr/bin/steamos-session-select}
+systemd_run=${POCKETDS_SYSTEMD_RUN:-/usr/bin/systemd-run}
+pgrep_bin=${POCKETDS_PGREP:-/usr/bin/pgrep}
+steam_launcher=${POCKETDS_STEAM_DESKTOP_LAUNCHER:-"$HOME/.local/share/Steam/launch-steam.sh"}
+action=${1:-gaming}
+
+for executable in "$supervisor" "$system_selector" "$systemd_run" "$pgrep_bin"; do
+    if [[ ! -x $executable || -L $executable ]]; then
+        echo "Required session component is missing or unsafe: $executable" >&2
+        exit 1
+    fi
+done
+
+if [[ $action == --pocketds-desktop-restart ]]; then
+    if [[ ! -x $steam_launcher || -L $steam_launcher ]]; then
+        echo "Steam desktop launcher is missing or unsafe: $steam_launcher" >&2
+        exit 1
+    fi
+    # The user unit is outside the dying Gamescope cgroup. Wait until both the
+    # exact supervisor record and Steam singleton are gone before relaunching.
+    for _attempt in {1..120}; do
+        set +e
+        "$supervisor" probe --name steam >/dev/null
+        probe_status=$?
+        "$pgrep_bin" -u "$(id -u)" -x steam >/dev/null 2>&1
+        steam_status=$?
+        set -e
+        if ((probe_status == 3 && steam_status == 1)); then
+            exec env STEAMDECK_MODE=false "$steam_launcher"
+        fi
+        if ((probe_status != 0 && probe_status != 3 && probe_status != 75)); then
+            echo 'Managed Steam cleanup could not be validated.' >&2
+            exit "$probe_status"
+        fi
+        if ((steam_status != 0 && steam_status != 1)); then
+            echo 'Steam process state could not be checked.' >&2
+            exit 1
+        fi
+        sleep 0.25
+    done
+    echo 'Timed out waiting to start Steam desktop mode.' >&2
+    exit 75
+fi
+
+case "$action" in
+    desktop|plasma|kde)
+        set +e
+        "$supervisor" probe --name steam >/dev/null
+        probe_status=$?
+        set -e
+        case "$probe_status" in
+            0)
+                # Queue the desktop client outside the dying Gamescope scope,
+                # then signal the exact journalled owner. Normal cleanup
+                # restores input/display state before the queued client starts.
+                "$systemd_run" --user \
+                    --unit=pocketds-steam-desktop \
+                    --collect \
+                    --property=Type=exec \
+                    --setenv=STEAMDECK_MODE=false \
+                    "$0" --pocketds-desktop-restart
+                exec "$supervisor" stop
+                ;;
+            3)
+                # No managed nested Steam session: preserve the packaged
+                # selector for the old login-session dispatcher.
+                exec "$system_selector" "$@"
+                ;;
+            75)
+                echo "Another managed game session owns the desktop switch." >&2
+                exit 75
+                ;;
+            *)
+                echo "The managed Steam session could not be validated." >&2
+                exit "$probe_status"
+                ;;
+        esac
+        ;;
+    *)
+        exec "$system_selector" "$@"
+        ;;
+esac

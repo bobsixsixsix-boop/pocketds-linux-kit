@@ -1,0 +1,29 @@
+{
+  "schema": "pocketds.inputplumber-mouse-clear-source.v1",
+  "upstream_repository": "https://github.com/ShadowBlip/InputPlumber.git",
+  "upstream_commit": "d3932cb4e0de3eb47688e381b5eb5334ebac6254",
+  "upstream_version": "0.78.1",
+  "base_patch": {
+    "path": "inputplumber-d3932cb4-pocketds-haptics.patch",
+    "sha256": "bc22340bc8a5cd865c04a77e2a4df950341b10bb526028d73afee09abc7387e9"
+  },
+  "patch": {
+    "path": "inputplumber-d3932cb4-mouse-clear-buttons.patch",
+    "sha256": "07b24cf890b4fd285f250968bb98fd4826caecd0be5d09267e72fff6c257a0fd",
+    "size": 2520
+  },
+  "mouse_source": {
+    "path": "src/input/target/mouse.rs",
+    "before_sha256": "766bed5bc7386d9fb4c51d7045086e1a5db3f038d5a10a4248be37788894ece5",
+    "after_sha256": "46282fbe128ce1f55db072280a8a16635930880a2c78c89b7a1fe33ebb6d58bf"
+  },
+  "release_builder": {
+    "repository_path": "mouse-clear-button-releases.rs",
+    "upstream_path": "src/input/target/mouse/button_releases.rs",
+    "sha256": "94b5ff0ff5943d94af028c3e147d4a497207ad7b7651506167f0cf67e91e4d5b"
+  },
+  "binary": null,
+  "install_ready": false,
+  "hardware_validated": false,
+  "reason": "Source candidate; existing haptics binary and installer lock are unchanged. A separate build receipt is not a deployment approval."
+}

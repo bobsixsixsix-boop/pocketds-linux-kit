@@ -1,0 +1,13 @@
+// Keep every ordinary desktop/login1 suspend path closed.  The attended
+// Pocket DS guard runs as root through the existing narrow sudo dispatcher.
+polkit.addRule(function(action, subject) {
+    var guarded = [
+        "org.freedesktop.login1.suspend",
+        "org.freedesktop.login1.suspend-ignore-inhibit",
+        "org.freedesktop.login1.suspend-multiple-sessions"
+    ];
+
+    if (guarded.indexOf(action.id) >= 0 && subject.user !== "root") {
+        return polkit.Result.NO;
+    }
+});

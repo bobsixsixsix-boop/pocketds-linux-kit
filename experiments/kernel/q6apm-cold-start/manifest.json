@@ -1,0 +1,370 @@
+{
+  "schema": 2,
+  "id": "pds-asr-q6apm-cold-start",
+  "status": "built-runtime-payload-reproduced-not-runtime-authorized",
+  "default_install": false,
+  "artifact_root_id": "q6apm-candidate-artifacts",
+  "baseline": {
+    "kernel_release": "7.1.0-100.20260730172655.pocketds.fc44.aarch64",
+    "candidate_release_is_distinct": true,
+    "baseline_module_tree_is_not_in_candidate_payload": true
+  },
+  "candidate": {
+    "version": "7.1.0",
+    "rpm_release": "101.20260829000000.pocketds.q6apmcs1.fc44",
+    "kernel_release": "7.1.0-101.20260829000000.pocketds.q6apmcs1.fc44.aarch64",
+    "nevra": "kernel-7.1.0-101.20260829000000.pocketds.q6apmcs1.fc44.aarch64",
+    "q6apm_vermagic": "7.1.0-101.20260829000000.pocketds.q6apmcs1.fc44.aarch64 SMP preempt mod_unload aarch64",
+    "kernel_build_id": {
+      "hex": "a907af55e31b45ea3110dbe130c8e6386049c128",
+      "raw_image_note_offset": 27395540,
+      "raw_image_descriptor_offset": 27395556
+    }
+  },
+  "must_not_combine_with": [
+    "pds002-a740-ifpc-revert",
+    "pds017-sm8550-charge-unit",
+    "ucm-route-experiments"
+  ],
+  "downstream_source": {
+    "repository": "https://gitlab.com/linux-pocketds/linux.git",
+    "ref": "refs/heads/pocketds/v7.1-rc2",
+    "commit": "a4975ce7c8eec079bd0cf7ec3890e100e016813f",
+    "driver_path": "sound/soc/qcom/qdsp6/q6apm.c",
+    "driver_sha256": "0abb500ed1b0b0fda0ec1b7d3926d28d69b00816d992b041575e0a1bc5867719",
+    "driver_git_blob": "e288bed27d6d019a411333f83f009dadbc45b005"
+  },
+  "source_rpm_inputs": {
+    "source_date_epoch": 1778025600,
+    "linux-7.1-rc2.tar.gz": {
+      "size": 262099891,
+      "sha256": "715b639c67d31b7abd4a3ccc02ad644e780ef369d4b4a27101698211272866bf"
+    },
+    "pocketds-initramfs.tar.zst": {
+      "size": 3232141,
+      "sha256": "b1f3313944e50899b0b6ee81b617c526fae296e4d7e7972e20937e5c6809b86a"
+    },
+    "rocknix-linux.aarch64.conf": {
+      "size": 231558,
+      "sha256": "0faed47042d8031b995cc77641ce3f86d329aeea1c6e612a431a92d5a947aa08"
+    },
+    "kernel.spec": {
+      "size": 14616,
+      "sha256": "71fbfe944e8485628a02ec2bdbce1fdef1775875e4d1969371ca5214c6a15b54"
+    },
+    "spec_delta": {
+      "path": "q6apm-kernel-spec.patch",
+      "size": 4238,
+      "sha256": "825974142f360a992a2fcc985d1ea5468a400084da5f707259fd71d539bd79a0"
+    }
+  },
+  "ordered_upstream_patches": [
+    {
+      "sequence": 1,
+      "commit": "3075ae5abbc370d2a9a01bd6d554a412d406f5bd",
+      "subject": "ASoC: qcom: q6apm: return error code to consumers on failures",
+      "url": "https://github.com/torvalds/linux/commit/3075ae5abbc370d2a9a01bd6d554a412d406f5bd",
+      "path": "0001-ASoC-qcom-q6apm-return-error-code-to-consumers.patch",
+      "size": 2009,
+      "sha256": "910517345b88a284975131421810dd3c7c0a8c84e99abfc99f9e057ade52a042"
+    },
+    {
+      "sequence": 2,
+      "commit": "daa7ffd765ae67a83e77dae32c66ce2d6d995d19",
+      "subject": "ASoC: qcom: q6apm: keep the graph start count in sync with the DSP",
+      "url": "https://github.com/torvalds/linux/commit/daa7ffd765ae67a83e77dae32c66ce2d6d995d19",
+      "path": "0002-ASoC-qcom-q6apm-keep-graph-start-count-in-sync.patch",
+      "size": 2158,
+      "sha256": "e26fb9dd8cbe15df54f98bc76297b0a8ba906f149a2d90c305808aa36f23042e"
+    }
+  ],
+  "ordered_apply_result": {
+    "method": "source-rpm-percent-prep-patch-batch-fuzz-zero",
+    "files_changed": [
+      "sound/soc/qcom/qdsp6/q6apm.c"
+    ],
+    "insertions": 14,
+    "deletions": 8,
+    "patched_driver_sha256": "0750990e05cd9eaca4c206caab756e97762e3efb7dc10c446fe963b74799b6a4",
+    "patched_driver_git_blob": "fa7d2eb67d4285e4766af4df3014ceeca9ddabde"
+  },
+  "source_rpm": {
+    "path": "source/kernel-7.1.0-101.20260829000000.pocketds.q6apmcs1.fc44.src.rpm",
+    "size": 259027014,
+    "sha256": "1721e15c447bde54c67e35a60621c896af00ca7b0f6a6b3ad289d683e0c3fcb2",
+    "payload_sha256": "37b892e53f78dc4c8f9e24ade2264a76d860ad1f1d78d44552ec06ce9820c1f5",
+    "members_rehashed_to_source_inputs": true
+  },
+  "build_environment": {
+    "virtual_machine": "pds002-build",
+    "distribution": "Fedora 44 aarch64",
+    "architecture": "aarch64",
+    "cpu_count": 8,
+    "memory_gib": 16,
+    "mock_version": "6.8",
+    "gcc_nevra": "gcc-16.1.1-2.fc44.aarch64",
+    "libfaketime_nevra": "libfaketime-0.9.12-12.fc44.aarch64",
+    "date_wrapper_sha256": "336acc81b65710fc4316fb53e0a89e41bcf4bd0851fbbefc7ea63dcbf61335f2",
+    "make_wrapper_sha256": "fa15dfc3f19361a46d84d836b87570040c60aa3a25ec1fd193f6b498e333c167",
+    "package_count": 326,
+    "package_nevra_manifest_sha256": "576ac2d4ef93ee2ccece81f18268618775b0420707c16827233709b05b02c91f",
+    "network_during_binary_builds": false,
+    "independent_roots": [
+      "/var/lib/mock/fedora-44-aarch64-q6apm-a/root",
+      "/var/lib/mock/fedora-44-aarch64-q6apm-b/root"
+    ]
+  },
+  "builds": {
+    "candidate_a": {
+      "rpm_buildtime": 1787967038,
+      "kernel_rpm": {
+        "path": "build-a/kernel-q6apm-a.aarch64.rpm",
+        "size": 37133258,
+        "sha256": "0cd7b54673aa6c7a421967ab3e4534603a54580440d43ceecda25da139eec0d2"
+      },
+      "kernel_devel_rpm": {
+        "path": "build-a/kernel-devel-q6apm-a.aarch64.rpm",
+        "size": 15145490,
+        "sha256": "7560a6b7390b9f143b102520d19635d728882c29b657cff3c58f5b793fffd296"
+      },
+      "build_log": {
+        "path": "build-a/build.log",
+        "size": 613755,
+        "sha256": "be88d28b0479d9208c8d0da97a4889f464fd26b5fc0e1526a0f182fc548ff57e"
+      }
+    },
+    "candidate_b": {
+      "rpm_buildtime": 1787967378,
+      "kernel_rpm": {
+        "path": "build-b/kernel-q6apm-b.aarch64.rpm",
+        "size": 37133258,
+        "sha256": "c523d4589125bee4dd0a8b203f662a00153ea339d177948f04d4db19fd5eb1db"
+      },
+      "kernel_devel_rpm": {
+        "path": "build-b/kernel-devel-q6apm-b.aarch64.rpm",
+        "size": 15145490,
+        "sha256": "74a2a5c99a7bd6986d03343642e7f034500d48778aa4ff0e1c1c1bc1cb138415"
+      },
+      "build_log": {
+        "path": "build-b/build.log",
+        "size": 613755,
+        "sha256": "2987fa51deb285b4616a6dd1d0b5356218bb6039146209783addca1ddb55a55a"
+      }
+    }
+  },
+  "package_reproduction": {
+    "definition": "runtime package payload byte reproducibility; the two RPM container files are intentionally not claimed byte-identical",
+    "runtime_payload": {
+      "format": "cpio",
+      "compressor": "zstd",
+      "flags": "19",
+      "compressed_size": 36983505,
+      "sha256": "85260d5738c60ade97496d6d3c2a5fd36260acc43594d4b2f9a9979e30ede3c4",
+      "byte_identical": true
+    },
+    "devel_payload": {
+      "compressed_size": 12445221,
+      "sha256": "91e590dba637e314b0e47d4eb3dee8a576771f6d4720db252d4e851193cfb468",
+      "byte_identical": true
+    },
+    "rpm_container": {
+      "byte_identical": false,
+      "root_cause": "BUILDTIME differs by 340 seconds; only SIGMD5, SHA1HEADER, and SHA256HEADER differ as derived digests",
+      "lead_identical": true,
+      "signature_reservation_identical": true,
+      "signature_reservation_size": 4128,
+      "signature_padding_identical": true,
+      "header_layout_identical": true,
+      "nonvolatile_normalized_header_sha256": "7a8b01ca773fbf39f5dc79cb3fa5c44cdc5d5a5f50877b6c70f8fc1d22a0dfd3",
+      "buildtime_zeroed_raw_main_header_sha256": "7d97463542806020cff69d0a49f6bc61aef7f4c0a646eeafc6c9c7ac0fae5283",
+      "rpm_kv_header_and_payload_digests_ok": true
+    },
+    "extracted_payload": {
+      "manifest_sha256": "e669559d8d30b636b139825f790c966ece456693212543a0774230a6c2876da5",
+      "entry_count": 499,
+      "regular_file_count": 341,
+      "directory_count": 156,
+      "symlink_count": 2,
+      "regular_file_bytes": 81188972,
+      "rpm_header_entry_count": 496,
+      "implicit_directories": [
+        "boot",
+        "lib",
+        "lib/modules"
+      ],
+      "module_count": 319,
+      "byte_identical": true,
+      "rpm_header_manifests_identical": true
+    },
+    "reports": {
+      "reproduction": {
+        "path": "reports/reproduction-report.json",
+        "size": 5429,
+        "sha256": "abce083eb2ae1554774a372f52abf19dcdb21251d9708a08aa47a2966ae54907"
+      },
+      "kernel_rpm_container": {
+        "path": "reports/rpm-container-comparison.json",
+        "size": 4169,
+        "sha256": "f6eb128f8d9df3af291361b5870709facaf64412f6b52847db0801b488540a0c"
+      },
+      "devel_rpm_container": {
+        "path": "reports/rpm-devel-container-comparison.json",
+        "size": 4185,
+        "sha256": "0067db0f7111a52f03aa5b80c039c3a61c65c7ed7c69aeb32c8681d68ae1a32f"
+      }
+    }
+  },
+  "key_payload_files": {
+    "raw_image": {
+      "path": "lib/modules/7.1.0-101.20260829000000.pocketds.q6apmcs1.fc44.aarch64/Image",
+      "size": 34515456,
+      "sha256": "30766024b63cc223bce3c873a8578784c8344bac805f668d875453e5b970994a"
+    },
+    "package_boot": {
+      "path": "boot/Image-7.1.0-101.20260829000000.pocketds.q6apmcs1.fc44.aarch64",
+      "size": 17090560,
+      "sha256": "eefdbf93211e6295cfa6c503daa5c7729b32494edcf609d6f3a7402f47eda7c1"
+    },
+    "package_dtb": {
+      "path": "boot/dtb-7.1.0-101.20260829000000.pocketds.q6apmcs1.fc44.aarch64/qcom/qcs8550-ayaneo-pocketds.dtb",
+      "size": 135527,
+      "sha256": "0557cee113d4e34fcae274c69400a8a53653e60229a1f333eafde83b2dfe6994"
+    },
+    "q6apm_module": {
+      "path": "lib/modules/7.1.0-101.20260829000000.pocketds.q6apmcs1.fc44.aarch64/kernel/sound/soc/qcom/qdsp6/snd-q6apm.ko",
+      "size": 54080,
+      "sha256": "b6c4d102d4752e0621407b4ea11a4931de61b07434a34aa86156268afcc4e4ed"
+    },
+    "config": {
+      "path": "boot/config-7.1.0-101.20260829000000.pocketds.q6apmcs1.fc44.aarch64",
+      "size": 234425,
+      "sha256": "2b8dc027552fe691e3700d1c34aa9e161f125fc4393a481a98db938d86453971"
+    },
+    "system_map": {
+      "path": "boot/System.map-7.1.0-101.20260829000000.pocketds.q6apmcs1.fc44.aarch64",
+      "size": 5980271,
+      "sha256": "434ea95b3a9afeb84de08753cecf0e9e10403ca6f84cefd346d8594ba2e8b16d"
+    }
+  },
+  "runtime_boot_composition": {
+    "tool": {
+      "path": "compose-runtime.py",
+      "size": 7660,
+      "sha256": "eb4528f41633a7afeb36c39ca6a2203cbfee13e4a5514eca64df47c1c16fea02"
+    },
+    "native_lid_dtb": {
+      "size": 135820,
+      "sha256": "195345de379195df466b999cf7c7ba53764dfd9c0bb12b18214083e530979556"
+    },
+    "gzip_stream": {
+      "size": 16951740,
+      "sha256": "66eebacbb149d88cc6975e3ffe8393dd45d9ba45cb2b8862b0ee8c576b62552e"
+    },
+    "output": {
+      "path": "build-a/q6apm-native-lid-runtime-boot-v1.img",
+      "size": 17090560,
+      "sha256": "e85e3ee065ace1414dfe165f2b798964ee9f0cbf4cc66eb6e8d2303e766d6b8e"
+    },
+    "report": {
+      "path": "build-a/runtime-composition-report.json",
+      "size": 1225,
+      "sha256": "bb1883785eec429e856208ce4b872902ad3f1f2b905df7365a77a32aeb460e5c"
+    },
+    "round_trip_verified": true,
+    "existing_output_rejected": true,
+    "wrong_dtb_rejected": true,
+    "runtime_authorized": false,
+    "deployed": false
+  },
+  "hot_module_ab": {
+    "status": "no-go",
+    "reason": "the live module has active reverse holders and a safe full ASoC/DSP teardown, rebind, and rollback without reboot is not proven",
+    "persistent_candidate_vermagic_matches_baseline": false,
+    "device_changed": false,
+    "evidence_path": "hot-module-ab-evaluation.md"
+  },
+  "fixed_userspace_controls": [
+    "current UCM route",
+    "two-channel hardware capture declaration",
+    "current DMIC0 and DMIC1 route",
+    "current MultiMedia3 controls",
+    "current PipeWire and WirePlumber configuration"
+  ],
+  "excluded_follow_up_commits": [
+    {
+      "commit_prefix": "2e926176",
+      "reason": "late buffer-done NULL-dereference safety fix; evaluate separately"
+    },
+    {
+      "commit_prefix": "9c9fb79",
+      "reason": "zero-initialization tied to newer topology Audio Interface fields; no evidence for this baseline PCM capture path"
+    }
+  ],
+  "verification_tools": {
+    "verify-reproduction.py": {
+      "size": 8791,
+      "sha256": "fc902f0e3a3470701c67e1719fc9187dd7113191639d418e8f0870c6cda2d538"
+    },
+    "compare-rpm-containers.py": {
+      "size": 18128,
+      "sha256": "ba1397f4e47b2455d82f3c7281467420e62023245158706f9857907d3469ac50"
+    },
+    "inventory-artifacts.py": {
+      "size": 6862,
+      "sha256": "ee78eb0b96c419a4a616c575f3d157c8365c7d536450d90ff077ef40f6b659df"
+    }
+  },
+  "artifact_security": {
+    "root_mode": "0700",
+    "directory_mode": "0700",
+    "file_mode": "0600",
+    "directory_count_including_root": 5,
+    "file_count": 25,
+    "regular_file_bytes": 382045239,
+    "all_owned_by_auditor": true,
+    "all_single_link_files": true,
+    "all_non_symlink": true,
+    "all_non_dataless": true,
+    "all_non_compressed": true,
+    "all_non_sparse": true,
+    "all_fully_readable": true,
+    "sha256sums": {
+      "path": "SHA256SUMS",
+      "size": 2404,
+      "sha256": "fda56c831d807345395d28b26222bedc60061afd1b0c7b9e0b7226b3a3997d2d"
+    },
+    "inventory_report": {
+      "path": "artifact-inventory.json",
+      "size": 12647,
+      "sha256": "7d6073d57d66dc183ca456797e047aa92b53d3e43a6c44a0a969c0494bca271e"
+    }
+  },
+  "validation": {
+    "ordered_apply_to_pinned_source": true,
+    "source_checkout_modified": false,
+    "compiled": true,
+    "packaged": true,
+    "required_targets_built": [
+      "Image",
+      "modules",
+      "dtbs"
+    ],
+    "independent_binary_builds": 2,
+    "runtime_package_payload_reproduced": true,
+    "rpm_container_files_reproduced": false,
+    "runtime_tested": false,
+    "device_touched_by_this_build": false,
+    "deployed": false
+  },
+  "gates": {
+    "distinct_kernel_release": true,
+    "baseline_module_tree_preserved_by_path": true,
+    "candidate_package_scriptlets_do_not_select_boot_alias": true,
+    "userspace_audio_frozen": true,
+    "hot_module_swap_authorized": false,
+    "independent_fastboot_recovery_validated": false,
+    "candidate_install_authorized": false,
+    "runtime_authorized": false,
+    "deployed": false
+  }
+}

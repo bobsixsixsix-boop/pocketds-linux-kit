@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=org.freedesktop.problems.applet
+# Prevent D-Bus from reactivating the hidden user applet.
+Exec=/usr/bin/false

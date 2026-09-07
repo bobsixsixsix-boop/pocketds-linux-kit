@@ -1,0 +1,857 @@
+{
+  "schema": "pocketds.sd-image-files.v1",
+  "files": [
+    {
+      "source": "components/system/pocketds-switch-to-linux-android.sh",
+      "target": "/boot/PocketDS-Switch-to-Linux.sh",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/system/90-pocketds-critical-power.conf",
+      "target": "/etc/UPower/UPower.conf.d/90-pocketds-critical-power.conf",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/system/90-pocketds-hardware-protection.conf",
+      "target": "/etc/dnf/libdnf5.conf.d/90-pocketds-hardware-protection.conf",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/network/pocketds-home.xml",
+      "target": "/etc/firewalld/zones/pocketds-home.xml",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/system/90-pocketds-deep-suspend.rules",
+      "target": "/etc/polkit-1/rules.d/90-pocketds-deep-suspend.rules",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/system/kwinrulesrc.current",
+      "target": "/etc/skel/.config/kwinrulesrc",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/control-panel/90-pocketds-linux-kit",
+      "target": "/etc/sudoers.d/90-pocketds-linux-kit",
+      "mode": "0440",
+      "owner": "root"
+    },
+    {
+      "source": "components/system/80-pocketds-lid-safety.conf",
+      "target": "/etc/systemd/logind.conf.d/80-pocketds-lid-safety.conf",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/system/80-pocketds-sleep.conf",
+      "target": "/etc/systemd/sleep.conf.d/80-pocketds-sleep.conf",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/inputplumber/10-pocketds-manage-all-devices.conf",
+      "target": "/etc/systemd/system/inputplumber.service.d/10-pocketds-manage-all-devices.conf",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/controller-test/pocketds-controller-test.service",
+      "target": "/etc/systemd/system/pocketds-controller-test.service",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/system/pocketds-gmu-runtime.service",
+      "target": "/etc/systemd/system/pocketds-gmu-runtime.service",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/system/pocketds-lid-switch.service",
+      "target": "/etc/systemd/system/pocketds-lid-switch.service",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/inputplumber/20-pocketds-mode-listener-input-state.conf",
+      "target": "/etc/systemd/system/pocketds-mode-listener.service.d/20-input-state.conf",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "packaging/sd-image/resize-root.service",
+      "target": "/etc/systemd/system/pocketds-resize-root.service",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/system/90-pocketds-stop-timeout.conf",
+      "target": "/etc/systemd/system/user@.service.d/90-pocketds-stop-timeout.conf",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/system/80-pocketds-pm.conf",
+      "target": "/etc/tmpfiles.d/80-pocketds-pm.conf",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/fan/ppd.conf",
+      "target": "/etc/tuned/ppd.conf",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/fan/profiles/pocketds-balanced/fan-profile.sh",
+      "target": "/etc/tuned/profiles/pocketds-balanced/fan-profile.sh",
+      "mode": "0755",
+      "owner": "root"
+    },
+    {
+      "source": "components/fan/profiles/pocketds-balanced/tuned.conf",
+      "target": "/etc/tuned/profiles/pocketds-balanced/tuned.conf",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/fan/profiles/pocketds-performance/fan-profile.sh",
+      "target": "/etc/tuned/profiles/pocketds-performance/fan-profile.sh",
+      "mode": "0755",
+      "owner": "root"
+    },
+    {
+      "source": "components/fan/profiles/pocketds-performance/tuned.conf",
+      "target": "/etc/tuned/profiles/pocketds-performance/tuned.conf",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/fan/profiles/pocketds-powersave/fan-profile.sh",
+      "target": "/etc/tuned/profiles/pocketds-powersave/fan-profile.sh",
+      "mode": "0755",
+      "owner": "root"
+    },
+    {
+      "source": "components/fan/profiles/pocketds-powersave/tuned.conf",
+      "target": "/etc/tuned/profiles/pocketds-powersave/tuned.conf",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/system/60-pocketds-i2c-ddc.rules",
+      "target": "/etc/udev/rules.d/60-pocketds-i2c-ddc.rules",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/system/61-pocketds-touchscreens.rules",
+      "target": "/etc/udev/rules.d/61-pocketds-touchscreens.rules",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/system/70-uinput.rules",
+      "target": "/etc/udev/rules.d/70-uinput.rules",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/system/71-pocketds-usb-wakeup.rules",
+      "target": "/etc/udev/rules.d/71-pocketds-usb-wakeup.rules",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/system/umtprd.conf",
+      "target": "/etc/umtprd/umtprd.conf",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "packaging/sd-image/firstboot-password.desktop",
+      "target": "/etc/xdg/autostart/pocketds-firstboot-password.desktop",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/locale/org.fcitx.Fcitx5.desktop",
+      "target": "/home/pocketds/.config/autostart/org.fcitx.Fcitx5.desktop",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/system/org.freedesktop.problems.applet.desktop",
+      "target": "/home/pocketds/.config/autostart/org.freedesktop.problems.applet.desktop",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/system/pocketds-fancontrol-indicator.desktop",
+      "target": "/home/pocketds/.config/autostart/pocketds-fancontrol-indicator.desktop",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/locale/90-fcitx5.conf",
+      "target": "/home/pocketds/.config/environment.d/90-fcitx5.conf",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/locale/classicui.conf",
+      "target": "/home/pocketds/.config/fcitx5/conf/classicui.conf",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/locale/config",
+      "target": "/home/pocketds/.config/fcitx5/config",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/locale/profile",
+      "target": "/home/pocketds/.config/fcitx5/profile",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/system/kscreenlockerrc",
+      "target": "/home/pocketds/.config/kscreenlockerrc",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/system/kwinrulesrc.current",
+      "target": "/home/pocketds/.config/kwinrulesrc",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/audio/90-pocketds-speaker-enhancement.conf",
+      "target": "/home/pocketds/.config/pipewire/filter-chain.conf.d/90-pocketds-speaker-enhancement.conf",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/locale/90-fcitx5-wayland.sh",
+      "target": "/home/pocketds/.config/plasma-workspace/env/90-fcitx5-wayland.sh",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/system/powerdevilrc",
+      "target": "/home/pocketds/.config/powerdevilrc",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/emulation/PPSSPP.opt",
+      "target": "/home/pocketds/.config/retroarch/config/PPSSPP/PPSSPP.opt",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/emulation/retroarch-pocketds.cfg",
+      "target": "/home/pocketds/.config/retroarch/pocketds.cfg",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/emulation/retroarch.cfg",
+      "target": "/home/pocketds/.config/retroarch/retroarch.cfg",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/audio/filter-chain-pocketds-speaker.conf",
+      "target": "/home/pocketds/.config/systemd/user/filter-chain.service.d/90-pocketds-speaker-enhancement.conf",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/system/20-pocketds-plasmashell-respawn.conf",
+      "target": "/home/pocketds/.config/systemd/user/plasma-plasmashell.service.d/20-pocketds-respawn.conf",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/system/20-pocketds-powerdevil-respawn.conf",
+      "target": "/home/pocketds/.config/systemd/user/plasma-powerdevil.service.d/20-pocketds-respawn.conf",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/brightness/pocketds-brightness.service",
+      "target": "/home/pocketds/.config/systemd/user/pocketds-brightness.service",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/codex-quota/pocketds-codex-quota.service",
+      "target": "/home/pocketds/.config/systemd/user/pocketds-codex-quota.service",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/codex-quota/pocketds-codex-quota.timer",
+      "target": "/home/pocketds/.config/systemd/user/pocketds-codex-quota.timer",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/gamepad-activity/pocketds-gamepad-activity.service",
+      "target": "/home/pocketds/.config/systemd/user/pocketds-gamepad-activity.service",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/telemetry/pocketds-gpu-telemetry.service",
+      "target": "/home/pocketds/.config/systemd/user/pocketds-gpu-telemetry.service",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "packaging/sd-image/kit-desktop.service",
+      "target": "/home/pocketds/.config/systemd/user/pocketds-image-desktop.service",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/keyboard/pocketds-keyboard.service",
+      "target": "/home/pocketds/.config/systemd/user/pocketds-keyboard.service",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/light-standby/pocketds-light-standby.service",
+      "target": "/home/pocketds/.config/systemd/user/pocketds-light-standby.service",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/control-panel/pocketds-plasma-recovery.service",
+      "target": "/home/pocketds/.config/systemd/user/pocketds-plasma-recovery.service",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/audio/pocketds-speaker-enhancement.service",
+      "target": "/home/pocketds/.config/systemd/user/pocketds-speaker-enhancement.service",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/touchpad/pocketds-touchpad.service",
+      "target": "/home/pocketds/.config/systemd/user/pocketds-touchpad.service",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/audio/90-pocketds-audio-card-ready.conf",
+      "target": "/home/pocketds/.config/systemd/user/wireplumber.service.d/90-pocketds-audio-card-ready.conf",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/keyboard/keyboard_adapter.py",
+      "target": "/home/pocketds/.local/bin/keyboard_adapter.py",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "scripts/pocketds-asr-api-provision.py",
+      "target": "/home/pocketds/.local/bin/pocketds-asr-api-provision",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/codex-quota/pocketds-codex-quota",
+      "target": "/home/pocketds/.local/bin/pocketds-codex-quota",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/emulation/pocketds-es-de",
+      "target": "/home/pocketds/.local/bin/pocketds-es-de",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/game-runtime/pocketds-game-limit",
+      "target": "/home/pocketds/.local/bin/pocketds-game-limit",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/game-runtime/pocketds-game-runtime",
+      "target": "/home/pocketds/.local/bin/pocketds-game-runtime",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/keyboard/pocketds-keyboard.py",
+      "target": "/home/pocketds/.local/bin/pocketds-keyboard.py",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/emulation/pocketds-melonds",
+      "target": "/home/pocketds/.local/bin/pocketds-melonds",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/emulation/pocketds-retroarch",
+      "target": "/home/pocketds/.local/bin/pocketds-retroarch",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/steam/pocketds-steam-arm64-workarounds",
+      "target": "/home/pocketds/.local/bin/pocketds-steam-arm64-workarounds",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/steam/pocketds-steam-game-fps",
+      "target": "/home/pocketds/.local/bin/pocketds-steam-game-fps",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/steam/pocketds-steam-session",
+      "target": "/home/pocketds/.local/bin/pocketds-steam-session",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/touchpad/pocketds-touchpad.py",
+      "target": "/home/pocketds/.local/bin/pocketds-touchpad.py",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/wiliwili/pocketds-wiliwili",
+      "target": "/home/pocketds/.local/bin/pocketds-wiliwili",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/keyboard/screen_geometry.py",
+      "target": "/home/pocketds/.local/bin/screen_geometry.py",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/steam/steamos-session-select",
+      "target": "/home/pocketds/.local/bin/steamos-session-select",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/touchpad/touchpad_gestures.py",
+      "target": "/home/pocketds/.local/bin/touchpad_gestures.py",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/touchpad/touchpad_raw.py",
+      "target": "/home/pocketds/.local/bin/touchpad_raw.py",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/keyboard/visibility_state.py",
+      "target": "/home/pocketds/.local/bin/visibility_state.py",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/keyboard/voice_artifacts.py",
+      "target": "/home/pocketds/.local/bin/voice_artifacts.py",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/emulation/pocketds-es-de-prepare.py",
+      "target": "/home/pocketds/.local/libexec/pocketds-es-de-prepare",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/game-runtime/pocketds-gamescope-inner",
+      "target": "/home/pocketds/.local/libexec/pocketds-gamescope-inner",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/emulation/pocketds-input-mode-user",
+      "target": "/home/pocketds/.local/libexec/pocketds-input-mode",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/emulation/pocketds-melonds-fullscreen.py",
+      "target": "/home/pocketds/.local/libexec/pocketds-melonds-fullscreen",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/emulation/pocketds-melonds-prepare.py",
+      "target": "/home/pocketds/.local/libexec/pocketds-melonds-prepare",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "scripts/pocketds-wiliwili-gamecontrollerdb.py",
+      "target": "/home/pocketds/.local/libexec/pocketds-wiliwili-gamecontrollerdb",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/audio/pocketds-audio-card-ready.py",
+      "target": "/home/pocketds/.local/libexec/pocketds/pocketds-audio-card-ready",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/brightness/pocketds-brightness.py",
+      "target": "/home/pocketds/.local/libexec/pocketds/pocketds-brightness",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/gamepad-activity/pocketds-gamepad-activity.py",
+      "target": "/home/pocketds/.local/libexec/pocketds/pocketds-gamepad-activity",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "scripts/pocketds-gpu-observer.py",
+      "target": "/home/pocketds/.local/libexec/pocketds/pocketds-gpu-observer.py",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/telemetry/pocketds-gpu-telemetry.py",
+      "target": "/home/pocketds/.local/libexec/pocketds/pocketds-gpu-telemetry.py",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/system/pocketds-lid-mode.py",
+      "target": "/home/pocketds/.local/libexec/pocketds/pocketds-lid-mode",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/light-standby/pocketds-light-standby.py",
+      "target": "/home/pocketds/.local/libexec/pocketds/pocketds-light-standby",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/audio/pocketds-speaker-enhancement.py",
+      "target": "/home/pocketds/.local/libexec/pocketds/pocketds-speaker-enhancement",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/emulation/ES-DE.desktop",
+      "target": "/home/pocketds/.local/share/applications/ES-DE.desktop",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/steam/Steam.desktop",
+      "target": "/home/pocketds/.local/share/applications/Steam.desktop",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/wiliwili/cn.xfangfang.wiliwili.desktop",
+      "target": "/home/pocketds/.local/share/applications/cn.xfangfang.wiliwili.desktop",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/system/pocketds-switch-to-android.desktop",
+      "target": "/home/pocketds/.local/share/applications/pocketds-switch-to-android.desktop",
+      "mode": "0755",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/system/org.freedesktop.problems.applet.service",
+      "target": "/home/pocketds/.local/share/dbus-1/services/org.freedesktop.problems.applet.service",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/control-panel/plasmoid/PHOSPHOR-SOURCES.json",
+      "target": "/home/pocketds/.local/share/plasma/plasmoids/org.pocketds.controlpanel.v3/PHOSPHOR-SOURCES.json",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/control-panel/plasmoid/contents/ui/ControllerDiagram.qml",
+      "target": "/home/pocketds/.local/share/plasma/plasmoids/org.pocketds.controlpanel.v3/contents/ui/ControllerDiagram.qml",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/control-panel/plasmoid/contents/ui/ControllerTestSession.qml",
+      "target": "/home/pocketds/.local/share/plasma/plasmoids/org.pocketds.controlpanel.v3/contents/ui/ControllerTestSession.qml",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/control-panel/plasmoid/contents/ui/main.qml",
+      "target": "/home/pocketds/.local/share/plasma/plasmoids/org.pocketds.controlpanel.v3/contents/ui/main.qml",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/control-panel/plasmoid/licenses/Phosphor-Icons-MIT.txt",
+      "target": "/home/pocketds/.local/share/plasma/plasmoids/org.pocketds.controlpanel.v3/licenses/Phosphor-Icons-MIT.txt",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/control-panel/plasmoid/metadata.json",
+      "target": "/home/pocketds/.local/share/plasma/plasmoids/org.pocketds.controlpanel.v3/metadata.json",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/emulation/es_settings.xml",
+      "target": "/home/pocketds/.local/share/pocketds-linux-kit/emulation/es_settings.xml",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/emulation/es_systems-shared.xml",
+      "target": "/home/pocketds/.local/share/pocketds-linux-kit/emulation/es_systems-shared.xml",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/emulation/es_systems.xml",
+      "target": "/home/pocketds/.local/share/pocketds-linux-kit/emulation/es_systems.xml",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/emulation/kwin-melonds-dualscreen.js",
+      "target": "/home/pocketds/.local/share/pocketds-linux-kit/emulation/kwin-melonds-dualscreen.js",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/emulation/kwin-retroarch-top-screen.js",
+      "target": "/home/pocketds/.local/share/pocketds-linux-kit/emulation/kwin-retroarch-top-screen.js",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/game-runtime/kwin-gamescope-top-screen.js",
+      "target": "/home/pocketds/.local/share/pocketds-linux-kit/game-runtime/kwin-gamescope-top-screen.js",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/wiliwili/gamecontrollerdb.txt",
+      "target": "/home/pocketds/.local/share/pocketds-linux-kit/wiliwili/gamecontrollerdb.txt",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/wiliwili/gamecontrollerdb.txt",
+      "target": "/home/pocketds/.var/app/cn.xfangfang.wiliwili/config/wiliwili/gamecontrollerdb.txt",
+      "mode": "0644",
+      "owner": "pocketds"
+    },
+    {
+      "source": "components/inputplumber/pocketds-mode-listener.py",
+      "target": "/usr/bin/pocketds-mode-listener",
+      "mode": "0755",
+      "owner": "root"
+    },
+    {
+      "source": "components/inputplumber/pocketds-toggle-joymouse",
+      "target": "/usr/bin/pocketds-toggle-joymouse",
+      "mode": "0755",
+      "owner": "root"
+    },
+    {
+      "source": "packaging/sd-image/firstboot-password.service",
+      "target": "/usr/lib/systemd/system/pocketds-firstboot-password.service",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/inputplumber/pocketds-input-mode.conf",
+      "target": "/usr/lib/tmpfiles.d/pocketds-input-mode.conf",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "packaging/sd-image/firstboot-client.py",
+      "target": "/usr/libexec/pocketds-firstboot-client.py",
+      "mode": "0755",
+      "owner": "root"
+    },
+    {
+      "source": "packaging/sd-image/firstboot-server.py",
+      "target": "/usr/libexec/pocketds-firstboot-server.py",
+      "mode": "0755",
+      "owner": "root"
+    },
+    {
+      "source": "packaging/sd-image/kit-desktop-init.py",
+      "target": "/usr/libexec/pocketds-image-desktop",
+      "mode": "0755",
+      "owner": "root"
+    },
+    {
+      "source": "components/chromium/pocketds-chromium-v4l2",
+      "target": "/usr/local/bin/pocketds-chromium-v4l2",
+      "mode": "0755",
+      "owner": "root"
+    },
+    {
+      "source": "scripts/pocketds-plasma-recovery.py",
+      "target": "/usr/local/bin/pocketds-plasma-recovery",
+      "mode": "0755",
+      "owner": "root"
+    },
+    {
+      "source": "components/inputplumber/controller_test_gate.py",
+      "target": "/usr/local/lib/pocketds/controller_test_gate.py",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/system/pocketds-boot-mode.py",
+      "target": "/usr/local/libexec/pocketds-boot-mode",
+      "mode": "0755",
+      "owner": "root"
+    },
+    {
+      "source": "components/controller-test/pocketds-controller-test.py",
+      "target": "/usr/local/libexec/pocketds-controller-test.py",
+      "mode": "0755",
+      "owner": "root"
+    },
+    {
+      "source": "components/system/pocketds-deep-suspend.py",
+      "target": "/usr/local/libexec/pocketds-deep-suspend",
+      "mode": "0755",
+      "owner": "root"
+    },
+    {
+      "source": "components/emulation/pocketds-game-session.py",
+      "target": "/usr/local/libexec/pocketds-game-session",
+      "mode": "0755",
+      "owner": "root"
+    },
+    {
+      "source": "components/system/pocketds-gmu-runtime",
+      "target": "/usr/local/libexec/pocketds-gmu-runtime",
+      "mode": "0755",
+      "owner": "root"
+    },
+    {
+      "source": "scripts/pocketds-input-held-modifiers.py",
+      "target": "/usr/local/libexec/pocketds-input-held-modifiers",
+      "mode": "0755",
+      "owner": "root"
+    },
+    {
+      "source": "components/emulation/pocketds-input-mode",
+      "target": "/usr/local/libexec/pocketds-input-mode",
+      "mode": "0755",
+      "owner": "root"
+    },
+    {
+      "source": "components/system/pocketds-lid-switch.py",
+      "target": "/usr/local/libexec/pocketds-lid-switch",
+      "mode": "0755",
+      "owner": "root"
+    },
+    {
+      "source": "components/control-panel/pocketds-panel-root",
+      "target": "/usr/local/libexec/pocketds-panel-root",
+      "mode": "0755",
+      "owner": "root"
+    },
+    {
+      "source": "packaging/sd-image/resize-root.py",
+      "target": "/usr/local/libexec/pocketds-resize-root",
+      "mode": "0755",
+      "owner": "root"
+    },
+    {
+      "source": "components/system/pocketds-switch-to-android.sh",
+      "target": "/usr/local/libexec/pocketds-switch-to-android",
+      "mode": "0755",
+      "owner": "root"
+    },
+    {
+      "source": "components/system/pocketds-usb-wake-policy",
+      "target": "/usr/local/libexec/pocketds-usb-wake-policy",
+      "mode": "0755",
+      "owner": "root"
+    },
+    {
+      "source": "components/audio/HiFi.conf",
+      "target": "/usr/share/alsa/ucm2/Qualcomm/sm8550/APS/HiFi.conf",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/audio/SM8550-APS.conf",
+      "target": "/usr/share/alsa/ucm2/Qualcomm/sm8550/APS/SM8550-APS.conf",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/inputplumber/ayaneo_mcu_xbox.yaml",
+      "target": "/usr/share/inputplumber/capability_maps/ayaneo_mcu_xbox.yaml",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/inputplumber/pocketds-gamepad.yaml",
+      "target": "/usr/share/inputplumber/profiles/pocketds-gamepad.yaml",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/inputplumber/pocketds-joymouse.yaml",
+      "target": "/usr/share/inputplumber/profiles/pocketds-joymouse.yaml",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "components/system/99-pocketds-lid.quirks",
+      "target": "/usr/share/libinput/99-pocketds-lid.quirks",
+      "mode": "0644",
+      "owner": "root"
+    },
+    {
+      "source": "packaging/sd-image/kit-desktop-layout.js",
+      "target": "/usr/share/pocketds-linux-kit/image/desktop-layout.js",
+      "mode": "0644",
+      "owner": "root"
+    }
+  ]
+}

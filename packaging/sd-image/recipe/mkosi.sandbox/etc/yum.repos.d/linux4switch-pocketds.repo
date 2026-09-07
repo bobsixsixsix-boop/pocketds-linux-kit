@@ -1,0 +1,12 @@
+[copr:copr.fedorainfracloud.org:linux4switch:pocketds]
+name=Copr repo for pocketds owned by linux4switch
+baseurl=https://download.copr.fedorainfracloud.org/results/linux4switch/pocketds/fedora-$releasever-$basearch/
+type=rpm-md
+skip_if_unavailable=False
+gpgcheck=1
+gpgkey=https://download.copr.fedorainfracloud.org/results/linux4switch/pocketds/pubkey.gpg
+repo_gpgcheck=0
+enabled=1
+enabled_metadata=1
+
+excludepkgs=pocketds-userspace

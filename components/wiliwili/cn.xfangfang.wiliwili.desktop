@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=Wiliwili
+Name[zh_CN]=Wiliwili（手柄模式）
+Comment=Bilibili client with automatic Pocket DS gamepad routing
+Comment[zh_CN]=自动切换 Pocket DS 手柄模式的哔哩哔哩客户端
+Exec=/home/pocketds/.local/bin/pocketds-wiliwili
+TryExec=/home/pocketds/.local/bin/pocketds-wiliwili
+Icon=cn.xfangfang.wiliwili
+Terminal=false
+Type=Application
+Categories=AudioVideo;Audio;Video;
+StartupNotify=true
+X-Flatpak=cn.xfangfang.wiliwili

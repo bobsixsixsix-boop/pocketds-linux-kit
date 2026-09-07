@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+# Add hidden MangoHud presentation logging to one Steam launch command so the
+# lower-screen Panel can report the active game's FPS without drawing an HUD.
+set -Eeuo pipefail
+
+if (($# == 0)); then
+    echo 'usage: pocketds-steam-game-fps COMMAND [ARG ...]' >&2
+    exit 64
+fi
+
+runtime_dir=${POCKETDS_RUNTIME_DIR:-${XDG_RUNTIME_DIR:-/run/user/$(id -u)}}
+fps_root=${POCKETDS_STEAM_FPS_ROOT:-${HOME:+$HOME/.cache/pocketds-linux-kit/steam-fps}}
+mangohud=${POCKETDS_MANGOHUD:-/usr/bin/mangohud}
+record="$runtime_dir/pocketds-steam-fps.active"
+fps_dir=
+record_temporary=
+
+cleanup() {
+    local status=$?
+    trap - EXIT INT TERM HUP
+    if [[ -n $fps_root && -n $fps_dir
+          && $fps_dir == "$fps_root"/session.* ]]; then
+        if [[ -f $record && ! -L $record ]] &&
+           [[ $(<"$record") == "$fps_dir" ]]; then
+            rm -f -- "$record"
+        fi
+        find "$fps_dir" -mindepth 1 -maxdepth 1 -type f -delete 2>/dev/null || true
+        rmdir -- "$fps_dir" 2>/dev/null || true
+        rmdir -- "$fps_root" 2>/dev/null || true
+    fi
+    exit "$status"
+}
+trap cleanup EXIT INT TERM HUP
+
+# Telemetry is optional: never prevent a game from starting when MangoHud or
+# the private runtime directory is unavailable.
+if [[ -z $fps_root || $fps_root != /* || $fps_root == *,*
+      || $fps_root == *$'\n'* || $fps_root == *$'\r'*
+      || ! -x $mangohud || -L $mangohud
+      || ! -d $runtime_dir || -L $runtime_dir ||
+      ! -O $runtime_dir ]]; then
+    trap - EXIT INT TERM HUP
+    exec "$@"
+fi
+
+if [[ ! -e $fps_root ]]; then
+    if ! mkdir -p -m 0700 -- "$fps_root"; then
+        trap - EXIT INT TERM HUP
+        exec "$@"
+    fi
+fi
+if [[ ! -d $fps_root || -L $fps_root || ! -O $fps_root ]] ||
+   ! chmod 0700 -- "$fps_root"; then
+    trap - EXIT INT TERM HUP
+    exec "$@"
+fi
+
+if ! fps_dir=$(mktemp -d "$fps_root/session.XXXXXXXX") ||
+   ! chmod 0700 "$fps_dir" ||
+   ! record_temporary=$(mktemp "$runtime_dir/.pocketds-steam-fps.active.XXXXXXXX") ||
+   ! chmod 0600 "$record_temporary"; then
+    [[ -z $record_temporary ]] || rm -f -- "$record_temporary"
+    [[ -z $fps_dir ]] || rmdir -- "$fps_dir" 2>/dev/null || true
+    rmdir -- "$fps_root" 2>/dev/null || true
+    fps_dir=
+    trap - EXIT INT TERM HUP
+    exec "$@"
+fi
+
+if ! printf '%s\n' "$fps_dir" >"$record_temporary" ||
+   ! mv -f -T -- "$record_temporary" "$record"; then
+    rm -f -- "$record_temporary"
+    find "$fps_dir" -mindepth 1 -maxdepth 1 -type f -delete 2>/dev/null || true
+    rmdir -- "$fps_dir" 2>/dev/null || true
+    rmdir -- "$fps_root" 2>/dev/null || true
+    record_temporary=
+    fps_dir=
+    trap - EXIT INT TERM HUP
+    exec "$@"
+fi
+record_temporary=
+
+fps_config="fps_only,alpha=0,background_alpha=0,text_color=000000,font_size=1,width=1,height=1,hud_no_margin,cpu_stats=0,gpu_stats=0,ram=0,frame_timing=0,fps_sampling_period=1000,output_folder=$fps_dir,autostart_log=1,log_interval=1000,permit_upload=0"
+
+set +e
+MANGOHUD_LOG_LEVEL=off \
+MANGOHUD_CONFIG="$fps_config" \
+"$mangohud" "$@"
+status=$?
+set -e
+exit "$status"

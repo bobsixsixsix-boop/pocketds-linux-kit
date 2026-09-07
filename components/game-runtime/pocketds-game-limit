@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+runtime_dir=${POCKETDS_RUNTIME_DIR:-${XDG_RUNTIME_DIR:-/run/user/$(id -u)}}
+limit_file="$runtime_dir/pocketds-gamescope-limit"
+config_home=${XDG_CONFIG_HOME:-${HOME:+$HOME/.config}}
+config_dir=${POCKETDS_CONFIG_DIR:-${config_home:+$config_home/pocketds-linux-kit}}
+config_file=${POCKETDS_GAME_LIMIT_CONFIG:-${config_dir:+$config_dir/game-fps-limit}}
+
+usage() {
+    echo 'usage: pocketds-game-limit {off|24|30|40|60|120|status}'
+}
+
+if (($# != 1)); then
+    usage >&2
+    exit 64
+fi
+if [[ ! -d $runtime_dir || -L $runtime_dir || ! -O $runtime_dir ]]; then
+    echo 'Private user runtime directory is unavailable.' >&2
+    exit 1
+fi
+
+read_configured_limit() {
+    local configured=0
+    if [[ -n $config_file && -f $config_file && ! -L $config_file &&
+          -O $config_file ]]; then
+        read -r configured <"$config_file" || configured=0
+    fi
+    case "$configured" in
+        0|24|30|40|60|120) printf '%s\n' "$configured" ;;
+        *) printf '0\n' ;;
+    esac
+}
+
+case "$1" in
+    off|0) value=0 ;;
+    24|30|40|60|120) value=$1 ;;
+    status)
+        value=$(read_configured_limit)
+        [[ $value == 0 ]] && echo off || echo "$value"
+        exit 0
+        ;;
+    *)
+        usage >&2
+        exit 64
+        ;;
+esac
+
+umask 077
+if [[ -z $config_dir || -z $config_file ]]; then
+    echo 'Private game-limit configuration path is unavailable.' >&2
+    exit 1
+fi
+mkdir -p -- "$config_dir"
+if [[ ! -d $config_dir || -L $config_dir || ! -O $config_dir ]]; then
+    echo 'Private game-limit configuration directory is unsafe.' >&2
+    exit 1
+fi
+chmod 0700 "$config_dir"
+temporary=$(mktemp "$config_dir/.game-fps-limit.XXXXXXXX")
+runtime_temporary=
+cleanup() {
+    [[ -z ${temporary:-} ]] || rm -f -- "$temporary"
+    [[ -z ${runtime_temporary:-} ]] || rm -f -- "$runtime_temporary"
+}
+trap cleanup EXIT HUP INT TERM
+printf '%s\n' "$value" >"$temporary"
+chmod 0600 "$temporary"
+mv -f -T -- "$temporary" "$config_file"
+temporary=
+
+# Apply immediately only when a managed Gamescope session already owns the
+# runtime file. Otherwise the next session imports the persistent preference.
+if [[ -f $limit_file && ! -L $limit_file && -O $limit_file ]]; then
+    runtime_temporary=$(mktemp "$runtime_dir/.pocketds-gamescope-limit.XXXXXXXX")
+    printf '%s\n' "$value" >"$runtime_temporary"
+    chmod 0600 "$runtime_temporary"
+    mv -f -T -- "$runtime_temporary" "$limit_file"
+    runtime_temporary=
+fi
+trap - EXIT HUP INT TERM
+[[ $value == 0 ]] && echo off || echo "$value"

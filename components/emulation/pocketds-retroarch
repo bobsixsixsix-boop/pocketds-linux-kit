@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+# Thin RetroArch entrypoint. A standalone launch owns one managed session;
+# RetroArch started by ES-DE joins that exact parent scope and lease.
+set -Eeuo pipefail
+
+supervisor=${POCKETDS_GAME_SESSION_SUPERVISOR:-/usr/local/libexec/pocketds-game-session}
+game_runtime=${POCKETDS_GAME_RUNTIME:-"$HOME/.local/bin/pocketds-game-runtime"}
+retroarch=${POCKETDS_RETROARCH:-"$HOME/.local/bin/retroarch"}
+config=${POCKETDS_RETROARCH_CONFIG:-"$HOME/.config/retroarch/retroarch.cfg"}
+managed_config=${POCKETDS_RETROARCH_MANAGED_CONFIG:-"$HOME/.config/retroarch/pocketds.cfg"}
+inhibit_bin=${POCKETDS_SYSTEMD_INHIBIT:-systemd-inhibit}
+
+for executable in "$supervisor" "$game_runtime" "$retroarch"; do
+    if [[ ! -x $executable || -L $executable ]]; then
+        echo "Required RetroArch component is missing or unsafe: $executable" >&2
+        exit 1
+    fi
+done
+for regular_file in "$config" "$managed_config"; do
+    if [[ ! -f $regular_file || -L $regular_file ]]; then
+        echo "Required RetroArch file is missing or unsafe: $regular_file" >&2
+        exit 1
+    fi
+done
+
+retroarch_command=(
+    "$retroarch" --config "$config" --appendconfig "$managed_config" "$@"
+)
+if [[ -n ${POCKETDS_GAME_SESSION_TOKEN:-} ]]; then
+    # ES-DE already owns the single Gamescope session.  Launching another
+    # compositor here would contend for the upper display and hide telemetry.
+    app_command=("${retroarch_command[@]}")
+else
+    app_command=("$game_runtime" -- "${retroarch_command[@]}")
+fi
+if [[ ${POCKETDS_SKIP_INHIBIT:-0} != 1 ]]; then
+    if ! command -v "$inhibit_bin" >/dev/null 2>&1; then
+        echo "Sleep inhibitor is unavailable: $inhibit_bin" >&2
+        exit 1
+    fi
+    app_command=(
+        "$inhibit_bin"
+        --what=idle:sleep
+        --who="Pocket DS RetroArch"
+        --why="Emulation session in progress"
+        --mode=block
+        "${app_command[@]}"
+    )
+fi
+
+if [[ -n ${POCKETDS_GAME_SESSION_TOKEN:-} ]]; then
+    exec "$supervisor" join \
+        --token "$POCKETDS_GAME_SESSION_TOKEN" \
+        -- "${app_command[@]}"
+else
+    exec "$supervisor" run \
+        --backend native \
+        --name retroarch \
+        --performance \
+        -- "${app_command[@]}"
+fi

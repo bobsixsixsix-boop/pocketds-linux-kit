@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Tailscale 状态（待登录）
+Comment=查看这台 Pocket DS 的 Tailscale 连接状态
+Exec=konsole --hold -e /usr/bin/tailscale status
+Icon=network-vpn
+Terminal=false
+Categories=Network;RemoteAccess;
+StartupNotify=true

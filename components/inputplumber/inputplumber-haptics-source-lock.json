@@ -1,0 +1,47 @@
+{
+  "schema": "pocketds.inputplumber-haptics-source.v1",
+  "upstream_repository": "https://github.com/ShadowBlip/InputPlumber.git",
+  "upstream_version": "0.78.1",
+  "upstream_commit": "d3932cb4e0de3eb47688e381b5eb5334ebac6254",
+  "upstream_pull_request": "https://github.com/ShadowBlip/InputPlumber/pull/670",
+  "architecture": "aarch64",
+  "downstream_patch": "inputplumber-d3932cb4-pocketds-haptics.patch",
+  "downstream_patch_sha256": "bc22340bc8a5cd865c04a77e2a4df950341b10bb526028d73afee09abc7387e9",
+  "downstream_patch_size": 4817,
+  "binary_filename": "inputplumber-pocketds-pulse",
+  "binary_sha256": "2c06a4cbfaa2aa93c923b1dc790bbaf15ae44e048662840cce0705bf2d7df244",
+  "binary_size": 9574272,
+  "install_payloads": {
+    "device_profile": {
+      "source": "01-ayaneo-controller-haptics.yaml",
+      "destination": "/etc/inputplumber/devices.d/01-ayaneo-controller.yaml",
+      "mode": "0644",
+      "sha256": "f649a29b0ead2aa3aee6e03891c8d15fbef84b3e82ad0a995b55b531670cbcc2",
+      "size": 1413
+    },
+    "service_dropin": {
+      "source": "30-pocketds-haptics-candidate.conf",
+      "destination": "/etc/systemd/system/inputplumber.service.d/30-pocketds-haptics-candidate.conf",
+      "mode": "0644",
+      "sha256": "15f8076184356e8c1109782127de86496079fdfd90dc020edbf24ff5dbdaa14a",
+      "size": 156
+    },
+    "polkit_policy": {
+      "source": "org.pocketds.InputPlumber.Haptics.policy",
+      "destination": "/usr/share/polkit-1/actions/org.pocketds.InputPlumber.Haptics.policy",
+      "mode": "0644",
+      "sha256": "7406842df878ff04b6542647ed1bb8bf82ab624bb8d2497d93299dac17c48967",
+      "size": 719
+    }
+  },
+  "downstream_changes": [
+    "bounded org.shadowblip.Output.ForceFeedback.Pulse D-Bus method",
+    "keyboard Pulse intensity clamped to 0.70",
+    "Pulse duration clamped to 5..50 ms",
+    "generic Rumble and game force feedback remain unchanged",
+    "Pulse stops force feedback before returning",
+    "Pulse polkit action and boundary test"
+  ],
+  "rollback_binary": "/usr/bin/inputplumber",
+  "rollback_package": "inputplumber-0.75.2-20260506235201.fc44.aarch64"
+}

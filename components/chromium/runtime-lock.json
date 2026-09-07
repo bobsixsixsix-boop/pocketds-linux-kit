@@ -1,0 +1,516 @@
+{
+  "schema": 1,
+  "release_ready": true,
+  "provenance_receipt": {
+    "path": "components/chromium/provenance/receipt.json",
+    "sha256": "24bbb58462cbaf3d7d32a38afa70cadd5115b6e4d848be750763f62796a78726"
+  },
+  "package": {
+    "name": "chromium",
+    "version": "151.0.7922.137-1",
+    "arch": "aarch64",
+    "builddate": 1786558446,
+    "packager": "Arch Linux ARM Build System <builder+seattle@archlinuxarm.org>",
+    "root_basename": "pocketds-chromium-v4l2-151.0.7922.137",
+    "main_binary": "usr/lib/chromium/chromium",
+    "package_page": "https://archlinuxarm.org/packages/aarch64/chromium",
+    "source_files": "https://archlinuxarm.org/packages/aarch64/chromium/files",
+    "download": "https://ca.us.mirror.archlinuxarm.org/aarch64/extra/chromium-151.0.7922.137-1-aarch64.pkg.tar.xz",
+    "signature": "https://ca.us.mirror.archlinuxarm.org/aarch64/extra/chromium-151.0.7922.137-1-aarch64.pkg.tar.xz.sig",
+    "signing_policy": "https://archlinuxarm.org/about/package-signing",
+    "signing_key_fingerprint": "68B3537F39A313B3E574D06777193F152BDBE6A6",
+    "pkgbuild_sha256": "9aba5eab0263c8deaf5f7bb2d660c6cbac4d4e499d21aa06d0cb4c307be0b4d2",
+    "archive_sha256": "e5f65d688bf74b78406e20cac900e3758a6999ddf3581a7f0286ce884d253a3f",
+    "signature_verified": true,
+    "status": "signed-archive-verified",
+    "gap": null
+  },
+  "observed": {
+    "pkginfo": {
+      "path": ".PKGINFO",
+      "size": 1967,
+      "sha256": "8b6956af9945d8dd688251a490641747070ed007e48d918566798136ac99a137"
+    },
+    "buildinfo": {
+      "path": ".BUILDINFO",
+      "size": 12577,
+      "sha256": "34a07c0353bdc4e7cb95127def2cafa7e148c8adc24816dca8564c04cfbb0d38"
+    },
+    "mtree": {
+      "path": ".MTREE",
+      "size": 5592,
+      "sha256": "03a8c2507dce08dc70c400b68ae58153cbc7c351b216bf51a3b120d68915a0f8"
+    },
+    "main_binary": {
+      "path": "usr/lib/chromium/chromium",
+      "size": 322767832,
+      "sha256": "2f0002bce6c72188c9426f083e6e802c690eacbbc4fee03b2c08343833fcd1b0"
+    },
+    "icon_256": {
+      "path": "usr/share/icons/hicolor/256x256/apps/chromium.png",
+      "size": 9614,
+      "sha256": "e14120fdefb8eb455f44eac572f34bda75c32c9404e5c3745d44793dae217331"
+    }
+  },
+  "wrapper": {
+    "path": "components/chromium/pocketds-chromium-v4l2",
+    "sha256": "273ea337eedbf3af2da56c4283811197a9322ccf59df16615bdd6ea77324b1c0"
+  },
+  "compat_sources": {
+    "icu": {
+      "version": "78.3-1",
+      "package_page": "https://archlinuxarm.org/packages/aarch64/icu",
+      "source_files": "https://archlinuxarm.org/packages/aarch64/icu/files",
+      "download": "https://ca.us.mirror.archlinuxarm.org/aarch64/core/icu-78.3-1-aarch64.pkg.tar.xz",
+      "signature": "https://ca.us.mirror.archlinuxarm.org/aarch64/core/icu-78.3-1-aarch64.pkg.tar.xz.sig",
+      "archive_sha256": "314cb2fecde9fd2a64ca9b6652c4c0e517bec0dceeafaf7e6a0cd578c607357f",
+      "signature_verified": true,
+      "status": "signed-archive-verified",
+      "gap": null
+    },
+    "libjpeg-turbo": {
+      "version": "3.2.0-2",
+      "package_page": "https://archlinuxarm.org/packages/aarch64/libjpeg-turbo",
+      "source_files": "https://archlinuxarm.org/packages/aarch64/libjpeg-turbo/files",
+      "download": "https://ca.us.mirror.archlinuxarm.org/aarch64/extra/libjpeg-turbo-3.2.0-2-aarch64.pkg.tar.xz",
+      "signature": "https://ca.us.mirror.archlinuxarm.org/aarch64/extra/libjpeg-turbo-3.2.0-2-aarch64.pkg.tar.xz.sig",
+      "archive_sha256": "fd1cd460ef3a4bbeb1a660f9f4bbacd09d6dd817a10f0300891a6a552fddb5ec",
+      "signature_verified": true,
+      "status": "signed-archive-verified",
+      "gap": null
+    },
+    "minizip": {
+      "version": "1:1.3.2-3",
+      "package_page": "https://archlinuxarm.org/packages/aarch64/minizip",
+      "source_files": "https://archlinuxarm.org/packages/aarch64/minizip/files",
+      "download": "https://ca.us.mirror.archlinuxarm.org/aarch64/core/minizip-1%3A1.3.2-3-aarch64.pkg.tar.xz",
+      "signature": "https://ca.us.mirror.archlinuxarm.org/aarch64/core/minizip-1%3A1.3.2-3-aarch64.pkg.tar.xz.sig",
+      "archive_sha256": "78d2dd86f4100b9482e8317ee2a13c355e1f19cca06effde0184f62231bf7d15",
+      "signature_verified": true,
+      "status": "signed-archive-verified",
+      "gap": null
+    },
+    "libxml2": {
+      "version": "2.15.3-1",
+      "package_page": "https://archlinuxarm.org/packages/aarch64/libxml2",
+      "source_files": "https://archlinuxarm.org/packages/aarch64/libxml2/files",
+      "download": "https://ca.us.mirror.archlinuxarm.org/aarch64/core/libxml2-2.15.3-1-aarch64.pkg.tar.xz",
+      "signature": "https://ca.us.mirror.archlinuxarm.org/aarch64/core/libxml2-2.15.3-1-aarch64.pkg.tar.xz.sig",
+      "archive_sha256": "e687984bf6f9dafd6293ac13e5bad9ecc8efae815363423693a3ce642d350edf",
+      "signature_verified": true,
+      "status": "signed-archive-verified",
+      "gap": null
+    }
+  },
+  "compat_files": [
+    {
+      "path": "usr/lib/cmake/libjpeg-turbo/libjpeg-turboConfig.cmake",
+      "runtime_required": false,
+      "sha256": "59b2e4f2b928de4e8047bc06b19f81c461d816a346756ff0a489140e07e0c884",
+      "size": 1354,
+      "source_package": "libjpeg-turbo",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/cmake/libjpeg-turbo/libjpeg-turboConfigVersion.cmake",
+      "runtime_required": false,
+      "sha256": "778a6352e87d7087e70ccecf6a2ae573ca44b31d390ee9c85886103909485c18",
+      "size": 1861,
+      "source_package": "libjpeg-turbo",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/cmake/libjpeg-turbo/libjpeg-turboTargets-none.cmake",
+      "runtime_required": false,
+      "sha256": "ab22fe7cba0402797e011a10f7ad0e73cc79934665bf86a3497b575a1434c610",
+      "size": 1321,
+      "source_package": "libjpeg-turbo",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/cmake/libjpeg-turbo/libjpeg-turboTargets.cmake",
+      "runtime_required": false,
+      "sha256": "7a11234a264670c516e32b7d42a72ff8ebcf6ee91af830c6e427e65c6d98c496",
+      "size": 4087,
+      "source_package": "libjpeg-turbo",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/cmake/libxml2/libxml2-config.cmake",
+      "runtime_required": false,
+      "sha256": "6f97963d4248f19f5aa0402690e1f2330e25298f8fac3fe00445bce1be0181f3",
+      "size": 5436,
+      "source_package": "libxml2",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/icu/78.3/Makefile.inc",
+      "runtime_required": false,
+      "sha256": "386591923f8610e445894f97c3d939cfcf0035cb55c59341c80673e4f9fa72c8",
+      "size": 9719,
+      "source_package": "icu",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/icu/78.3/pkgdata.inc",
+      "runtime_required": false,
+      "sha256": "62bdf886c32f5244c7d2f21fb1528406a4d4dd532bd7aca50cef145700319d08",
+      "size": 924,
+      "source_package": "icu",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/icu/Makefile.inc",
+      "runtime_required": false,
+      "source_package": "icu",
+      "target": "current/Makefile.inc",
+      "type": "symlink"
+    },
+    {
+      "path": "usr/lib/icu/current",
+      "runtime_required": false,
+      "source_package": "icu",
+      "target": "78.3",
+      "type": "symlink"
+    },
+    {
+      "path": "usr/lib/icu/pkgdata.inc",
+      "runtime_required": false,
+      "source_package": "icu",
+      "target": "current/pkgdata.inc",
+      "type": "symlink"
+    },
+    {
+      "path": "usr/lib/libicudata.so",
+      "runtime_required": false,
+      "source_package": "icu",
+      "target": "libicudata.so.78.3",
+      "type": "symlink"
+    },
+    {
+      "path": "usr/lib/libicudata.so.78",
+      "runtime_required": true,
+      "source_package": "icu",
+      "target": "libicudata.so.78.3",
+      "type": "symlink"
+    },
+    {
+      "path": "usr/lib/libicudata.so.78.3",
+      "runtime_required": true,
+      "sha256": "2f624d6c2d92113a45906f245e0d50f4d28572cfe973ede09b25e8422460ba09",
+      "size": 33162960,
+      "source_package": "icu",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/libicui18n.so",
+      "runtime_required": false,
+      "source_package": "icu",
+      "target": "libicui18n.so.78.3",
+      "type": "symlink"
+    },
+    {
+      "path": "usr/lib/libicui18n.so.78",
+      "runtime_required": false,
+      "source_package": "icu",
+      "target": "libicui18n.so.78.3",
+      "type": "symlink"
+    },
+    {
+      "path": "usr/lib/libicui18n.so.78.3",
+      "runtime_required": false,
+      "sha256": "ca18aeafedc4349242d593b908fac7e67182014db945af2a39fb612f082f73d0",
+      "size": 4131368,
+      "source_package": "icu",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/libicuio.so",
+      "runtime_required": false,
+      "source_package": "icu",
+      "target": "libicuio.so.78.3",
+      "type": "symlink"
+    },
+    {
+      "path": "usr/lib/libicuio.so.78",
+      "runtime_required": false,
+      "source_package": "icu",
+      "target": "libicuio.so.78.3",
+      "type": "symlink"
+    },
+    {
+      "path": "usr/lib/libicuio.so.78.3",
+      "runtime_required": false,
+      "sha256": "c09fe8fdd1a35bde56b0dfd22db67eee218ed1adff4b8d96ce5d30298398f97b",
+      "size": 67664,
+      "source_package": "icu",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/libicutest.so",
+      "runtime_required": false,
+      "source_package": "icu",
+      "target": "libicutest.so.78.3",
+      "type": "symlink"
+    },
+    {
+      "path": "usr/lib/libicutest.so.78",
+      "runtime_required": false,
+      "source_package": "icu",
+      "target": "libicutest.so.78.3",
+      "type": "symlink"
+    },
+    {
+      "path": "usr/lib/libicutest.so.78.3",
+      "runtime_required": false,
+      "sha256": "6d2f017d3b695ae0bfd2b49a630fd3d458cf61bf4dbed3959f071d6dbf15a18f",
+      "size": 134560,
+      "source_package": "icu",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/libicutu.so",
+      "runtime_required": false,
+      "source_package": "icu",
+      "target": "libicutu.so.78.3",
+      "type": "symlink"
+    },
+    {
+      "path": "usr/lib/libicutu.so.78",
+      "runtime_required": false,
+      "source_package": "icu",
+      "target": "libicutu.so.78.3",
+      "type": "symlink"
+    },
+    {
+      "path": "usr/lib/libicutu.so.78.3",
+      "runtime_required": false,
+      "sha256": "0a945a705f6ff80b0f5fe9c2b387f0aa92c49dfd6f41a2dbbde439fac3bddbe3",
+      "size": 265032,
+      "source_package": "icu",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/libicuuc.so",
+      "runtime_required": false,
+      "source_package": "icu",
+      "target": "libicuuc.so.78.3",
+      "type": "symlink"
+    },
+    {
+      "path": "usr/lib/libicuuc.so.78",
+      "runtime_required": true,
+      "source_package": "icu",
+      "target": "libicuuc.so.78.3",
+      "type": "symlink"
+    },
+    {
+      "path": "usr/lib/libicuuc.so.78.3",
+      "runtime_required": true,
+      "sha256": "76217efb5cf1c42284a1572e6b8f1b13147523b0072d3cc819458be5f657fe40",
+      "size": 2427016,
+      "source_package": "icu",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/libjpeg.so",
+      "runtime_required": false,
+      "source_package": "libjpeg-turbo",
+      "target": "libjpeg.so.8",
+      "type": "symlink"
+    },
+    {
+      "path": "usr/lib/libjpeg.so.8",
+      "runtime_required": true,
+      "source_package": "libjpeg-turbo",
+      "target": "libjpeg.so.8.3.2",
+      "type": "symlink"
+    },
+    {
+      "path": "usr/lib/libjpeg.so.8.3.2",
+      "runtime_required": true,
+      "sha256": "ac27ab464ab783be9cf059ac16ea577427a7bce10406121eb34c34b2031158b3",
+      "size": 526400,
+      "source_package": "libjpeg-turbo",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/libminizip.so",
+      "runtime_required": false,
+      "source_package": "minizip",
+      "target": "libminizip.so.1.0.0",
+      "type": "symlink"
+    },
+    {
+      "path": "usr/lib/libminizip.so.1",
+      "runtime_required": true,
+      "source_package": "minizip",
+      "target": "libminizip.so.1.0.0",
+      "type": "symlink"
+    },
+    {
+      "path": "usr/lib/libminizip.so.1.0.0",
+      "runtime_required": true,
+      "sha256": "d18924cdfbc645ac1a63cc95b642540ebb3305778f2f544cc369354d7b96cc22",
+      "size": 67496,
+      "source_package": "minizip",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/libturbojpeg.so",
+      "runtime_required": false,
+      "source_package": "libjpeg-turbo",
+      "target": "libturbojpeg.so.0",
+      "type": "symlink"
+    },
+    {
+      "path": "usr/lib/libturbojpeg.so.0",
+      "runtime_required": false,
+      "source_package": "libjpeg-turbo",
+      "target": "libturbojpeg.so.0.5.0",
+      "type": "symlink"
+    },
+    {
+      "path": "usr/lib/libturbojpeg.so.0.5.0",
+      "runtime_required": false,
+      "sha256": "c78024cb2fe1b35e34303ec662830d8abf9d5a2100f16f46e6854ba5043781c1",
+      "size": 854608,
+      "source_package": "libjpeg-turbo",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/libxml2.so",
+      "runtime_required": false,
+      "source_package": "libxml2",
+      "target": "libxml2.so.16",
+      "type": "symlink"
+    },
+    {
+      "path": "usr/lib/libxml2.so.16",
+      "runtime_required": true,
+      "source_package": "libxml2",
+      "target": "libxml2.so.16.1.3",
+      "type": "symlink"
+    },
+    {
+      "path": "usr/lib/libxml2.so.16.1.3",
+      "runtime_required": true,
+      "sha256": "a0fafd1caf0bf63f71e23175a797d0f1decaef1afa752d3d05d2946cebe03d0c",
+      "size": 1379208,
+      "source_package": "libxml2",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/pkgconfig/icu-i18n.pc",
+      "runtime_required": false,
+      "sha256": "4f821c933caf2a2e9f4f6cd2f260727dff955940895eaa590f3f50be44ef23bb",
+      "size": 1251,
+      "source_package": "icu",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/pkgconfig/icu-io.pc",
+      "runtime_required": false,
+      "sha256": "0f69b41ef7ccfc7a0d34ed6be247605b46feb1c1908f1e7a0cf496449982c566",
+      "size": 1243,
+      "source_package": "icu",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/pkgconfig/icu-uc.pc",
+      "runtime_required": false,
+      "sha256": "9f143e22849f2342693bb4a0ced9a752536bc282852d41d3e7bfea36d0bb5d21",
+      "size": 1255,
+      "source_package": "icu",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/pkgconfig/libjpeg.pc",
+      "runtime_required": false,
+      "sha256": "5456c3be5874c7f1afc1854256d89873a12c2c5dfc144802d751f47c09abec28",
+      "size": 221,
+      "source_package": "libjpeg-turbo",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/pkgconfig/libturbojpeg.pc",
+      "runtime_required": false,
+      "sha256": "b3db2e7c5b880ea8f88b47f780e185172c4503c0f679975e7846179ea216374d",
+      "size": 233,
+      "source_package": "libjpeg-turbo",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/pkgconfig/libxml-2.0.pc",
+      "runtime_required": false,
+      "sha256": "2b684e45715196b3dd4b519f31bfe790be72436e2b38d3b9c2e158e4a1ee5cad",
+      "size": 256,
+      "source_package": "libxml2",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/pkgconfig/minizip.pc",
+      "runtime_required": false,
+      "sha256": "71a111ed9eea664b9869423d736aa73e3fc1b0ec8c10f56fe401d68e32b08551",
+      "size": 264,
+      "source_package": "minizip",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/python3.14/site-packages/__pycache__/drv_libxml2.cpython-314.opt-1.pyc",
+      "runtime_required": false,
+      "sha256": "0581b5d5a21432eb3cda3667516262989ff83f53fa50232bf7ad4b525258f31b",
+      "size": 16918,
+      "source_package": "libxml2",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/python3.14/site-packages/__pycache__/drv_libxml2.cpython-314.pyc",
+      "runtime_required": false,
+      "sha256": "0581b5d5a21432eb3cda3667516262989ff83f53fa50232bf7ad4b525258f31b",
+      "size": 16918,
+      "source_package": "libxml2",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/python3.14/site-packages/__pycache__/libxml2.cpython-314.opt-1.pyc",
+      "runtime_required": false,
+      "sha256": "3f68ef4523b87cfc000a9edd0f7d9bca1f1269a129d878e4c1712d08a5af62b0",
+      "size": 374143,
+      "source_package": "libxml2",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/python3.14/site-packages/__pycache__/libxml2.cpython-314.pyc",
+      "runtime_required": false,
+      "sha256": "3f68ef4523b87cfc000a9edd0f7d9bca1f1269a129d878e4c1712d08a5af62b0",
+      "size": 374143,
+      "source_package": "libxml2",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/python3.14/site-packages/drv_libxml2.py",
+      "runtime_required": false,
+      "sha256": "4e3189e992d20c41f11d13208f9b45fe697f2ba9652122c1c274ceb2723f5dbd",
+      "size": 15376,
+      "source_package": "libxml2",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/python3.14/site-packages/libxml2.py",
+      "runtime_required": false,
+      "sha256": "a45d7d4af6aff5d51eddf99e0a6b19e9109027193ef66915f90cf7c418e91657",
+      "size": 278296,
+      "source_package": "libxml2",
+      "type": "file"
+    },
+    {
+      "path": "usr/lib/python3.14/site-packages/libxml2mod.cpython-314-aarch64-linux-gnu.so",
+      "runtime_required": false,
+      "sha256": "dc80f09affe12794943c1e640363190df34d89461cbe437f1b7136b1a656e0d9",
+      "size": 419416,
+      "source_package": "libxml2",
+      "type": "file"
+    }
+  ]
+}

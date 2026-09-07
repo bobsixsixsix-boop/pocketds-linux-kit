@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# Thin Wiliwili entrypoint. The mapping preflight stays application-specific;
+# the common supervisor exclusively owns mode changes and Flatpak lifetime.
+set -Eeuo pipefail
+
+app_id=cn.xfangfang.wiliwili
+supervisor=${POCKETDS_GAME_SESSION_SUPERVISOR:-/usr/local/libexec/pocketds-game-session}
+mapping_validator=${POCKETDS_WILIWILI_MAPPING_VALIDATOR:-"$HOME/.local/libexec/pocketds-wiliwili-gamecontrollerdb"}
+mapping_source=${POCKETDS_WILIWILI_MAPPING_SOURCE:-"$HOME/.local/share/pocketds-linux-kit/wiliwili/gamecontrollerdb.txt"}
+mapping_live=${POCKETDS_WILIWILI_MAPPING_LIVE:-"$HOME/.var/app/$app_id/config/wiliwili/gamecontrollerdb.txt"}
+
+for executable in "$supervisor" "$mapping_validator"; do
+    if [[ ! -x $executable || -L $executable ]]; then
+        echo "Required Wiliwili component is missing or unsafe: $executable" >&2
+        exit 1
+    fi
+done
+for mapping in "$mapping_source" "$mapping_live"; do
+    if [[ ! -f $mapping || -L $mapping ]]; then
+        echo "Wiliwili controller database is missing or unsafe: $mapping" >&2
+        exit 1
+    fi
+done
+if ! "$mapping_validator" --source "$mapping_source" --check-existing "$mapping_live"; then
+    echo 'Wiliwili controller mapping is stale; reinstall the game/input stack.' >&2
+    exit 1
+fi
+
+exec "$supervisor" run \
+    --backend flatpak \
+    --name wiliwili \
+    --app-id "$app_id" \
+    -- "$@"

@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<systemList>
+  <system>
+    <name>famicom</name><fullname>Family Computer</fullname><path>/home/pocketds/ROMs/famicom</path>
+    <extension>.nes .fds .zip .7z</extension>
+    <command label="RetroArch - FCEUmm">/home/pocketds/.local/bin/pocketds-retroarch -L /home/pocketds/.config/retroarch/cores/fceumm_libretro.so %ROM%</command>
+    <platform>famicom</platform><theme>famicom</theme>
+  </system>
+  <system>
+    <name>nes</name><fullname>Nintendo Entertainment System</fullname><path>/home/pocketds/ROMs/nes</path>
+    <extension>.nes .fds .zip .7z</extension>
+    <command label="RetroArch - FCEUmm">/home/pocketds/.local/bin/pocketds-retroarch -L /home/pocketds/.config/retroarch/cores/fceumm_libretro.so %ROM%</command>
+    <command label="RetroArch - Nestopia UE">/home/pocketds/.local/bin/pocketds-retroarch -L /home/pocketds/.config/retroarch/cores/nestopia_libretro.so %ROM%</command>
+    <platform>nes</platform><theme>nes</theme>
+  </system>
+  <system>
+    <name>sfc</name><fullname>Super Famicom / SNES</fullname><path>/home/pocketds/ROMs/sfc</path>
+    <extension>.sfc .smc .fig .bs .zip .7z</extension>
+    <command label="RetroArch - Snes9x">/home/pocketds/.local/bin/pocketds-retroarch -L /home/pocketds/.config/retroarch/cores/snes9x_libretro.so %ROM%</command>
+    <platform>snes</platform><theme>snes</theme>
+  </system>
+  <system>
+    <name>gbc</name><fullname>Game Boy Color</fullname><path>/home/pocketds/ROMs/gbc</path>
+    <extension>.gb .gbc .dmg .zip .7z</extension>
+    <command label="RetroArch - Gambatte">/home/pocketds/.local/bin/pocketds-retroarch -L /home/pocketds/.config/retroarch/cores/gambatte_libretro.so %ROM%</command>
+    <platform>gb gbc</platform><theme>gbc</theme>
+  </system>
+  <system>
+    <name>gba</name><fullname>Game Boy Advance</fullname><path>/home/pocketds/ROMs/gba</path>
+    <extension>.gba .zip .7z</extension>
+    <command label="RetroArch - mGBA">/home/pocketds/.local/bin/pocketds-retroarch -L /home/pocketds/.config/retroarch/cores/mgba_libretro.so %ROM%</command>
+    <platform>gba</platform><theme>gba</theme>
+  </system>
+  <system>
+    <name>genesis</name><fullname>Mega Drive / Genesis</fullname><path>/home/pocketds/ROMs/genesis</path>
+    <extension>.md .mdx .gen .smd .32x .bin .zip .7z</extension>
+    <command label="RetroArch - Genesis Plus GX">/home/pocketds/.local/bin/pocketds-retroarch -L /home/pocketds/.config/retroarch/cores/genesis_plus_gx_libretro.so %ROM%</command>
+    <command label="RetroArch - PicoDrive">/home/pocketds/.local/bin/pocketds-retroarch -L /home/pocketds/.config/retroarch/cores/picodrive_libretro.so %ROM%</command>
+    <platform>genesis megadrive</platform><theme>megadrive</theme>
+  </system>
+  <system>
+    <name>pcengine</name><fullname>PC Engine / TurboGrafx-16</fullname><path>/home/pocketds/ROMs/pcengine</path>
+    <extension>.pce .cue .ccd .chd .zip .7z</extension>
+    <command label="RetroArch - Beetle PCE Fast">/home/pocketds/.local/bin/pocketds-retroarch -L /home/pocketds/.config/retroarch/cores/mednafen_pce_fast_libretro.so %ROM%</command>
+    <platform>pcengine</platform><theme>pcengine</theme>
+  </system>
+  <system>
+    <name>n64</name><fullname>Nintendo 64</fullname><path>/home/pocketds/ROMs/n64</path>
+    <extension>.z64 .n64 .v64 .rom .bin .u1 .ndd .zip .7z</extension>
+    <command label="RetroArch - ParaLLEl N64">/home/pocketds/.local/bin/pocketds-retroarch -L /home/pocketds/.config/retroarch/cores/parallel_n64_libretro.so %ROM%</command>
+    <platform>n64</platform><theme>n64</theme>
+  </system>
+  <system>
+    <name>nds</name><fullname>Nintendo DS</fullname><path>/home/pocketds/ROMs/nds</path>
+    <extension>.nds .zip .7z</extension>
+    <command label="melonDS - Pocket DS 双屏">/home/pocketds/.local/bin/pocketds-melonds %ROM%</command>
+    <platform>nds</platform><theme>nds</theme>
+  </system>
+  <system>
+    <name>psx</name><fullname>PlayStation</fullname><path>/home/pocketds/ROMs/psx</path>
+    <extension>.cue .chd .m3u .pbp .iso .ccd .img .zip .7z</extension>
+    <command label="RetroArch - SwanStation">/home/pocketds/.local/bin/pocketds-retroarch -L /home/pocketds/.config/retroarch/cores/swanstation_libretro.so %ROM%</command>
+    <command label="RetroArch - PCSX-ReARMed">/home/pocketds/.local/bin/pocketds-retroarch -L /home/pocketds/.config/retroarch/cores/pcsx_rearmed_libretro.so %ROM%</command>
+    <platform>psx</platform><theme>psx</theme>
+  </system>
+  <system>
+    <name>psp</name><fullname>PlayStation Portable</fullname><path>/home/pocketds/ROMs/psp</path>
+    <extension>.iso .cso .chd .pbp .elf</extension>
+    <command label="RetroArch - PPSSPP">/home/pocketds/.local/bin/pocketds-retroarch -L /home/pocketds/.config/retroarch/cores/ppsspp_libretro.so %ROM%</command>
+    <platform>psp</platform><theme>psp</theme>
+  </system>
+  <system>
+    <name>neogeo</name><fullname>Neo Geo</fullname><path>/home/pocketds/ROMs/neogeo</path>
+    <extension>.zip .7z</extension>
+    <command label="RetroArch - FinalBurn Neo">/home/pocketds/.local/bin/pocketds-retroarch -L /home/pocketds/.config/retroarch/cores/fbneo_libretro.so %ROM%</command>
+    <platform>neogeo arcade</platform><theme>neogeo</theme>
+  </system>
+  <system>
+    <name>arcade</name><fullname>Arcade</fullname><path>/home/pocketds/ROMs/arcade</path>
+    <extension>.zip .7z</extension>
+    <command label="RetroArch - FinalBurn Neo">/home/pocketds/.local/bin/pocketds-retroarch -L /home/pocketds/.config/retroarch/cores/fbneo_libretro.so %ROM%</command>
+    <platform>arcade</platform><theme>arcade</theme>
+  </system>
+  <system>
+    <name>mame</name><fullname>MAME 2003 Plus</fullname><path>/home/pocketds/ROMs/mame2003</path>
+    <extension>.zip .7z</extension>
+    <command label="RetroArch - MAME 2003 Plus">/home/pocketds/.local/bin/pocketds-retroarch -L /home/pocketds/.config/retroarch/cores/mame2003_plus_libretro.so %ROM%</command>
+    <platform>arcade mame</platform><theme>mame</theme>
+  </system>
+</systemList>

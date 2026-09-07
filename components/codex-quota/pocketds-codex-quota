@@ -1,0 +1,513 @@
+#!/usr/bin/env python3
+"""Cache the logged-in Codex account's live rate limits for the Panel."""
+
+from __future__ import annotations
+
+import json
+import math
+import os
+from pathlib import Path
+import selectors
+import shutil
+import signal
+import stat
+import subprocess
+import tempfile
+import time
+from typing import Any
+
+
+OUTPUT = Path(
+    os.environ.get(
+        "POCKETDS_CODEX_QUOTA_OUTPUT",
+        Path(os.environ.get("XDG_RUNTIME_DIR", f"/run/user/{os.getuid()}"))
+        / "pocketds-codex-quota.json",
+    )
+)
+DEFAULT_APP_SERVER_TIMEOUT_S = 8.0
+MIN_APP_SERVER_TIMEOUT_S = 0.1
+MAX_APP_SERVER_TIMEOUT_S = 30.0
+MAX_APP_SERVER_STDOUT_BYTES = 256 * 1024
+MAX_APP_SERVER_LINE_BYTES = 64 * 1024
+MAX_APP_SERVER_LINES = 128
+MAX_CACHE_BYTES = 64 * 1024
+MAX_TEXT_CHARS = 128
+# The Linux desktop app bundles its CLI here without adding it to the user's
+# PATH.  Keep discovery explicit and bounded; never scan processes or sessions.
+BUNDLED_CODEX_PATHS = ("/usr/lib/chatgpt/resources/codex",)
+
+
+class InvalidInput(RuntimeError):
+    """An external response or private cache target violated a strict bound."""
+
+
+def bounded_timeout() -> float | None:
+    raw = os.environ.get("POCKETDS_CODEX_TIMEOUT")
+    if raw is None:
+        return DEFAULT_APP_SERVER_TIMEOUT_S
+    try:
+        timeout = float(raw)
+    except (TypeError, ValueError, OverflowError):
+        return None
+    if (
+        not math.isfinite(timeout)
+        or not MIN_APP_SERVER_TIMEOUT_S <= timeout <= MAX_APP_SERVER_TIMEOUT_S
+    ):
+        return None
+    return timeout
+
+
+APP_SERVER_TIMEOUT_S = bounded_timeout()
+
+
+def reject_duplicate_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    value: dict[str, Any] = {}
+    for key, item in pairs:
+        if key in value:
+            raise InvalidInput("duplicate JSON key")
+        value[key] = item
+    return value
+
+
+def reject_nonfinite_constant(_value: str) -> None:
+    raise InvalidInput("non-finite JSON value")
+
+
+def strict_json_object(raw: bytes) -> dict[str, Any]:
+    try:
+        value = json.loads(
+            raw.decode("utf-8", errors="strict"),
+            object_pairs_hook=reject_duplicate_keys,
+            parse_constant=reject_nonfinite_constant,
+        )
+    except (UnicodeError, json.JSONDecodeError) as exc:
+        raise InvalidInput("invalid JSON") from exc
+    if type(value) is not dict:
+        raise InvalidInput("JSON message is not an object")
+    return value
+
+
+def finite_percent(value: Any) -> float | None:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return None
+    try:
+        number = float(value)
+    except OverflowError:
+        return None
+    if not math.isfinite(number) or not 0 <= number <= 100:
+        return None
+    return number
+
+
+def positive_int(value: Any) -> int | None:
+    if isinstance(value, bool) or type(value) is not int:
+        return None
+    return value if value > 0 else None
+
+
+def bounded_text(value: Any, *, default: str) -> str | None:
+    if value is None or value == "":
+        return default
+    if type(value) is not str or len(value) > MAX_TEXT_CHARS:
+        return None
+    if any(ord(character) < 0x20 or ord(character) == 0x7F for character in value):
+        return None
+    return value
+
+
+def find_codex() -> str | None:
+    configured = os.environ.get("POCKETDS_CODEX_BIN")
+    if configured:
+        candidates = [configured]
+    else:
+        candidates = [str(Path.home() / ".local/bin/codex")]
+        discovered = shutil.which("codex")
+        if discovered:
+            candidates.append(discovered)
+        candidates.extend(BUNDLED_CODEX_PATHS)
+    for candidate in candidates:
+        if candidate and Path(candidate).is_file() and os.access(candidate, os.X_OK):
+            return candidate
+    return None
+
+
+def send_message(process: subprocess.Popen[bytes], message: dict[str, Any]) -> None:
+    if process.stdin is None:
+        raise RuntimeError("Codex app-server stdin is unavailable")
+    process.stdin.write(
+        json.dumps(message, separators=(",", ":")).encode("utf-8") + b"\n"
+    )
+    process.stdin.flush()
+
+
+def stop_process(process: subprocess.Popen[bytes]) -> None:
+    # app-server owns a new session/process group.  Always signal the group,
+    # even when its leader already exited after spawning a child.
+    try:
+        os.killpg(process.pid, signal.SIGTERM)
+    except (ProcessLookupError, PermissionError):
+        pass
+    deadline = time.monotonic() + 0.5
+    while time.monotonic() < deadline:
+        try:
+            os.killpg(process.pid, 0)
+        except (ProcessLookupError, PermissionError):
+            break
+        time.sleep(0.02)
+    try:
+        os.killpg(process.pid, signal.SIGKILL)
+    except (ProcessLookupError, PermissionError):
+        pass
+    try:
+        process.wait(timeout=0.5)
+    except subprocess.TimeoutExpired:
+        try:
+            process.kill()
+        except ProcessLookupError:
+            pass
+        try:
+            process.wait(timeout=0.5)
+        except subprocess.TimeoutExpired:
+            pass
+    for stream in (process.stdin, process.stdout):
+        if stream is not None:
+            try:
+                stream.close()
+            except OSError:
+                pass
+
+
+def app_server_rate_limits() -> dict[str, Any] | None:
+    """Read account/rateLimits/read from the installed, logged-in Codex CLI."""
+    codex = find_codex()
+    if codex is None or APP_SERVER_TIMEOUT_S is None:
+        return None
+    try:
+        process = subprocess.Popen(
+            [codex, "app-server"],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+            start_new_session=True,
+        )
+    except OSError:
+        return None
+
+    selector = selectors.DefaultSelector()
+    buffer = b""
+    requested = False
+    total_bytes = 0
+    line_count = 0
+    deadline = time.monotonic() + APP_SERVER_TIMEOUT_S
+    try:
+        if process.stdout is None:
+            return None
+        selector.register(process.stdout, selectors.EVENT_READ)
+        send_message(
+            process,
+            {
+                "id": 1,
+                "method": "initialize",
+                "params": {
+                    "clientInfo": {
+                        "name": "pocketds-panel",
+                        "title": "Pocket DS Panel",
+                        "version": "1",
+                    },
+                    "capabilities": {},
+                },
+            },
+        )
+        while time.monotonic() < deadline:
+            while b"\n" in buffer:
+                raw, buffer = buffer.split(b"\n", 1)
+                try:
+                    line_count += 1
+                    if line_count > MAX_APP_SERVER_LINES or len(raw) > MAX_APP_SERVER_LINE_BYTES:
+                        return None
+                    message = strict_json_object(raw)
+                except InvalidInput:
+                    return None
+                message_id = message.get("id")
+                if type(message_id) is not int:
+                    continue
+                if message_id == 1 and not requested:
+                    if type(message.get("result")) is not dict or "error" in message:
+                        return None
+                    send_message(process, {"method": "initialized", "params": {}})
+                    send_message(
+                        process,
+                        {
+                            "id": 2,
+                            "method": "account/rateLimits/read",
+                            "params": None,
+                        },
+                    )
+                    requested = True
+                elif message_id == 2:
+                    if "error" in message:
+                        return None
+                    result = message.get("result")
+                    return result if type(result) is dict else None
+
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                break
+            events = selector.select(remaining)
+            if not events:
+                break
+            try:
+                chunk = os.read(process.stdout.fileno(), 65536)
+            except OSError:
+                break
+            if not chunk:
+                break
+            total_bytes += len(chunk)
+            if total_bytes > MAX_APP_SERVER_STDOUT_BYTES:
+                return None
+            buffer += chunk
+            if len(buffer) > MAX_APP_SERVER_LINE_BYTES and b"\n" not in buffer:
+                return None
+        return None
+    except (BrokenPipeError, OSError, RuntimeError, ValueError, OverflowError):
+        return None
+    finally:
+        selector.close()
+        stop_process(process)
+
+
+def extract_window(window: Any) -> tuple[bool, float | None, int | None, int | None]:
+    if window is None:
+        return True, None, None, None
+    if type(window) is not dict:
+        return False, None, None, None
+    used_key, reset_key, minutes_key = (
+        "usedPercent",
+        "resetsAt",
+        "windowDurationMins",
+    )
+    allowed = {used_key, reset_key, minutes_key}
+    if used_key not in window or not set(window).issubset(allowed):
+        return False, None, None, None
+    if type(window[used_key]) is not int:
+        return False, None, None, None
+    used = finite_percent(window[used_key])
+    reset_value = window.get(reset_key)
+    minutes_value = window.get(minutes_key)
+    reset = None if reset_value is None else positive_int(reset_value)
+    minutes = None if minutes_value is None else positive_int(minutes_value)
+    if (
+        used is None
+        or (reset_value is not None and reset is None)
+        or (minutes_value is not None and minutes is None)
+    ):
+        return False, None, None, None
+    return True, used, reset, minutes
+
+
+def normalize_limits(
+    limits: Any,
+    *,
+    source: str,
+    synced_at: int,
+    source_timestamp: str | int,
+    fresh: bool,
+    fallback_id: str = "",
+    fallback_name: str = "Codex",
+) -> dict[str, Any] | None:
+    if type(limits) is not dict:
+        return None
+    id_key = "limitId"
+    name_key = "limitName"
+    plan_key = "planType"
+    allowed = {"primary", "secondary", id_key, name_key, plan_key}
+    allowed.update(
+        {
+            "credits",
+            "individualLimit",
+            "rateLimitReachedType",
+            "spendControlReached",
+        }
+    )
+    if not set(limits).issubset(allowed):
+        return None
+    for key in ("credits", "individualLimit"):
+        if key in limits and limits[key] is not None and type(limits[key]) is not dict:
+            return None
+    if (
+        "spendControlReached" in limits
+        and limits["spendControlReached"] is not None
+        and type(limits["spendControlReached"]) is not bool
+    ):
+        return None
+    if (
+        "rateLimitReachedType" in limits
+        and bounded_text(limits["rateLimitReachedType"], default="") is None
+    ):
+        return None
+    primary_valid, primary_used, primary_reset, primary_minutes = extract_window(
+        limits.get("primary")
+    )
+    secondary_valid, secondary_used, secondary_reset, secondary_minutes = extract_window(
+        limits.get("secondary")
+    )
+    if not primary_valid or not secondary_valid:
+        return None
+    if primary_used is None and secondary_used is None:
+        return None
+    limit_id = bounded_text(limits.get(id_key), default=fallback_id)
+    limit_name = bounded_text(limits.get(name_key), default=fallback_name)
+    plan_type = bounded_text(limits.get(plan_key), default="")
+    if limit_id is None or limit_name is None or plan_type is None:
+        return None
+    return {
+        "available": True,
+        "fresh": fresh,
+        "source": source,
+        "synced_at": synced_at,
+        "source_timestamp": source_timestamp,
+        "limit_id": limit_id,
+        "limit_name": limit_name,
+        "plan_type": plan_type,
+        "primary_used_percent": primary_used,
+        "primary_reset": primary_reset,
+        "primary_window_minutes": primary_minutes,
+        "secondary_used_percent": secondary_used,
+        "secondary_reset": secondary_reset,
+        "secondary_window_minutes": secondary_minutes,
+    }
+
+
+def normalize_app_server(result: dict[str, Any], now: int) -> dict[str, Any] | None:
+    # New CLI versions add envelope metadata (for example accountId and
+    # rateLimitUpsell).  Only project validated quota fields into our cache;
+    # unrelated metadata must neither leak nor hide an otherwise valid quota.
+    if type(result) is not dict or "rateLimits" not in result:
+        return None
+    direct = result.get("rateLimits")
+    buckets = result.get("rateLimitsByLimitId")
+    metadata: dict[str, Any] = {}
+    if buckets is not None and type(buckets) is not dict:
+        return None
+    for bucket_id, bucket in (buckets or {}).items():
+        if (
+            type(bucket_id) is not str
+            or not bucket_id
+            or len(bucket_id) > MAX_TEXT_CHARS
+            or type(bucket) is not dict
+        ):
+            return None
+    reset_credits = result.get("rateLimitResetCredits")
+    if reset_credits is not None and type(reset_credits) is not dict:
+        return None
+    candidate = (buckets or {}).get("codex")
+    if type(candidate) is dict:
+        metadata = candidate
+        if type(direct) is not dict:
+            direct = candidate
+    if type(direct) is not dict:
+        return None
+    merged = dict(direct)
+    # The keyed Codex bucket is authoritative when the legacy single-bucket
+    # view differs.  Older servers may supply only its identity metadata.
+    merged.update(metadata)
+    return normalize_limits(
+        merged,
+        source="app-server",
+        synced_at=now,
+        source_timestamp=now,
+        fresh=True,
+        fallback_id="codex",
+    )
+
+
+def unavailable(now: int) -> dict[str, Any]:
+    return {
+        "available": False,
+        "fresh": False,
+        "source": "unavailable",
+        "synced_at": now,
+        "source_timestamp": None,
+        "limit_id": "",
+        "limit_name": "Codex",
+        "plan_type": "",
+        "primary_used_percent": None,
+        "primary_reset": None,
+        "primary_window_minutes": None,
+        "secondary_used_percent": None,
+        "secondary_reset": None,
+        "secondary_window_minutes": None,
+    }
+
+
+def write_payload(payload: dict[str, Any]) -> None:
+    content = (
+        json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\n"
+    ).encode("utf-8")
+    if not 1 <= len(content) <= MAX_CACHE_BYTES:
+        raise InvalidInput("quota cache payload is outside its size bound")
+    OUTPUT.parent.mkdir(parents=True, mode=0o700, exist_ok=True)
+    parent_metadata = OUTPUT.parent.lstat()
+    if (
+        not stat.S_ISDIR(parent_metadata.st_mode)
+        or stat.S_ISLNK(parent_metadata.st_mode)
+        or parent_metadata.st_uid != os.getuid()
+        or stat.S_IMODE(parent_metadata.st_mode) & 0o077
+    ):
+        raise InvalidInput("quota cache directory is unsafe")
+    fd, temp_name = tempfile.mkstemp(prefix=".pocketds-codex-", dir=OUTPUT.parent)
+    try:
+        os.fchmod(fd, 0o600)
+        view = memoryview(content)
+        while view:
+            written = os.write(fd, view)
+            if written <= 0:
+                raise OSError("short quota cache write")
+            view = view[written:]
+        os.fsync(fd)
+        os.close(fd)
+        fd = -1
+        os.replace(temp_name, OUTPUT)
+        directory = os.open(
+            OUTPUT.parent,
+            os.O_RDONLY
+            | getattr(os, "O_CLOEXEC", 0)
+            | getattr(os, "O_DIRECTORY", 0)
+            | getattr(os, "O_NOFOLLOW", 0),
+        )
+        try:
+            os.fsync(directory)
+        finally:
+            os.close(directory)
+        installed = OUTPUT.lstat()
+        if (
+            not stat.S_ISREG(installed.st_mode)
+            or stat.S_ISLNK(installed.st_mode)
+            or installed.st_uid != os.getuid()
+            or installed.st_nlink != 1
+            or stat.S_IMODE(installed.st_mode) != 0o600
+            or installed.st_size != len(content)
+        ):
+            raise InvalidInput("quota cache identity is unsafe after replacement")
+    finally:
+        if fd >= 0:
+            os.close(fd)
+        Path(temp_name).unlink(missing_ok=True)
+
+
+def main() -> int:
+    raw_now = os.environ.get("POCKETDS_CODEX_NOW")
+    try:
+        now = int(time.time()) if raw_now is None else int(raw_now)
+    except ValueError:
+        now = int(time.time())
+    payload: dict[str, Any] | None = None
+    live = app_server_rate_limits()
+    if live is not None:
+        payload = normalize_app_server(live, now)
+    write_payload(payload or unavailable(now))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

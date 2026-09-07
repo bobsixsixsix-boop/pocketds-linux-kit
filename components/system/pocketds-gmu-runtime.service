@@ -1,0 +1,12 @@
+[Unit]
+Description=Pocket DS GMU runtime-PM stability workaround
+ConditionPathExists=/sys/devices/platform/soc@0/3d6a000.gmu/power/control
+Before=display-manager.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/libexec/pocketds-gmu-runtime on
+RemainAfterExit=yes
+
+[Install]
+WantedBy=graphical.target

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<settings>
+  <string name="ROMDirectory" value="/home/pocketds/ROMs" />
+  <bool name="LegacyGamelistFileLocation" value="true" />
+  <bool name="BackgroundJoystickInput" value="false" />
+  <bool name="VideoHardwareDecoding" value="true" />
+  <bool name="ScrapeVideos" value="true" />
+  <bool name="ScrapeRatings" value="true" />
+  <bool name="ScrapeMetadata" value="true" />
+</settings>
+

@@ -1,0 +1,10 @@
+[Unit]
+Description=Refresh Pocket DS Codex quota every five minutes
+
+[Timer]
+OnBootSec=30s
+OnUnitActiveSec=5min
+AccuracySec=30s
+
+[Install]
+WantedBy=timers.target

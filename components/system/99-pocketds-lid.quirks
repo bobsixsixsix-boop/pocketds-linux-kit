@@ -1,0 +1,8 @@
+# Pocket DS has two internal displays; its lid must not switch KWin layouts.
+# gpio-keys also carries KEY_VOLUMEUP, so never ignore the whole device.
+# This changes libinput's view only. logind, UPower and kernel wake keep SW_LID.
+# AttrEventCode is libinput internal API: run check-libinput-lid.py after updates.
+[AYANEO Pocket DS compositor lid filtering]
+MatchName=gpio-keys
+MatchDeviceTree=ayaneo,pocketds
+AttrEventCode=-SW_LID;

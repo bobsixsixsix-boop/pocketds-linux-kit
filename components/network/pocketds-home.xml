@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<zone>
+  <short>Pocket DS Home</short>
+  <description>Trusted Pocket DS networks. KDE Connect is accepted here, while unknown networks remain in the public zone.</description>
+  <service name="ssh"/>
+  <service name="mdns"/>
+  <service name="dhcpv6-client"/>
+  <service name="kdeconnect"/>
+  <forward/>
+</zone>

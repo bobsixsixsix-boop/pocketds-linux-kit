@@ -1,0 +1,126 @@
+{
+  "schema": 1,
+  "package": {
+    "name": "pocketds-userspace",
+    "source_version": "20260507-20260730174706.fc44",
+    "hardened_version": "20260507-20260730174706.pds2.fc44",
+    "source_rpm": {
+      "filename": "pocketds-userspace-20260507-20260730174706.fc44.src.rpm",
+      "url": "https://download.copr.fedorainfracloud.org/results/linux4switch/pocketds/fedora-44-aarch64/10794892-pocketds-userspace/pocketds-userspace-20260507-20260730174706.fc44.src.rpm",
+      "size": 94753,
+      "sha256": "b0d509040195c19cc8b8ead5e296ffe26dddf34886f5a7c4428bf5adf921d561",
+      "signing_key_fingerprint": "cb2323a20ebafb6d02d625b76aaf40a74b7ff931"
+    },
+    "source_tree": {
+      "file_count": 67,
+      "total_size": 148381,
+      "manifest_sha256": "67e4896b09071e6a35265fd1062efa7cbf3648194d8994a77ab258d01f142f32"
+    },
+    "spec": {
+      "path": "pocketds-userspace.spec",
+      "size": 31375,
+      "sha256": "d6cf9474bc1d45f9553a05aa76f0bbeb2f893485fa138e7524be99ed6d7de031"
+    },
+    "fan_controller_source": {
+      "path": "pocketds-fancontrol",
+      "size": 9582,
+      "sha256": "07c8a931672cc90d5033f00a2bbc849ddc30e82b275a5373d5491f3f8efbdcc7"
+    },
+    "forbidden_source": {
+      "path": "10-wheel-nopasswd",
+      "size": 31,
+      "sha256": "6b4c40d177f490829fb5f2507d8bb8bcd8767b92f20230e0f95637d601be809d"
+    }
+  },
+  "transform": {
+    "replace_exact_lines": [
+      {
+        "old": "Release:        20260730174706%{?dist}",
+        "new": "Release:        20260730174706.pds2%{?dist}"
+      },
+      {
+        "old": "Source70:       pocketds-fancontrol",
+        "new": "Source70:       pocketds-fancontrol.pds1"
+      }
+    ],
+    "remove_exact_lines": [
+      "Source22:       10-wheel-nopasswd",
+      "  * /etc/sysctl.d, /etc/sudoers.d                    — printk + wheel nopasswd",
+      "install -D -m 0440 %{SOURCE22} %{buildroot}%{_sysconfdir}/sudoers.d/10-wheel-nopasswd",
+      "%{_sysconfdir}/sudoers.d/10-wheel-nopasswd",
+      "# ── Onboard on-screen keyboard integration ──",
+      "# Onboard runs under XWayland with the uinput injection backend, pinned to",
+      "# DSI-2, toggled by an extra trigger key in keyboard mode. See the source",
+      "# files' header comments for the why behind each piece.",
+      "Source100:      pocketds-onboard",
+      "Source101:      pocketds-osk-toggle",
+      "Source102:      pocketds-osk-listener",
+      "Source103:      pocketds-osk-listener.service",
+      "Source104:      05-ignore-onboard-osk.yaml",
+      "Source105:      Switch.theme",
+      "Source106:      SwitchColor.colors",
+      "Source107:      95-pocketds-onboard.gschema.override",
+      "Source108:      kwinrulesrc",
+      "Source109:      org.onboard.Onboard.service",
+      "# Onboard OSK: the keyboard itself (built in the onboard COPR with the",
+      "# uinput-backend + singleton-lifetime patches) and DejaVu Sans, which",
+      "# carries the special-key glyphs (Tab/Enter/Shift/Backspace arrows",
+      "# U+21E5/23CE/21E7/21EA/232B) — without it Onboard renders them as hex",
+      "# tofu.",
+      "Requires:       onboard",
+      "Requires:       onboard-data",
+      "Requires:       dejavu-sans-fonts",
+      "# ── Onboard OSK: launcher wrapper, toggle, ui_osk listener, theme,",
+      "#    gsettings defaults, DSI-2 window rule, InputPlumber ignore rule ──",
+      "install -D -m 0755 %{SOURCE100} %{buildroot}%{_bindir}/pocketds-onboard",
+      "install -D -m 0755 %{SOURCE101} %{buildroot}%{_bindir}/pocketds-osk-toggle",
+      "install -D -m 0755 %{SOURCE102} %{buildroot}%{_bindir}/pocketds-osk-listener",
+      "install -D -m 0644 %{SOURCE103} %{buildroot}%{_userunitdir}/pocketds-osk-listener.service",
+      "# enable the user listener for every user's graphical session",
+      "install -d %{buildroot}%{_userunitdir}/graphical-session.target.wants",
+      "ln -sf ../pocketds-osk-listener.service \\",
+      "       %{buildroot}%{_userunitdir}/graphical-session.target.wants/pocketds-osk-listener.service",
+      "install -D -m 0644 %{SOURCE104} %{buildroot}%{_datadir}/inputplumber/devices/05-ignore-onboard-osk.yaml",
+      "install -D -m 0644 %{SOURCE105} %{buildroot}%{_datadir}/onboard/themes/Switch.theme",
+      "install -D -m 0644 %{SOURCE106} %{buildroot}%{_datadir}/onboard/themes/SwitchColor.colors",
+      "install -D -m 0644 %{SOURCE107} %{buildroot}%{_datadir}/glib-2.0/schemas/95-pocketds-onboard.gschema.override",
+      "install -D -m 0644 %{SOURCE108} %{buildroot}%{_sysconfdir}/skel/.config/kwinrulesrc",
+      "# D-Bus activation override -> wrapper. /usr/local/share precedes",
+      "# /usr/share in XDG_DATA_DIRS, so this wins over onboard's env-less one.",
+      "install -D -m 0644 %{SOURCE109} %{buildroot}/usr/local/share/dbus-1/services/org.onboard.Onboard.service",
+      "# Onboard OSK integration",
+      "%{_bindir}/pocketds-onboard",
+      "%{_bindir}/pocketds-osk-toggle",
+      "%{_bindir}/pocketds-osk-listener",
+      "%{_userunitdir}/pocketds-osk-listener.service",
+      "%{_userunitdir}/graphical-session.target.wants/pocketds-osk-listener.service",
+      "%{_datadir}/inputplumber/devices/05-ignore-onboard-osk.yaml",
+      "%{_datadir}/onboard/themes/Switch.theme",
+      "%{_datadir}/onboard/themes/SwitchColor.colors",
+      "%{_datadir}/glib-2.0/schemas/95-pocketds-onboard.gschema.override",
+      "%config(noreplace) %{_sysconfdir}/skel/.config/kwinrulesrc",
+      "/usr/local/share/dbus-1/services/org.onboard.Onboard.service",
+      "# Compile the Onboard gsettings override (95-pocketds-onboard.gschema.override)."
+    ],
+    "insert_after_exact_line": {
+      "line": "%changelog",
+      "text": "* Fri Aug 28 2026 Pocket DS Linux Kit <pocketds@local> - 20260507-20260730174706.pds2\n- Drop the retired third-party OSK integration and unavailable hard dependencies.\n- Keep the locked downstream smooth fan controller and omit global wheel NOPASSWD.\n"
+    },
+    "forbidden_tokens": [
+      "10-wheel-nopasswd",
+      "NOPASSWD: ALL",
+      "wheel nopasswd",
+      "Onboard",
+      "onboard"
+    ],
+    "fan_controller_override": {
+      "path": "pocketds-fancontrol.pds1",
+      "size": 11955,
+      "sha256": "9f04ff7113a3e2ea8412fca17a44cd728c20f6cbb7ab5cd463d8f66dd006f0fe",
+      "payload_path": "/usr/bin/pocketds-fancontrol",
+      "payload_mode": "0755"
+    },
+    "hardened_spec_size": 28270,
+    "hardened_spec_sha256": "bdd2045335d5d63386efcc004ca39e7b86afedfba0f9314b26ffe614180297b9"
+  }
+}

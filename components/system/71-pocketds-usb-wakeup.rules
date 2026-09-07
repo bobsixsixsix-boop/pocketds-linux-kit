@@ -1,0 +1,6 @@
+# The built-in keyboard and gamepad sit behind this Renesas xHCI controller.
+# They must not race lid-triggered suspend; the native GPIO lid switch and
+# PMIC power key remain the intentional system wake sources. Apply this only
+# after the driver has bound: usb_hcd_pci_probe() enables wake after the PCI
+# add rules have already run.
+ACTION=="bind", SUBSYSTEM=="pci", DRIVER=="xhci-pci-renesas", ATTR{vendor}=="0x1912", ATTR{device}=="0x0014", TEST=="power/wakeup", ATTR{power/wakeup}="disabled"

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Stable user path retained for Panel and existing desktop integrations.
+set -Eeuo pipefail
+canonical=${POCKETDS_INPUT_MODE_CANONICAL:-/usr/local/libexec/pocketds-input-mode}
+[[ -x $canonical ]] || {
+    echo "Canonical Pocket DS input helper is unavailable: $canonical" >&2
+    exit 1
+}
+exec "$canonical" "$@"

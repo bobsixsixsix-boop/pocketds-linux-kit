@@ -1,0 +1,118 @@
+{
+  "schema": 1,
+  "verified_at": "2026-08-27T19:26:57Z",
+  "signing_policy": "https://archlinuxarm.org/about/package-signing",
+  "mirror_policy": "https://archlinuxarm.org/about/mirrors",
+  "key": {
+    "fingerprint": "68B3537F39A313B3E574D06777193F152BDBE6A6",
+    "certificate_path": "components/chromium/provenance/archlinuxarm-builder.asc",
+    "certificate_sha256": "26196ae6d6efbb1138be6805245d577adbcd94b887eaf0569f88efe003e6b3d9",
+    "source_repository": "https://github.com/archlinuxarm/archlinuxarm-keyring.git",
+    "source_commit": "91e6b11698f8df66042d56aaa56fbe9c9263847d",
+    "source_path": "packager/builder.asc"
+  },
+  "verifier": {
+    "name": "sequoia-sqv",
+    "version": "1.5.0",
+    "openpgp_version": "2.4.0",
+    "backend": "OpenSSL 3.6.3",
+    "command_contract": "sqv --verbose --keyring <builder.asc> --signature-file <archive.sig> <archive>"
+  },
+  "packages": {
+    "chromium": {
+      "version": "151.0.7922.137-1",
+      "arch": "aarch64",
+      "archive_url": "https://ca.us.mirror.archlinuxarm.org/aarch64/extra/chromium-151.0.7922.137-1-aarch64.pkg.tar.xz",
+      "archive_size": 122615648,
+      "archive_sha256": "e5f65d688bf74b78406e20cac900e3758a6999ddf3581a7f0286ce884d253a3f",
+      "signature_url": "https://ca.us.mirror.archlinuxarm.org/aarch64/extra/chromium-151.0.7922.137-1-aarch64.pkg.tar.xz.sig",
+      "signature_size": 566,
+      "signature_sha256": "19b31a4b32fa6baf7fc9b689b0de3141c3a5105b16ff96c40bb7636554ff55e7",
+      "signature_base64": "iQIzBAABCgAdFiEEaLNTfzmjE7PldNBndxk/FSvb5qYFAmp9IIMACgkQdxk/FSvb5qYv1BAAjcN0ZR2AF2QqR0gm7fYfZzj5Dcscn1T3NttUC8aDV/9NdOc0ib45Yf2IT5JCejjVECS9WQblQ6IfF5+GiI+sLpAsnii1EqQhfO3a010/tj4wlS3aUveexRDWtVJDP1h0R0oRu+dm0rDNM2CxOJNKJSWy2crhT5iqPGUsWyQrzmWu0JeyCOzoSL5ew+MdXnFXXm+WRSlTK6QIZM+kZv0EIP6k6fT9bssDeN94Ij/lc9f+iZLcmoGSGE9eAECoUsX8/vbR4RiMTfgrRCGAsepwFus9H32T7hi2pOWoffYQvvZ9skcdCXDhiBBh28+igZ3YMnpNoo7f9VS65O0lpOg5182kK5L3i4YTmS8qu2x8aYJx7QiIciPvJau4zFqA7OPc/U5StkfgHhfNGZl0MHohTcXGEt4vimG87jl7JPywUl6smceOpGBU6yvZuNMZWlkkCGWspp06iToKV1zebgiXktpRzFTJa5vf8bhmFGQjPw1+UMPE29IsL1jKd50Mu91votV9CHll36r7y67/aDhkUjDDE0l28/aLvYPEL4v1Oy72Um+5EQcXFoCV3pc3y7MJRAUcamBVi2BmufqKMIh1YA/JIJoTac0z0k5tOrIspVa+hHec96LYX8KfS69ot4k6OhM2vU88YsNl53+40OMfr968ST8izMUBCSg45OaYqvY=",
+      "signer_fingerprint": "68B3537F39A313B3E574D06777193F152BDBE6A6",
+      "signature_valid": true,
+      "locked_entries_verified": 5,
+      "metadata": {
+        ".PKGINFO": {"size": 1967, "sha256": "8b6956af9945d8dd688251a490641747070ed007e48d918566798136ac99a137"},
+        ".BUILDINFO": {"size": 12577, "sha256": "34a07c0353bdc4e7cb95127def2cafa7e148c8adc24816dca8564c04cfbb0d38"},
+        ".MTREE": {"size": 5592, "sha256": "03a8c2507dce08dc70c400b68ae58153cbc7c351b216bf51a3b120d68915a0f8"}
+      }
+    },
+    "icu": {
+      "version": "78.3-1",
+      "arch": "aarch64",
+      "archive_url": "https://ca.us.mirror.archlinuxarm.org/aarch64/core/icu-78.3-1-aarch64.pkg.tar.xz",
+      "archive_size": 10800876,
+      "archive_sha256": "314cb2fecde9fd2a64ca9b6652c4c0e517bec0dceeafaf7e6a0cd578c607357f",
+      "signature_url": "https://ca.us.mirror.archlinuxarm.org/aarch64/core/icu-78.3-1-aarch64.pkg.tar.xz.sig",
+      "signature_size": 566,
+      "signature_sha256": "bf9b97d0633e5640e7e235686300853be2cef5d0eaf87762fda46ab618845221",
+      "signature_base64": "iQIzBAABCgAdFiEEaLNTfzmjE7PldNBndxk/FSvb5qYFAmm6oQcACgkQdxk/FSvb5qbmmg/+OKJHpbdPWF3rI+/8l8tXqxAu0k1IyT8/fJetJaoAmTI9U/AKp9i0BruJj+1ZMVQO3Q0675CtiOSsuj5zaGg2Or8TLoMDQs/YX0rfo/TZnWzTtBQhsA+v1uGIUlBY83GBVbLXOd99GbM+A8eP+tvIiU2nso6iaWsTVYwfbnN38P8mmBmDtnJzYGIHbiEYIX98Je5XJ0O3rRAxn/yl7caqej41iHVQ2L8VErR33KHNfQL293AKy9B6aLSTzSKLY+3fXD3zjYlJuz+g89LQOLiwQls2GawXSRyUfxtH2VCNY3aOvJg9tN0BbxRHfNbc7P2S5HcOsBO6wg/obhii5eyS2tqe8pVps7+uBFxcv5JtuBaTaOFz7Hvba9X8yvKrlf+iyt3XFye8jUlb1/3AKbAPWm0Y/G3ELHGPToUiokrxYgx4cCFi53gTEYBytK18xr1SZqRmo8wNhmPPnSQz7lp6BcpOe0R15/NaIyHF9Egx3lHqifstDcNviAwY4FcDIR38exIeM4CHdMwgfRjeDZ9wNnT/kigyMrETKfDZzUGryJl73cLk+TpMew38rj6YBtWJwT6e9C2v/nFt9qm8b5A75P3Yk1OTqa1o4vyYFomQl9Z770QHFb2jSztL8lAgU0afGl20jpXnA6aEvFP9XuaDfTsKYxYLjQo4d9VJm5a/8wo=",
+      "signer_fingerprint": "68B3537F39A313B3E574D06777193F152BDBE6A6",
+      "signature_valid": true,
+      "locked_entries_verified": 26,
+      "metadata": {
+        ".PKGINFO": {"size": 700, "sha256": "3283701a6be44f615447ce7ea0106c82f52cc0f672a130e3e4f5c23d76b80855"},
+        ".BUILDINFO": {"size": 6205, "sha256": "86bfde20bf94e529849a38e1c4263c66b3bd154c363336721d49afeb23731963"},
+        ".MTREE": {"size": 13513, "sha256": "8fbe0435f04016fa4cb8743ff3554c208538d384105893f10600395584ed6814"}
+      }
+    },
+    "libjpeg-turbo": {
+      "version": "3.2.0-2",
+      "arch": "aarch64",
+      "archive_url": "https://ca.us.mirror.archlinuxarm.org/aarch64/extra/libjpeg-turbo-3.2.0-2-aarch64.pkg.tar.xz",
+      "archive_size": 503296,
+      "archive_sha256": "fd1cd460ef3a4bbeb1a660f9f4bbacd09d6dd817a10f0300891a6a552fddb5ec",
+      "signature_url": "https://ca.us.mirror.archlinuxarm.org/aarch64/extra/libjpeg-turbo-3.2.0-2-aarch64.pkg.tar.xz.sig",
+      "signature_size": 566,
+      "signature_sha256": "98fc688c700aabea1a1cf125d0bfa221e195324bb2ca5e60a8dc8a0841fcad78",
+      "signature_base64": "iQIzBAABCgAdFiEEaLNTfzmjE7PldNBndxk/FSvb5qYFAmpFp3wACgkQdxk/FSvb5qYBOA//StBfzlHEHJSCCBWEK3TUiZAuv94S/qeJ/lvg0rH1dS1LQc2iXiuKDU8fWpxztqZGy0FZupz/15Nee3bpA9Am+X4yh46veyVTJCs+w92I4dqiFl0GMx9EeOj9onHa05AL+kQGCmlg2pcez9OR+hgsskrFGMB+JmmJaoQDO6VCwvrOJxbSAaGfUfYdHv5uu3VNa39DETgtrafCt4UPMc7M0ZBJAKrcDEIBlhLcEXoykiilIvFGxRIH0NOJKOwCpoJnpTlF//blF/jsEN/w5kOLav4euKqXkNXMTOQn9bcs6fsUyvYNJl4dUJedYc4PgsDX6smh4WUIipvo4y9ZMbf4bq4I/e/V8avqLXpTaCHziRr6To/MnkQ6vgGwf94C9+wG4+e20EwSDWGhLJwXf1QKpvfyzLN0HMKuawv8JrMQikLnZNFxJqnsdka5i3caJdV2e8sZTQMlxHvWDmenjY8KFyV0twuOaOOgAUXTm+wtMW1iKEKsszOprEq2s4C9FMEzRGw0amZ8ScyU1D096RWgf/pkjzLgS76H6f68/UXMD9AO8yoOg4ztqGIu+sW/3qd8JCX8i8WUQAEi98gEaYB2XFU1vLERiih/npDZMJa96EyeTeID07BoQwMw8L8PTScObd7lurIFWV0WDTISQSyFdtKjC++3PIRCyvAV0vCulo0=",
+      "signer_fingerprint": "68B3537F39A313B3E574D06777193F152BDBE6A6",
+      "signature_valid": true,
+      "locked_entries_verified": 12,
+      "metadata": {
+        ".PKGINFO": {"size": 556, "sha256": "4fc0eaa2f52b9d090ea4b87945c9c9f834a716760949b130e315c1aaae628c82"},
+        ".BUILDINFO": {"size": 6761, "sha256": "bcee04ac8a2c0308a31bce3684bf356f9e4f98dd66b4ad24a9dc0d9e26ce4321"},
+        ".MTREE": {"size": 2319, "sha256": "9dd9d297847a0b9f97f2325406b3b33c6854ee4f12ea5339650b926f9afed569"}
+      }
+    },
+    "libxml2": {
+      "version": "2.15.3-1",
+      "arch": "aarch64",
+      "archive_url": "https://ca.us.mirror.archlinuxarm.org/aarch64/core/libxml2-2.15.3-1-aarch64.pkg.tar.xz",
+      "archive_size": 691808,
+      "archive_sha256": "e687984bf6f9dafd6293ac13e5bad9ecc8efae815363423693a3ce642d350edf",
+      "signature_url": "https://ca.us.mirror.archlinuxarm.org/aarch64/core/libxml2-2.15.3-1-aarch64.pkg.tar.xz.sig",
+      "signature_size": 566,
+      "signature_sha256": "333ce3f01ab72910f720bd3981c6631e4fbea591da4469be923288a5d3140b74",
+      "signature_base64": "iQIzBAABCgAdFiEEaLNTfzmjE7PldNBndxk/FSvb5qYFAmnlblIACgkQdxk/FSvb5qbpMw/+IKh1jgfMCZzIHx3MwpnN9/xxBDFl9xObT81Pd2LYOyiyZW60ZRcMnt7EYcLbsPRR6u76lWJwY+J9EzME/9SN7dNqanyOCJ/N8xaBoqtiJyRke+/wN+XO6mKobaXH/7sXSEjD/dRvw2veom0XpGdS7yRavsFg8nF+KnSAR44NNlqqNg7nlCNbertlAZRU+qBjuS+a3heniaP4aaa46vT3xof9IQH0TtZ5p6OkIXQcVTbyi6XHQIAYRGsUwWZQY5buBFs4aCvMSGks+Od3xlEZRz6AGV350OOPivUmixMbTHbRd7UlDLtW/E6yjzSiUkcsrwIrmBMNf/GoxyV15SBJ14h8V+dSpSFvIxPlp/hAorxpZqIBKemRPU8IRd4p1EqYSE/GB67llI29D0GgcJPKOna6IL20BhTZDfv0o7sVSUTa8wJp5iQeY6nlqFFQSfY8GXs+gthWe0kDMb+0RcJMUFKJMks2EOneP5Fw8upp5vHm0pDBm9LWcxGBVs00wgCIXDxlZ+0ms8hE+JvJld3suCwFy7vKQsxl21+mUb6vfCdBx3+0tmoYV8q6GvCsgldAR2qUMf4A9suzE0ui2k84r7qEr5HEJWa5a7zZflls/rkLEEQZcKGFN7O6x258C9Ui1aPszPa1oL+yXcHG+e+lJ8aLs49oRBTVQo2hJjcbnWQ=",
+      "signer_fingerprint": "68B3537F39A313B3E574D06777193F152BDBE6A6",
+      "signature_valid": true,
+      "locked_entries_verified": 12,
+      "metadata": {
+        ".PKGINFO": {"size": 633, "sha256": "e6c52aeaa759759500cad4eaa3950b93a442dfa9b96b2281bf73518c9f728454"},
+        ".BUILDINFO": {"size": 6861, "sha256": "6841ceb0c3259d0bceeae74855de69edb1af79e9f5c243bc73f743ac86f6eaef"},
+        ".MTREE": {"size": 3741, "sha256": "511a70f021b8e4d7d8c9c145fc15cb8959fd172bff070f3fc446c4d2639e1ead"}
+      }
+    },
+    "minizip": {
+      "version": "1:1.3.2-3",
+      "arch": "aarch64",
+      "archive_url": "https://ca.us.mirror.archlinuxarm.org/aarch64/core/minizip-1%3A1.3.2-3-aarch64.pkg.tar.xz",
+      "archive_size": 29932,
+      "archive_sha256": "78d2dd86f4100b9482e8317ee2a13c355e1f19cca06effde0184f62231bf7d15",
+      "signature_url": "https://ca.us.mirror.archlinuxarm.org/aarch64/core/minizip-1%3A1.3.2-3-aarch64.pkg.tar.xz.sig",
+      "signature_size": 566,
+      "signature_sha256": "906b689441b9f52f44d8912f3633cc981ca6d0a24ae09dd4d61b2536cee73bd2",
+      "signature_base64": "iQIzBAABCgAdFiEEaLNTfzmjE7PldNBndxk/FSvb5qYFAmmtvm8ACgkQdxk/FSvb5qYM3A//TyNwrYfnyaGRGFCggXjr7yDNubJk9Z5YGF0OohzH6Ot5YcKoHZjmIESCGfsMGPCtVqA9vpqtkJ+EQkKJsauSYCu2PC/KBt46dYplUVDT4SUUNaDzXv0pK9LvIJrCxlNPDx9d34dGuJG1jKXEFRborGbDLCxhmqwm649UCtvUYdArGogv8A+PfUaV9Usn/wYLtBnDR5lxlLIhHTHj2qWa1fk0t7Ei3SpBtlEV19qsszzhZYJYbnv9zvHaVYekfjuvOMyMl4H4bYOzsYt6uiahmyRscbstEGXakyQFVq904OrrnWR15x5xp/oUndAJzHXU0cCB7QvGUY8dJ3uvbP3/SO72b9busRKAm9iEqDNqgecx0oSxC/td/Tgb2y9SYiK51sLNKwA+4IVmNXd323a/ac72HVLVCgBTyIZB7Z3GJrZ5qRBs5qforkQpbZih6AfbRU6xh0usC5XUK/Z+gvNVqF43qJ7O96yR0wzPo5g1tb0nplYQNbLskuWKytWAfDatPZKZhz8K/6AMs9T0KRsYWYBUTv7oEck3n4UMqvEO1NcV5B9ZueZKjPtbX0v0rOOQI2ztoFyAPoGit/U6yy0/TbRAwvITBFeUaKwXMHYdhYTihOnENwxWAOGBqcJh3N5ANtanm35QDT+JtYzn4BWw/tNhZA0gTXcCqslBH5/bPmM=",
+      "signer_fingerprint": "68B3537F39A313B3E574D06777193F152BDBE6A6",
+      "signature_valid": true,
+      "locked_entries_verified": 4,
+      "metadata": {
+        ".PKGINFO": {"size": 371, "sha256": "239b3d67ebf7fc24fa0168c4364d19645101b44a1a87ead153d6c82a6b2c3fec"},
+        ".BUILDINFO": {"size": 6134, "sha256": "26a7792edb3177c38edbb9bc5d7209b9b3c44ac259770a31a3535a86ca3ee4c6"},
+        ".MTREE": {"size": 757, "sha256": "999650612a29a8deb48ad48cf9974c47402d94bf1a3d7e79447a8ab87f1a699d"}
+      }
+    }
+  }
+}

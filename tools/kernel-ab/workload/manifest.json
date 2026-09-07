@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "workload_id": "pds002-webgl2-compositor-v1",
+  "duration_seconds": 2700,
+  "network_content": false,
+  "asset": {
+    "filename": "webgl-compositor.html",
+    "sha256": "c79d50fa7adcc0845e548749b7cf754f0600b467df6470edbb3423343e5dc3a6",
+    "size": 6003
+  },
+  "browser": {
+    "wrapper": {
+      "path": "/usr/local/bin/pocketds-chromium-v4l2",
+      "sha256": "cadcdb3f51d7620df8ccf75bd6eb04b113b6157ac5a918393ba3738ef1ce9506",
+      "size": 586
+    },
+    "binary": {
+      "path": "/opt/pocketds-chromium-v4l2-151.0.7922.137/usr/lib/chromium/chromium",
+      "sha256": "2f0002bce6c72188c9426f083e6e802c690eacbbc4fee03b2c08343833fcd1b0",
+      "size": 322767832
+    }
+  },
+  "arguments": [
+    "--app={asset_uri}",
+    "--user-data-dir={private_profile}",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-sync",
+    "--disable-translate",
+    "--disable-component-update",
+    "--disable-background-networking",
+    "--disable-domain-reliability",
+    "--disable-client-side-phishing-detection",
+    "--metrics-recording-only",
+    "--disable-features=OptimizationHints,MediaRouter",
+    "--host-resolver-rules=MAP * ~NOTFOUND",
+    "--disable-quic",
+    "--disable-breakpad",
+    "--disable-default-apps",
+    "--disable-extensions",
+    "--window-position=0,0",
+    "--window-size=1280,720",
+    "--start-fullscreen"
+  ],
+  "renderer_contract": {
+    "api": "WebGL2",
+    "webgl_context_loss_is_failure": true,
+    "hidden_document_is_failure": true,
+    "animated_compositor_layers": 48
+  }
+}

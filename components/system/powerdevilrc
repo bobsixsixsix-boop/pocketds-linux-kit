@@ -1,0 +1,48 @@
+# Pocket DS light standby owns lid DPMS because PowerDevil reaches only one DSI.
+# PowerDevil owns short power-button and idle display-off. Idle DPMS never locks
+# or suspends; dimming stays disabled so it cannot fight the two-screen
+# brightness state machine. Action 64 is TurnOffScreen.
+[AC][Display]
+DimDisplayWhenIdle=false
+LockBeforeTurnOffDisplay=false
+TurnOffDisplayIdleTimeoutSec=300
+TurnOffDisplayIdleTimeoutWhenLockedSec=60
+TurnOffDisplayWhenIdle=true
+UseProfileSpecificDisplayBrightness=false
+
+[AC][SuspendAndShutdown]
+AutoSuspendAction=0
+InhibitLidActionWhenExternalMonitorPresent=false
+LidAction=0
+PowerButtonAction=64
+PowerDownAction=0
+
+[Battery][Display]
+DimDisplayWhenIdle=false
+LockBeforeTurnOffDisplay=false
+TurnOffDisplayIdleTimeoutSec=300
+TurnOffDisplayIdleTimeoutWhenLockedSec=60
+TurnOffDisplayWhenIdle=true
+UseProfileSpecificDisplayBrightness=false
+
+[Battery][SuspendAndShutdown]
+AutoSuspendAction=0
+InhibitLidActionWhenExternalMonitorPresent=false
+LidAction=0
+PowerButtonAction=64
+PowerDownAction=0
+
+[LowBattery][Display]
+DimDisplayWhenIdle=false
+LockBeforeTurnOffDisplay=false
+TurnOffDisplayIdleTimeoutSec=120
+TurnOffDisplayIdleTimeoutWhenLockedSec=60
+TurnOffDisplayWhenIdle=true
+UseProfileSpecificDisplayBrightness=false
+
+[LowBattery][SuspendAndShutdown]
+AutoSuspendAction=0
+InhibitLidActionWhenExternalMonitorPresent=false
+LidAction=0
+PowerButtonAction=64
+PowerDownAction=0

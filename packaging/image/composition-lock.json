@@ -1,0 +1,79 @@
+{
+  "schema": 1,
+  "builder": {
+    "reference": "ghcr.io/osbuild/image-builder-cli@sha256:27cabea9e504a7c4a7546f287f5d60a4846c62b5a8d18c0f678d25fdc2d7975a",
+    "source": "https://osbuild.org/docs/user-guide/image-descriptions/fedora-44/generic-container/",
+    "distro": "fedora-44",
+    "arch": "aarch64",
+    "image_type": "generic-container",
+    "bootmode": "none",
+    "default_filename": "container.tar"
+  },
+  "boundary": {
+    "artifact_role": "rootfs-staging-only",
+    "flashable": false,
+    "partition_table": false,
+    "modifies_boot_chain": false,
+    "build_on_daily_device": false
+  },
+  "blueprint": {
+    "path": "packaging/image/pocketds-rootfs.template.toml",
+    "size": 301,
+    "sha256": "730423ac4158f704da123495bc9284a287e39d62e6a5cfcf95c8611cff6fa1da",
+    "name": "pocketds-linux-rootfs",
+    "description": "Non-flashable Fedora 44 aarch64 rootfs staging artifact",
+    "version": "0.1.0",
+    "distro": "fedora-44",
+    "packages": [
+      {
+        "name": "pocketds-linux-kit",
+        "version": "__PIN_REQUIRED__"
+      },
+      {
+        "name": "pocketds-userspace",
+        "version": "20260507-20260730174706.pds2.fc44"
+      }
+    ]
+  },
+  "identity_policy": {
+    "users_embedded": false,
+    "passwords_embedded": false,
+    "ssh_keys_embedded": false,
+    "network_profiles_embedded": false,
+    "hostname_embedded": false,
+    "machine_id_initialized": false,
+    "ssh_host_keys_initialized": false
+  },
+  "gates": {
+    "builder_digest_verified": {
+      "passed": false,
+      "evidence": null,
+      "sha256": null
+    },
+    "project_rpm_signed_and_pinned": {
+      "passed": false,
+      "evidence": null,
+      "sha256": null
+    },
+    "userspace_pds2_rpm_signed_and_pinned": {
+      "passed": false,
+      "evidence": null,
+      "sha256": null
+    },
+    "repository_snapshot_signed_and_pinned": {
+      "passed": false,
+      "evidence": null,
+      "sha256": null
+    },
+    "release_evidence_complete": {
+      "passed": false,
+      "evidence": null,
+      "sha256": null
+    },
+    "rootfs_smoke_passed": {
+      "passed": false,
+      "evidence": null,
+      "sha256": null
+    }
+  }
+}

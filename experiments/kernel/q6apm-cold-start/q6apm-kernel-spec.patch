@@ -1,0 +1,93 @@
+--- kernel.spec
++++ kernel.spec
+@@ -43,7 +43,7 @@
+ # `.pocketds` suffix bumps NVR above Fedora's vanilla kernel-7.0.0-62.fc44
+ # so that mkosi (and dnf in general) installs our rocknix-patched +
+ # boot.img-wrapped kernel rather than the upstream Fedora signed build.
+-Release:        100.20260730172655.pocketds%{?dist}
++Release:        101.20260829000000.pocketds.q6apmcs1%{?dist}
+ Summary:        Linux kernel for the AYANEO Pocket DS (SM8550)
+ 
+ License:        GPL-2.0-only WITH Linux-syscall-note
+@@ -68,6 +68,8 @@
+ # The tarball is produced by `pocketds-initramfs/make-tarball.sh` and is
+ # refreshed in this dir by `fetch-sources.sh` before each COPR build.
+ Source2:        pocketds-initramfs.tar.zst
++Patch0:         0001-ASoC-qcom-q6apm-return-error-code-to-consumers.patch
++Patch1:         0002-ASoC-qcom-q6apm-keep-graph-start-count-in-sync.patch
+ 
+ 
+ BuildRequires:  bash bc bison binutils diffutils elfutils-devel findutils flex
+@@ -114,6 +116,11 @@
+ 
+ %prep
+ %setup -q -n linux-pocketds-v%{tarfile_release}
++
++# Keep this source experiment fail-closed: both upstream q6apm fixes must
++# apply exactly, in order, with no fuzz or rejected hunks.
++patch --batch --fuzz=0 --reject-file=- -p1 < %{PATCH0}
++patch --batch --fuzz=0 --reject-file=- -p1 < %{PATCH1}
+ 
+ 
+ # Drop the .config in place
+@@ -281,53 +288,18 @@
+ # initramfs and the ROCKNIX-signed ABL doesn't read BLS — those files
+ # would just bloat the FAT and shadow our /boot/Image.
+ #
+-# We DO need a %posttrans to maintain the unversioned /boot/Image
+-# symlink that the ABL actually loads. Per-kernel files are at
+-# /boot/Image-<KernelVer> (rpm-tracked); the unversioned alias is a
+-# plain symlink (rpm-untracked, so two installed kernels don't fight
+-# over /boot/Image like they did before — that conflict is what
+-# triggered "file /boot/Image from install of kernel-X.Y conflicts
+-# with file from package kernel-X.Z" on dnf upgrade).
++# The production package normally refreshes the unversioned ABL aliases in
++# %posttrans. This experimental package deliberately leaves both aliases
++# untouched: it installs only versioned boot files and its distinct module
++# tree. Runtime selection belongs to a separate reviewed transaction.
+ 
+ %posttrans
+-# After every install/upgrade transaction: refresh both
+-#   /boot/Image            (FAT root -- one of the paths the ABL probes)
+-#   /boot/boot/Image       (FAT \boot\Image -- the canonical ABL load
+-#                           path, originally populated only by
+-#                           mkosi.repart at image build time)
+-#
+-# cp not ln because the device's fstab mounts /boot from the FAT
+-# ROCKNIX partition and vfat doesn't support symlinks. `ls -v` sorts
+-# numerically so tail -n1 is the newest NVR. The cp is ~16 MB --
+-# negligible on every kernel upgrade.
+-#
+-# Without writing /boot/boot/Image specifically, on-device dnf
+-# upgrade kernel-X never refreshes the path the ABL actually loads,
+-# and the device keeps booting whatever was flashed at image build
+-# time -- verified live on a Pocket DS that was stuck on kernel-100.*
+-# after multiple kernel-101.* upgrades.
+-latest=$(ls -v /boot/Image-*.aarch64 2>/dev/null | tail -n1)
+-if [ -n "$latest" ]; then
+-    /usr/bin/cp -f "$latest" /boot/Image
+-    if [ -d /boot/boot ]; then
+-        /usr/bin/cp -f "$latest" /boot/boot/Image
+-    fi
+-fi
++# Experimental kernel packages must never select themselves for the ABL.
++# Runtime selection is a separately reviewed, reversible transaction.
+ exit 0
+ 
+ %postun
+-# Same logic on uninstall: re-point both Image paths at whatever
+-# Image-<ver> is still on disk (which after `dnf remove kernel-OLD`
+-# is the still-installed newer kernel). If nothing is left, leave
+-# the existing Images alone -- removing them would leave the device
+-# unbootable, and the user is presumably about to flash a fresh image.
+-latest=$(ls -v /boot/Image-*.aarch64 2>/dev/null | tail -n1)
+-if [ -n "$latest" ]; then
+-    /usr/bin/cp -f "$latest" /boot/Image
+-    if [ -d /boot/boot ]; then
+-        /usr/bin/cp -f "$latest" /boot/boot/Image
+-    fi
+-fi
++# Do not alter either ABL alias when removing an experimental package.
+ exit 0
+ 
+ # --------------------------------------------------------------- files ----

@@ -1,0 +1,35 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: PocketDS Linux Kit <pocketds-linux-kit@localhost>
+Date: Sat, 29 Aug 2026 00:00:00 +0900
+Subject: [PATCH] power: supply: qcom_battmgr: initialize property protocol
+ unit
+
+The SM8350-style property protocol exposes BATT_CHG_FULL_DESIGN and
+BATT_CHG_FULL as charge properties.  Unlike the SC8280XP-style information
+response, this protocol does not populate battmgr->unit.  Since the driver is
+zero allocated, the unit otherwise remains QCOM_BATTMGR_UNIT_mWh and both
+charge properties always return -ENODATA.
+
+Initialize the property-protocol variants to mAh.  The SC8280XP-style
+variants continue to obtain their unit from BATTMGR_BAT_INFO.
+
+Signed-off-by: PocketDS Linux Kit <pocketds-linux-kit@localhost>
+---
+ drivers/power/supply/qcom_battmgr.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/power/supply/qcom_battmgr.c b/drivers/power/supply/qcom_battmgr.c
+index 92a9729e93d5..88db4c507bd9 100644
+--- a/drivers/power/supply/qcom_battmgr.c
++++ b/drivers/power/supply/qcom_battmgr.c
+@@ -1689,5 +1689,8 @@ static int qcom_battmgr_probe(struct auxiliary_device *adev,
+ 					     "failed to register wireless charing power supply\n");
+ 	} else {
++		/* The SM8350-style property protocol reports capacity as charge. */
++		battmgr->unit = QCOM_BATTMGR_UNIT_mAh;
++
+ 		if (battmgr->variant == QCOM_BATTMGR_SM8550)
+ 			psy_desc = &sm8550_bat_psy_desc;
+ 		else
+-- 
+2.50.1

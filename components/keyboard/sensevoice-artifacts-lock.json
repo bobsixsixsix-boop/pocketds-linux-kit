@@ -1,0 +1,129 @@
+{
+  "schema": 1,
+  "platform": {
+    "os": "linux",
+    "arch": "aarch64"
+  },
+  "download_ready": true,
+  "install_ready": true,
+  "release_ready": false,
+  "release_blockers": [
+    "Pocket DS microphone input is unavailable, so no device corpus quality result exists",
+    "Pocket DS latency and memory acceptance have not been measured",
+    "FunASR MODEL_LICENSE requires a current-upstream recheck at release time"
+  ],
+  "engine": {
+    "name": "sherpa-onnx",
+    "version": "1.13.2",
+    "tag": "v1.13.2",
+    "source_commit": "13d0ae6c539d2809d32f5eaa3ef1db0c459d0b24",
+    "source_url": "https://github.com/k2-fsa/sherpa-onnx/tree/13d0ae6c539d2809d32f5eaa3ef1db0c459d0b24",
+    "release_url": "https://github.com/k2-fsa/sherpa-onnx/releases/tag/v1.13.2",
+    "archive": {
+      "filename": "sherpa-onnx-v1.13.2-linux-aarch64-shared-cpu.tar.bz2",
+      "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/v1.13.2/sherpa-onnx-v1.13.2-linux-aarch64-shared-cpu.tar.bz2",
+      "size": 26674802,
+      "sha256": "b54178420e9e6ff6c7f308b5f1cde827215b38393356ee0bd2b7595c648b330b",
+      "member_count": 46,
+      "root": "sherpa-onnx-v1.13.2-linux-aarch64-shared-cpu"
+    },
+    "runtime_files": [
+      {
+        "archive_path": "sherpa-onnx-v1.13.2-linux-aarch64-shared-cpu/bin/sherpa-onnx-offline",
+        "target": ".local/libexec/pocketds-keyboard/sherpa-onnx-offline",
+        "mode": 493,
+        "size": 1709616,
+        "sha256": "993c11d15cdea9e6abfcc4c57d317115e6cdf34ecd63ede71295260e641d95cd"
+      },
+      {
+        "archive_path": "sherpa-onnx-v1.13.2-linux-aarch64-shared-cpu/lib/libonnxruntime.so",
+        "target": ".local/libexec/pocketds-keyboard/libonnxruntime.so",
+        "mode": 420,
+        "size": 32116504,
+        "sha256": "7b31d696ba5020ae72c967e499e802af8123778f1540237bff155db15fe0d7d7"
+      }
+    ],
+    "version_evidence": {
+      "binary": "sherpa-onnx-version",
+      "version": "1.13.2",
+      "git_sha1": "13d0ae6c",
+      "build_date": "Wed May 13 10:53:59 2026"
+    }
+  },
+  "model": {
+    "name": "sherpa-onnx-sense-voice-zh-en-ja-ko-yue-int8-2024-07-17",
+    "source_model": "SenseVoiceSmall",
+    "source_author": "FunASR/FunAudioLLM",
+    "documentation": "https://k2-fsa.github.io/sherpa/onnx/sense-voice/pretrained.html",
+    "archive": {
+      "filename": "sherpa-onnx-sense-voice-zh-en-ja-ko-yue-int8-2024-07-17.tar.bz2",
+      "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-sense-voice-zh-en-ja-ko-yue-int8-2024-07-17.tar.bz2",
+      "size": 163002883,
+      "sha256": "7d1efa2138a65b0b488df37f8b89e3d91a60676e416f515b952358d83dfd347e",
+      "member_count": 12,
+      "root": "sherpa-onnx-sense-voice-zh-en-ja-ko-yue-int8-2024-07-17"
+    },
+    "runtime_files": [
+      {
+        "archive_path": "sherpa-onnx-sense-voice-zh-en-ja-ko-yue-int8-2024-07-17/model.int8.onnx",
+        "target": ".local/share/pocketds-keyboard/sensevoice/model.int8.onnx",
+        "mode": 420,
+        "size": 239233841,
+        "sha256": "c71f0ce00bec95b07744e116345e33d8cbbe08cef896382cf907bf4b51a2cd51"
+      },
+      {
+        "archive_path": "sherpa-onnx-sense-voice-zh-en-ja-ko-yue-int8-2024-07-17/tokens.txt",
+        "target": ".local/share/pocketds-keyboard/sensevoice/tokens.txt",
+        "mode": 420,
+        "size": 315894,
+        "sha256": "f449eb28dc567533d7fa59be34e2abca8784f771850c78a47fb731a31429a1dc"
+      }
+    ],
+    "smoke_fixture": {
+      "archive_path": "sherpa-onnx-sense-voice-zh-en-ja-ko-yue-int8-2024-07-17/test_wavs/zh.wav",
+      "size": 178988,
+      "sha256": "b77f1794fe374a0ba1ee1dc458bfaf9349496cbbfc32780c50ba3c5a7ad8e373",
+      "language": "<|zh|>",
+      "event": "<|Speech|>",
+      "text": "开放时间早上9点至下午5点。"
+    }
+  },
+  "licenses": [
+    {
+      "component": "sherpa-onnx engine",
+      "license": "Apache-2.0",
+      "source_url": "https://github.com/k2-fsa/sherpa-onnx/blob/13d0ae6c539d2809d32f5eaa3ef1db0c459d0b24/LICENSE",
+      "source_commit": "13d0ae6c539d2809d32f5eaa3ef1db0c459d0b24",
+      "repository_path": "components/keyboard/licenses/sherpa-onnx-Apache-2.0.txt",
+      "target": ".local/share/licenses/pocketds-sensevoice/sherpa-onnx-Apache-2.0.txt",
+      "mode": 420,
+      "size": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "current_upstream_recheck_at_release": false
+    },
+    {
+      "component": "SenseVoiceSmall model weights",
+      "license": "FunASR Model Open Source License Agreement 1.1",
+      "source_url": "https://github.com/modelscope/FunASR/blob/05be4863fc94e3df37924a849b9790484ac74a29/MODEL_LICENSE",
+      "source_commit": "05be4863fc94e3df37924a849b9790484ac74a29",
+      "repository_path": "components/keyboard/licenses/FunASR-MODEL-LICENSE-1.1.txt",
+      "target": ".local/share/licenses/pocketds-sensevoice/FunASR-MODEL-LICENSE-1.1.txt",
+      "mode": 420,
+      "size": 5306,
+      "sha256": "7dba975a2069691db4992b0592d70828b330d2f8a30a71450f4e152a554e84f8",
+      "current_upstream_recheck_at_release": true
+    },
+    {
+      "component": "Pocket DS attribution notice",
+      "license": "notice",
+      "source_url": null,
+      "source_commit": null,
+      "repository_path": "components/keyboard/licenses/NOTICE.md",
+      "target": ".local/share/licenses/pocketds-sensevoice/NOTICE.md",
+      "mode": 420,
+      "size": 948,
+      "sha256": "6cae5d6eaa7b972eda5b7ac40e4cbdfa707f0c530593fb7d2b42b579f9d8fed0",
+      "current_upstream_recheck_at_release": false
+    }
+  ]
+}

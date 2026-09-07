@@ -1,0 +1,28 @@
+{
+    "schema": 1,
+    "default_deny": true,
+    "local_only": true,
+    "automatic_upload": false,
+    "diagnostics": {
+        "exclude": [
+            "credentials",
+            "tokens",
+            "cookies",
+            "browser_profiles",
+            "network_configuration",
+            "keyboard_asr_logs",
+            "rom_content",
+            "rom_filenames",
+            "saves",
+            "account_data"
+        ],
+        "redact": [
+            "username",
+            "home_path",
+            "ip_address",
+            "mac_address",
+            "machine_id",
+            "serial"
+        ]
+    }
+}

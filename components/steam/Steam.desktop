@@ -1,0 +1,17 @@
+[Desktop Entry]
+Name=Steam
+Name[zh_CN]=Steam
+Comment=Launch Steam in the unified Pocket DS game runtime
+Comment[zh_CN]=在上屏统一运行，游戏自动获得帧率与限帧
+TryExec=/home/pocketds/.local/bin/pocketds-steam-session
+Exec=env STEAMDECK_MODE=true /home/pocketds/.local/bin/pocketds-steam-session %U
+Icon=/home/pocketds/.local/share/Steam/public/steam_tray_48.tga
+Terminal=false
+Type=Application
+Categories=Game;
+MimeType=x-scheme-handler/steam;
+Actions=GamepadUI;
+
+[Desktop Action GamepadUI]
+Name=大屏幕模式（实验性）
+Exec=env STEAMDECK_MODE=true /home/pocketds/.local/bin/pocketds-steam-session -gamepadui

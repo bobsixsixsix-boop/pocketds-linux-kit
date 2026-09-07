@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Pocket DS 控制台（实验）
+Comment=重新打开下屏实验控制台
+Exec=/usr/libexec/pocketds-panel-client show
+Icon=speedometer
+Terminal=false
+Categories=System;Settings;

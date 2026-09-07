@@ -1,0 +1,26 @@
+From: Pocket DS Linux maintenance
+Subject: [PATCH] drm/msm/dpu: try the next DSC when pingpong parity differs
+
+The non-paired allocator aborts at the first available DSC whose parity
+does not match the assigned pingpong. After the lower, uncompressed panel
+takes pingpong 0, the returning compressed upper panel can receive
+pingpong 1. A free DSC 0 then prevents consideration of the usable DSC 1.
+
+Skip the incompatible DSC, without advancing the pingpong or reserving
+the incompatible resource. Exhaustion still returns -ENAVAIL. The paired
+allocator and all resource ownership checks remain unchanged.
+
+This candidate is tested against extracted real C functions, not yet
+accepted by physical lid/suspend tests.
+
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
+@@ -539,7 +539,7 @@ static int _dpu_rm_dsc_alloc(struct dpu_rm *rm,
+ 
+ 		ret = _dpu_rm_pingpong_dsc_check(dsc_idx, pp_idx);
+ 		if (ret)
+-			return -ENAVAIL;
++			continue;
+ 
+ 		global_state->dsc_to_crtc_id[dsc_idx] = crtc_id;
+ 		num_dsc++;

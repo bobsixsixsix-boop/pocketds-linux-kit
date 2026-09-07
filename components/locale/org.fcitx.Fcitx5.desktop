@@ -1,0 +1,6 @@
+# Pocket DS uses KWin's input-method connection in its Plasma Wayland session.
+# Override only XDG autostart; KWin still uses the system applications entry.
+[Desktop Entry]
+Type=Application
+Name=Fcitx 5
+Hidden=true

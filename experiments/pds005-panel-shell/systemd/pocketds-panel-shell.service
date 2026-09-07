@@ -1,0 +1,14 @@
+[Unit]
+Description=Pocket DS experimental standalone lower-screen panel
+After=plasma-workspace-wayland.target
+PartOf=graphical-session.target
+
+[Service]
+Type=dbus
+BusName=org.pocketds.Panel
+ExecStart=/usr/libexec/pocketds-panel-shell
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=graphical-session.target

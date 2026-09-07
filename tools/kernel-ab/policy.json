@@ -1,0 +1,111 @@
+{
+  "policy_version": 1,
+  "planner_schema_version": 2,
+  "allowed_baselines": {
+    "a4975ce7c8eec079bd0cf7ec3890e100e016813f": {
+      "label": "linux-pocketds v7.1-rc2 plus 46 downstream commits (2026-07-30)",
+      "source_url": "https://gitlab.com/linux-pocketds/linux/-/commit/a4975ce7c8eec079bd0cf7ec3890e100e016813f",
+      "device_id": "ayaneo-pocket-ds-qcs8550",
+      "kernel_release": "7.1.0-100.20260730172655.pocketds.fc44.aarch64"
+    }
+  },
+  "experiments": {
+    "a740-ifpc": {
+      "description": "Disable only the downstream A740 IFPC enablement",
+      "required_reverts": [
+        "d84f65cc8cd7af0bf62cca52d13583394851cfe8"
+      ],
+      "review_patch": {
+        "path": "tools/kernel-ab/patches/0002-revert-a740-ifpc.patch",
+        "sha256": "cefa9b570876057f74bc3695b6328780bf2b69c77d64e0583446826f72f4f4fb"
+      },
+      "acceptance": {
+        "profile": "pds002-gpu-ifpc-v1",
+        "minimum_observation_minutes": 45,
+        "minimum_matched_runs": 3,
+        "recommended_matched_runs": 3,
+        "zero_event_classes": [
+          "gmu_oob",
+          "hfi_error",
+          "gpu_lockup",
+          "gpu_recover",
+          "gpu_offender",
+          "fenced_register_delay",
+          "critical_dma_fence_d_state"
+        ],
+        "non_regression_metrics": [
+          "kwin_atomic_ebusy_rate",
+          "kwin_atomic_ebusy_max_burst",
+          "pressure_some_avg10",
+          "collector_cpu_seconds"
+        ],
+        "required_invariants": [
+          "boot_completed",
+          "display_signature_unchanged",
+          "mesa_unchanged",
+          "kwin_unchanged",
+          "firmware_set_unchanged",
+          "workload_unchanged"
+        ],
+        "rollback_conditions": [
+          "gpu_probe_failed",
+          "black_screen_or_desktop_failed",
+          "new_or_increased_smmu_faults",
+          "display_signature_changed",
+          "thermal_power_or_fan_limit_exceeded",
+          "local_console_and_ssh_both_unavailable"
+        ]
+      }
+    },
+    "dmabuf-release-wait": {
+      "description": "Remove only the downstream GEM/dma-buf teardown change with an infinite fence wait",
+      "required_reverts": [
+        "9f8fbaaeb9e8d6c11bca695de77fd6ee2778fa02"
+      ],
+      "acceptance": {
+        "profile": "pds002-dmabuf-release-v1",
+        "minimum_observation_minutes": 45,
+        "minimum_matched_runs": 3,
+        "recommended_matched_runs": 3,
+        "zero_event_classes": [
+          "critical_dma_fence_d_state",
+          "hung_task",
+          "gem_warn",
+          "gem_uaf",
+          "new_smmu_fault"
+        ],
+        "non_regression_metrics": [
+          "gmu_oob_rate",
+          "gpu_lockup_rate",
+          "kwin_atomic_ebusy_rate",
+          "user_manager_stop_seconds",
+          "collector_cpu_seconds"
+        ],
+        "required_invariants": [
+          "boot_completed",
+          "user_manager_stop_at_most_30_seconds",
+          "display_signature_unchanged",
+          "ifpc_choice_unchanged",
+          "mesa_unchanged",
+          "kwin_unchanged",
+          "firmware_set_unchanged",
+          "workload_unchanged"
+        ],
+        "rollback_conditions": [
+          "gem_warn_or_uaf",
+          "new_or_increased_smmu_faults",
+          "gpu_event_rate_worsened",
+          "black_screen_or_desktop_failed",
+          "shutdown_exceeded_30_seconds",
+          "local_console_and_ssh_both_unavailable"
+        ]
+      }
+    }
+  },
+  "symmetric_patches": {
+    "3392291fc509d8ad6e4ad90f15b0a193f721cbc9": {
+      "name": "drm/msm: Fix shrinker deadlock",
+      "source_url": "https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=3392291fc509d8ad6e4ad90f15b0a193f721cbc9"
+    }
+  }
+}

@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Name=Problem Reporting
+# Keep ABRT collection enabled, but do not replay its GUI notifications.
+Hidden=true

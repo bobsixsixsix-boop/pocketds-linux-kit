@@ -1,0 +1,28 @@
+[Unit]
+Description=Pocket DS temporary controller inspection
+After=inputplumber.service systemd-tmpfiles-setup.service
+Requires=inputplumber.service systemd-tmpfiles-setup.service
+
+[Service]
+Type=notify
+NotifyAccess=main
+ExecStart=/usr/bin/python3 -B /usr/local/libexec/pocketds-controller-test.py
+ExecStopPost=/usr/bin/python3 -B /usr/local/libexec/pocketds-controller-test.py --recover
+Restart=on-failure
+RestartSec=1
+TimeoutStopSec=12
+TimeoutStartSec=12
+RuntimeDirectory=pocketds-controller-test
+RuntimeDirectoryMode=0755
+RuntimeDirectoryPreserve=yes
+UMask=0022
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/run/pocketds-controller-test
+RestrictAddressFamilies=AF_UNIX
+LimitCORE=0
+MemoryMax=96M
+
+[Install]
+WantedBy=multi-user.target

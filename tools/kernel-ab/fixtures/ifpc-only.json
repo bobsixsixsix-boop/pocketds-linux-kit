@@ -1,0 +1,35 @@
+{
+  "schema_version": 2,
+  "experiment_id": "pds002-ifpc-only",
+  "source_commit": "a4975ce7c8eec079bd0cf7ec3890e100e016813f",
+  "variable": "a740-ifpc",
+  "revert_commits": [
+    "d84f65cc8cd7af0bf62cca52d13583394851cfe8"
+  ],
+  "acceptance_profile": "pds002-gpu-ifpc-v1",
+  "controls": {
+    "display_signature": "upper:165Hz;lower:60Hz;layout:pinned-v1",
+    "mesa_nevra": "mesa-dri-drivers-26.1.8-1.fc44.aarch64",
+    "kwin_nevra": "kwin-6.7.4-2.fc44.aarch64",
+    "firmware_set_sha256": "PLACEHOLDER-NOT-FOR-REAL-PLAN:FIRMWARE-SET-SHA256",
+    "kernel_config_sha256": "PLACEHOLDER-NOT-FOR-REAL-PLAN:KERNEL-CONFIG-SHA256",
+    "workload_id": "pds002-baseline-v1",
+    "observation_minutes": 60,
+    "matched_runs": 3,
+    "rollback_artifact": {
+      "artifact_id": "PLACEHOLDER-NOT-FOR-REAL-PLAN:ROLLBACK-ARTIFACT",
+      "sha256": "PLACEHOLDER-NOT-FOR-REAL-PLAN:ROLLBACK-SHA256",
+      "size_bytes": 1,
+      "format": "android-bootimg-v0",
+      "device_id": "ayaneo-pocket-ds-qcs8550",
+      "kernel_release": "7.1.0-100.20260730172655.pocketds.fc44.aarch64",
+      "validation": {
+        "status": "passed",
+        "successful_boots": 1,
+        "successful_recovery_tests": 1,
+        "report_sha256": "PLACEHOLDER-NOT-FOR-REAL-PLAN:ROLLBACK-REPORT-SHA256",
+        "independent_recovery_path": true
+      }
+    }
+  }
+}

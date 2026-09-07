@@ -1,0 +1,146 @@
+{
+  "schema_version": 1,
+  "copr_build_id": 10794847,
+  "package_nevra": "kernel-7.1.0-100.20260730172655.pocketds.fc44.aarch64",
+  "source_commit": "a4975ce7c8eec079bd0cf7ec3890e100e016813f",
+  "source_date_epoch": 1778025600,
+  "environment": {
+    "architecture": "aarch64",
+    "distribution": "Fedora 44",
+    "original_mock_version": "6.7",
+    "reproducer_mock_version": "6.8",
+    "compiler_nevra": "gcc-16.1.1-2.fc44.aarch64",
+    "libfaketime_nevra": "libfaketime-0.9.12-12.fc44.aarch64",
+    "build_user": "mockbuild",
+    "build_host": "f3372ee0477b4ad5af69ee5dda18230b",
+    "build_timestamp": "Thu Jul 30 17:34:11 UTC 2026",
+    "initramfs_regular_mtime_epoch": 1767225600,
+    "initramfs_generated_mtime_epoch": 1785432757
+  },
+  "artifacts": {
+    "source_rpm": {
+      "filename": "kernel.src.rpm",
+      "sha256": "03076822c95a0ec0315d0d400ac0163e86c1ef46eb783bc72621e99f0fed7c03",
+      "size": 259026310
+    },
+    "reference_rpm": {
+      "filename": "reference-kernel.rpm",
+      "sha256": "3d1502c7995fbd4b496796dc66777242c373240209902290899f38160efe2cb9",
+      "size": 37131042
+    },
+    "attested_rebuilt_rpm": {
+      "filename": "attested-rebuilt-kernel.rpm",
+      "sha256": "37b2f27c8c956c1c0ae36800cdbd38f5a2ddf2a0fd470577d16af0144fc9a479",
+      "size": 37131050
+    },
+    "cpp": {
+      "filename": "cpp-16.1.1-2.fc44.aarch64.rpm",
+      "sha256": "36cb4ae1891109006bfff7fab966da1ff110f58b4e2373a2158da4397fc28392",
+      "size": 13931884
+    },
+    "gcc": {
+      "filename": "gcc-16.1.1-2.fc44.aarch64.rpm",
+      "sha256": "073ca0d06242405e0acad7b88f7368b8985b5b5ac842910e7d36c8a28b6469c6",
+      "size": 41809456
+    },
+    "gcc_cxx": {
+      "filename": "gcc-c++-16.1.1-2.fc44.aarch64.rpm",
+      "sha256": "39c7856c8ebd5c7e2651de0ab16b407138096aa0b3e4c78a47bfc4e9dab9fa92",
+      "size": 16664444
+    },
+    "gcc_plugin_annobin": {
+      "filename": "gcc-plugin-annobin-16.1.1-2.fc44.aarch64.rpm",
+      "sha256": "8100ea9818cc8e9c4e885718c5bfb2b7c6d0b4c1ffefcb4415d56d4fa00ffef5",
+      "size": 54344
+    },
+    "libatomic": {
+      "filename": "libatomic-16.1.1-2.fc44.aarch64.rpm",
+      "sha256": "b51b383e7553f067315e5dae998534651f4022d3ae8e42d94802afeb67953016",
+      "size": 51292
+    },
+    "libfaketime": {
+      "filename": "libfaketime-0.9.12-12.fc44.aarch64.rpm",
+      "sha256": "29069d11f4967fdba19e8151f913341db1aab57c745bc1c801dfe5ab38411ce5",
+      "size": 73616
+    },
+    "libgcc": {
+      "filename": "libgcc-16.1.1-2.fc44.aarch64.rpm",
+      "sha256": "cb5f5f6f8e0633a46630abacf3731355879487fb094d2170b2654062a2856c3d",
+      "size": 115381
+    },
+    "libgomp": {
+      "filename": "libgomp-16.1.1-2.fc44.aarch64.rpm",
+      "sha256": "cfb7f7b27cd6be4fbdaabb44d025285cc92ae5c696f700f7c67dc75fb2dc4367",
+      "size": 384202
+    },
+    "libstdcxx": {
+      "filename": "libstdc++-16.1.1-2.fc44.aarch64.rpm",
+      "sha256": "36eaad919acffbbd8555143e32b35d5a05951bf107f118e28cdd1f2a0f63a522",
+      "size": 934128
+    },
+    "libstdcxx_devel": {
+      "filename": "libstdc++-devel-16.1.1-2.fc44.aarch64.rpm",
+      "sha256": "5852c4145dfe2c5045cb445e3205783bdc2ea330f7b49109b5d3f25408da57ab",
+      "size": 5929176
+    }
+  },
+  "recipe_files": {
+    "copr_child_config": {
+      "filename": "copr-child.cfg",
+      "sha256": "3d8b8e3e0c5dc4dcc8249c10a80c77e40a4487a1b0c1c273eb869d6078fb1084",
+      "size": 996
+    },
+    "mock_overlay": {
+      "filename": "pinned-child.cfg",
+      "sha256": "34a3806fa77c2fc36c3e6d2825d24a020bc508d94b16a1d8df2ad6c396d698cc",
+      "size": 302
+    },
+    "date_wrapper": {
+      "filename": "date-wrapper.sh",
+      "sha256": "336acc81b65710fc4316fb53e0a89e41bcf4bd0851fbbefc7ea63dcbf61335f2",
+      "size": 210
+    },
+    "make_wrapper": {
+      "filename": "make-wrapper.sh",
+      "sha256": "fa15dfc3f19361a46d84d836b87570040c60aa3a25ec1fd193f6b498e333c167",
+      "size": 723
+    }
+  },
+  "expected_payload": {
+    "manifest_sha256": "4654c0aa99fcf447b6c589986a1c286a33357aef2e164a65ab79f464ec6b1ada",
+    "entry_count": 499,
+    "regular_file_count": 341,
+    "directory_count": 156,
+    "symlink_count": 2,
+    "regular_file_bytes": 81183506,
+    "rpm_entry_count": 496,
+    "implicit_directory_count": 3,
+    "key_files": {
+      "raw_image": {
+        "path": "lib/modules/7.1.0-100.20260730172655.pocketds.fc44.aarch64/Image",
+        "sha256": "b77e3cecf7c49689017965b5b19829d8224144179fdd4c6c41d79c04e3239ba1",
+        "size": 34515456
+      },
+      "boot_image": {
+        "path": "boot/Image-7.1.0-100.20260730172655.pocketds.fc44.aarch64",
+        "sha256": "cf910fef42e06aaae7f983d3e29ec920705e311e768721428b481a033670d55b",
+        "size": 17090560
+      },
+      "system_map": {
+        "path": "boot/System.map-7.1.0-100.20260730172655.pocketds.fc44.aarch64",
+        "sha256": "576ca5cc5ccfaf3e024043daea7fd02860fccbabe789afc000cac86b2b68c147",
+        "size": 5980271
+      },
+      "dtb": {
+        "path": "boot/dtb-7.1.0-100.20260730172655.pocketds.fc44.aarch64/qcom/qcs8550-ayaneo-pocketds.dtb",
+        "sha256": "0557cee113d4e34fcae274c69400a8a53653e60229a1f333eafde83b2dfe6994",
+        "size": 135527
+      },
+      "config": {
+        "path": "boot/config-7.1.0-100.20260730172655.pocketds.fc44.aarch64",
+        "sha256": "5414bbb75c971adfc7410ca259994ce8a3c7013530105ea79a04500c7f750755",
+        "size": 234416
+      }
+    }
+  }
+}

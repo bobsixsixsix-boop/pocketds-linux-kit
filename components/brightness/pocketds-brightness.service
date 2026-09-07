@@ -1,0 +1,17 @@
+[Unit]
+Description=Pocket DS independent hardware brightness reconciliation
+PartOf=graphical-session.target
+After=graphical-session.target plasma-powerdevil.service
+
+[Service]
+Type=simple
+ExecStart=%h/.local/libexec/pocketds/pocketds-brightness daemon --interval 1 --startup-delay 0
+Restart=on-failure
+RestartSec=5
+Nice=10
+CPUWeight=10
+MemoryMax=64M
+UMask=0077
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,4 @@
+[Behavior]
+ActiveByDefault=True
+ShareInputState=All
+PreloadInputMethod=True

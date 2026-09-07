@@ -1,0 +1,139 @@
+#!/usr/bin/env bash
+# InputPlumber compatibility entrypoint. All profile writes live in
+# the canonical helper so token, rollback and lock semantics cannot drift.
+set -Eeuo pipefail
+
+request=toggle
+case ${1-} in
+    "")
+        ;;
+    --guide)
+        [[ $# -eq 1 ]] || exit 2
+        request=guide
+        ;;
+    --exit-game)
+        [[ $# -eq 1 ]] || exit 2
+        request=exit-game
+        ;;
+    --exit-game-active)
+        [[ $# -eq 1 ]] || exit 2
+        request=exit-game-active
+        ;;
+    *)
+        echo "usage: pocketds-toggle-joymouse [--guide|--exit-game|--exit-game-active]" >&2
+        exit 2
+        ;;
+esac
+
+canonical=${POCKETDS_INPUT_MODE_CANONICAL:-/usr/local/libexec/pocketds-input-mode}
+game_session_state=${POCKETDS_GAME_SESSION_STATE:-/run/user/1000/pocketds-game-session/session.json}
+game_session_supervisor=${POCKETDS_GAME_SESSION_SUPERVISOR:-/usr/local/libexec/pocketds-game-session}
+melonds_app_id=net.kuribo64.melonDS
+retroarch_pattern='^/home/pocketds/.local/bin/retroarch --config /home/pocketds/.config/retroarch/retroarch\.cfg --appendconfig /home/pocketds/.config/retroarch/pocketds\.cfg( |$)'
+[[ -x $canonical ]] || {
+    echo "Canonical Pocket DS input helper is unavailable: $canonical" >&2
+    exit 1
+}
+
+managed_melonds_is_active() {
+    # Production deliberately does not read the ES-DE journal under
+    # /run/user/1000. ProtectHome hides the user's runtime directory from this
+    # root service. Querying the graphical user's Flatpak manager for one exact
+    # application ID is both narrower and works inside the service sandbox.
+    if [[ $game_session_supervisor == /usr/local/libexec/pocketds-game-session ]]; then
+        run_in_pocketds_session /usr/bin/flatpak ps --columns=application |
+            grep -Fxq -- "$melonds_app_id"
+        return $?
+    fi
+
+    # The injected supervisor and state path form the bounded test/development
+    # backend; retain their private-record checks without weakening production.
+    [[ -f $game_session_state && ! -L $game_session_state ]] || return 1
+    local size
+    size=$(stat -c %s -- "$game_session_state" 2>/dev/null) || return 1
+    [[ $size -gt 0 && $size -le 4096 ]] || return 1
+
+    # The production runtime record is private to the graphical user.  Tests
+    # may point at an isolated fixture through the explicit environment hook.
+    if [[ $game_session_state == /run/user/1000/pocketds-game-session/session.json ]]; then
+        local uid mode links
+        read -r uid mode links < <(stat -c '%u %a %h' -- "$game_session_state") || return 1
+        [[ $uid == 1000 && $mode == 600 && $links == 1 ]] || return 1
+    fi
+    grep -Fq '"name":"es-de"' "$game_session_state" || return 1
+    grep -Fq '"phase":"running"' "$game_session_state" || return 1
+}
+
+managed_retroarch_is_active() {
+    # Match the exact managed executable and both explicit config paths. This
+    # excludes ES-DE and unrelated processes while working for every libretro
+    # core launched through pocketds-retroarch.
+    [[ $game_session_supervisor == /usr/local/libexec/pocketds-game-session ]] || return 1
+    run_in_pocketds_session /usr/bin/pgrep -u 1000 -f -- "$retroarch_pattern" \
+        >/dev/null
+}
+
+managed_game_is_active() {
+    managed_melonds_is_active || managed_retroarch_is_active
+}
+
+run_in_pocketds_session() {
+    if [[ $EUID -eq 0 ]]; then
+        /usr/bin/systemd-run --machine=pocketds@.host --user \
+            --quiet --wait --pipe --collect -- "$@"
+    else
+        XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/1000} \
+        DBUS_SESSION_BUS_ADDRESS=${DBUS_SESSION_BUS_ADDRESS:-unix:path=/run/user/1000/bus} \
+            "$@"
+    fi
+}
+
+if [[ $request == exit-game-active ]]; then
+    managed_game_is_active
+    exit $?
+fi
+
+if [[ $request == exit-game ]]; then
+    # Preserve the injected supervisor as a bounded test/development hook.
+    # Production uses Flatpak's exact application ID, never a process-name
+    # search. The root listener asks the existing pocketds user manager to run
+    # it, so NoNewPrivileges and ProtectHome stay enabled on the listener.
+    if [[ $game_session_supervisor != /usr/local/libexec/pocketds-game-session ]]; then
+        managed_melonds_is_active || exit 0
+        [[ -x $game_session_supervisor ]] || exit 0
+        "$game_session_supervisor" stop
+        exit $?
+    fi
+
+    if managed_melonds_is_active; then
+        run_in_pocketds_session /usr/bin/flatpak kill "$melonds_app_id"
+        exit $?
+    fi
+    if managed_retroarch_is_active; then
+        # SIGTERM lets RetroArch save its per-core state before its launcher
+        # unloads the temporary KWin placement script and returns to ES-DE.
+        run_in_pocketds_session /usr/bin/pkill -TERM -u 1000 -f -- \
+            "$retroarch_pattern"
+        exit $?
+    fi
+    exit 0
+fi
+
+# ES-DE owns gamepad mode for its whole managed session.
+if [[ -f $game_session_state && ! -L $game_session_state ]] &&
+   [[ $(stat -c %s -- "$game_session_state" 2>/dev/null || echo 0) -le 4096 ]] &&
+   grep -Fq '"name":"es-de"' "$game_session_state" &&
+   grep -Fq '"phase":"running"' "$game_session_state"; then
+    exit 0
+fi
+
+set +e
+"$canonical" toggle --nonblocking
+status=$?
+set -e
+# Input presses during another serialized transition are intentionally dropped;
+# retrying later is safer than queueing a surprise mode change.
+if [[ $status -eq 75 ]]; then
+    exit 0
+fi
+exit "$status"

@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+usage() {
+    echo 'usage: pocketds-usb-wake-policy' >&2
+    echo '       pocketds-usb-wake-policy --test-root PATH  # unprivileged tests only' >&2
+}
+
+if (( EUID == 0 )); then
+    (( $# == 0 )) || { usage; exit 2; }
+    pci_root=/sys/bus/pci/devices
+else
+    if (( $# != 2 )) || [[ $1 != --test-root ]]; then
+        echo 'Real wake policy application requires root.' >&2
+        usage
+        exit 2
+    fi
+    pci_root=$2
+fi
+
+[[ -d $pci_root ]] || {
+    echo "PCI root does not exist: $pci_root" >&2
+    exit 1
+}
+
+matches=()
+for device_path in "$pci_root"/*; do
+    [[ -d $device_path && -r $device_path/vendor && -r $device_path/device ]] || continue
+    [[ $(<"$device_path/vendor") == 0x1912 ]] || continue
+    [[ $(<"$device_path/device") == 0x0014 ]] || continue
+    [[ -L $device_path/driver ]] || continue
+    [[ $(basename "$(readlink -f "$device_path/driver")") == xhci-pci-renesas ]] || continue
+    [[ -r $device_path/power/wakeup && -w $device_path/power/wakeup ]] || continue
+    matches+=("$device_path")
+done
+
+if (( ${#matches[@]} != 1 )); then
+    echo "Expected exactly one bound Renesas 1912:0014 controller; found ${#matches[@]}." >&2
+    exit 1
+fi
+
+wakeup_file=${matches[0]}/power/wakeup
+current=$(<"$wakeup_file")
+case $current in
+    enabled) printf '%s\n' disabled >"$wakeup_file" ;;
+    disabled) ;;
+    *)
+        echo "Unexpected wake state for ${matches[0]}: $current" >&2
+        exit 1
+        ;;
+esac
+
+[[ $(<"$wakeup_file") == disabled ]] || {
+    echo "Failed to disable wake for ${matches[0]}." >&2
+    exit 1
+}
+
+echo "Renesas xHCI wake disabled: ${matches[0]}"

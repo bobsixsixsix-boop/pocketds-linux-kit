@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=ES-DE 游戏库
+Comment=Pocket DS 复古游戏前端
+Exec=/home/pocketds/.local/bin/pocketds-es-de
+Icon=applications-games
+Terminal=false
+Categories=Game;Emulator;
+StartupNotify=true
+

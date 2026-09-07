@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "device_id": "ayaneo-pocket-ds-qcs8550",
+  "machine_model": "AYANEO Pocket DS",
+  "kernel_release": "7.1.0-100.20260730172655.pocketds.fc44.aarch64",
+  "artifacts": {
+    "baseline_rollback_boot": {
+      "filename": "pds002-live-baseline-rollback-v2.img",
+      "sha256": "e4e0a38ab2f247dc67b6b4521f2fcc57123528ea50edda46ea08d305d9336c94",
+      "size": 17090560
+    },
+    "candidate_runtime_boot": {
+      "filename": "ifpc-native-lid-runtime-boot-v1.img",
+      "sha256": "b29b7c34da3b5406c60cdb7f9cd878de68ce0622de86cb6fab0e314d73c798a1",
+      "size": 17090560
+    },
+    "rocknix_abl_payload": {
+      "filename": "abl_signed-SM8550.elf",
+      "sha256": "5f1018211feaa109563d5890ab52dccfb31db90f4bbe9e6b7fb39e94f860f8d4",
+      "size": 258048
+    },
+    "host_fastboot": {
+      "filename": "fastboot",
+      "sha256": "b635fe0fd3aadf83451b4166332bd6d0e218304265f7e892021a5a6d26b2b3d9",
+      "size": 4956384
+    }
+  },
+  "boot_images": {
+    "page_size": 2048,
+    "container_size": 17090560,
+    "baseline_kernel_size": 17087383,
+    "baseline_image_id_hex": "da1d98ea3f9109c9319a7071d5850845d5df0535000000000000000000000000",
+    "candidate_kernel_size": 17087382,
+    "candidate_image_id_hex": "b1ae63bbad931bc5d1e9d6de38de15cbadde935f000000000000000000000000"
+  },
+  "rocknix_abl": {
+    "release": "1.1.8",
+    "release_url": "https://github.com/ROCKNIX/abl/releases/tag/v1.1.8",
+    "release_asset_sha256": "b217fd8a07acb0346b4704df3805298b2d7025e27fd59a7c11417a6803bab8af",
+    "linuxloader_commit": "22ac43cef216dfd2caefef26cd46db0d8e0d4d71",
+    "partition_prefix_size": 258048,
+    "required_fastboot_string": "Fastboot boot command is not available in locked device"
+  },
+  "host_fastboot": {
+    "version_line": "fastboot version 36.0.2-14143358",
+    "temporary_boot_subcommand": "boot",
+    "requires_unlocked": true
+  },
+  "runtime_identity": {
+    "notes_size": 128,
+    "baseline_notes_sha256": "623ddfdf9409d44af8384b380052e55d3e068710959ebb55cbecf99a48ca55a4",
+    "candidate_notes_sha256": "c6fd86318f8ad84380b3b4bbda0ab3b6df1a13c5881ee1585a8ac5f5ec91ca7a",
+    "baseline_build_id_hex": "8669714a825554324fdfd99fc6ffebaa33e5d755",
+    "candidate_build_id_hex": "2757c6af4c956e14ea106d87233503503b6ba75c"
+  },
+  "disk_boot_aliases": [
+    "boot/Image",
+    "boot/boot/Image",
+    "boot/Image-7.1.0-100.20260730172655.pocketds.fc44.aarch64"
+  ]
+}

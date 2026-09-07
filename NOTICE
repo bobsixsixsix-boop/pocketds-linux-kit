@@ -1,0 +1,40 @@
+Pocket DS Linux Kit — source preview notices
+
+The original code and documentation of Pocket DS Linux Kit, except material
+with an existing separate license or third-party origin, are licensed under the
+GNU General Public License, version 3 or (at your option) any later version
+(SPDX-License-Identifier: GPL-3.0-or-later).
+
+You may redistribute and modify that original material under those terms. It is
+provided without any warranty, including implied warranties of merchantability
+or fitness for a particular purpose. See the complete license in LICENSE.
+
+Existing copyright statements, SPDX identifiers and upstream patch authorship
+remain in their respective files. Separate file-level and third-party licenses
+continue to apply; this grant does not replace GPL-2.0-or-later, GPL-2.0-only,
+GPL-3.0-only, BSD, MIT or other existing notices. No third-party copyrights are
+claimed by this project.
+
+Source attribution and unresolved copy-history details are recorded in
+THIRD-PARTY.md. In particular:
+
+* Phosphor icon paths retain the complete MIT notice at
+  components/android-boot-switch/licenses/Phosphor-Icons-MIT.txt and
+  components/control-panel/plasmoid/licenses/Phosphor-Icons-MIT.txt.
+  If extracting either component separately, carry its full MIT notice.
+* The Valve gamescope protocol retains its MIT notice in
+  components/game-runtime/gamescope-control.xml.
+* The ALSA UCM sequence in components/audio/HiFi.conf derives from alsa-ucm-conf.
+  Its full BSD notice is in components/audio/licenses/ALSA-ucm-BSD-3-Clause.txt.
+* Existing GPL-covered components retain their per-file version options.
+  Copies of GPL version 2 and version 3 are provided under LICENSES/.
+  The presence of a GPL text alone does not add an "or later" grant.
+* Kernel and device-tree patches retain the licenses of their upstream files;
+  this includes GPL-2.0-only and BSD-3-Clause material.
+
+Optional downloaded models, engines, application runtimes and system packages
+have separate licenses. The notices supplied here do not authorize distribution
+of a complete system image or downloaded runtime bundle. Personal wallpapers
+and the precompiled gamescope observer are excluded from source previews.
+Device screenshots under docs/screenshots are documentation; existing
+third-party notices and license scopes for the depicted UI continue to apply.

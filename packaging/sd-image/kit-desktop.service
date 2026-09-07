@@ -1,0 +1,15 @@
+[Unit]
+Description=Set up the Pocket DS lower-screen desktop
+After=plasma-plasmashell.service plasma-workspace-wayland.target pocketds-keyboard.service
+PartOf=graphical-session.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/python3 -B /usr/libexec/pocketds-image-desktop
+TimeoutStartSec=180
+UMask=0077
+NoNewPrivileges=true
+
+[Install]
+WantedBy=graphical-session.target

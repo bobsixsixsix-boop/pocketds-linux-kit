@@ -1,0 +1,25 @@
+[Unit]
+Description=Pocket DS lower-screen multi-touch trackpad
+After=plasma-workspace-wayland.target pocketds-keyboard.service
+PartOf=graphical-session.target
+
+[Service]
+Type=notify
+NotifyAccess=main
+Environment=GDK_BACKEND=x11
+Environment=DISPLAY=:0
+ExecStart=%h/.local/bin/pocketds-touchpad.py
+ExecReload=/bin/kill -USR1 $MAINPID
+RuntimeDirectory=pocketds-touchpad
+RuntimeDirectoryMode=0700
+RuntimeDirectoryPreserve=no
+UMask=0077
+Restart=on-failure
+RestartSec=2
+TimeoutStartSec=15
+TimeoutStopSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=graphical-session.target

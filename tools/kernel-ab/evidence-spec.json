@@ -1,0 +1,24 @@
+{
+  "schema_version": 3,
+  "device_id": "ayaneo-pocket-ds-qcs8550",
+  "expected_compatible": [
+    "ayaneo,pocketds",
+    "qcom,qcs8550",
+    "qcom,sm8550"
+  ],
+  "expected_kernel_release": "7.1.0-100.20260730172655.pocketds.fc44.aarch64",
+  "expected_source_commit": "a4975ce7c8eec079bd0cf7ec3890e100e016813f",
+  "kernel_image": "usr/lib/modules/7.1.0-100.20260730172655.pocketds.fc44.aarch64/Image",
+  "kernel_config": "usr/lib/modules/7.1.0-100.20260730172655.pocketds.fc44.aarch64/config",
+  "kernel_config_mirror": "boot/config-7.1.0-100.20260730172655.pocketds.fc44.aarch64",
+  "boot_image_versioned": "boot/Image-7.1.0-100.20260730172655.pocketds.fc44.aarch64",
+  "boot_image_aliases": [
+    "boot/Image",
+    "boot/boot/Image"
+  ],
+  "boot_dtb": "boot/dtb-7.1.0-100.20260730172655.pocketds.fc44.aarch64/qcom/qcs8550-ayaneo-pocketds.dtb",
+  "firmware_files": [
+    "usr/lib/firmware/qcom/a740_sqe.fw",
+    "usr/lib/firmware/qcom/gmu_gen70200.bin"
+  ]
+}

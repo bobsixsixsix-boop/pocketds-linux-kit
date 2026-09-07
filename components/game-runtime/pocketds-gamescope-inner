@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Runs inside Gamescope. Telemetry is deliberately optional: a broken observer
+# must never prevent the actual game from starting.
+set -Eeuo pipefail
+
+if (($# == 0)); then
+    echo 'usage: pocketds-gamescope-inner COMMAND [ARG ...]' >&2
+    exit 64
+fi
+
+observer=${POCKETDS_GAMESCOPE_OBSERVER:-/usr/local/libexec/pocketds-gamescope-observer}
+gamescopectl=${POCKETDS_GAMESCOPECTL:-/usr/bin/gamescopectl}
+# This Flip DS Gamescope fork emits output-timing callbacks on DRM, but not on
+# its nested Wayland backend. Use the compositor's own commit-timing path for
+# nested sessions; the limiter is applied before these commits are reported.
+if [[ -x $gamescopectl && ! -L $gamescopectl ]]; then
+    "$gamescopectl" mangoapp_use_output_timing false >/dev/null 2>&1 || true
+fi
+if [[ -x $observer && ! -L $observer ]]; then
+    POCKETDS_GAMESCOPE_PARENT_PID=$$ "$observer" >/dev/null 2>&1 &
+fi
+
+# Gamescope intentionally exposes an XWayland display in this mode. Point the
+# generic Wayland variable at no socket as well: libwayland otherwise falls
+# back to the host's wayland-0 when WAYLAND_DISPLAY is merely unset, allowing
+# native-Wayland applications to bypass this compositor and its telemetry.
+unset WAYLAND_SOCKET
+export WAYLAND_DISPLAY=/nonexistent/pocketds-gamescope-wayland
+export XDG_SESSION_TYPE=x11
+exec "$@"

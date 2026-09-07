@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Linux Logo adapted from Phosphor Icons, MIT licensed.
+     Fixed reference and unchanged local path: ../../licenses/Phosphor-SOURCES.json. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="256"
+    android:viewportHeight="256">
+    <group
+        android:scaleX="0.625"
+        android:scaleY="0.625"
+        android:translateX="48"
+        android:translateY="48">
+        <path
+            android:fillColor="#78D6A4"
+            android:pathData="M229,214.25A8,8 0,0 1,217.76 213C216.39,211.27 184,169.86 184,88A56,56 0,0 0,72 88c0,81.86 -32.37,123.27 -33.75,125A8,8 0,0 1,25.74 203c0.15,-0.2 7.69,-9.9 15.13,-28.74C47.77,156.8 56,127.64 56,88a72,72 0,0 1,144 0c0,39.64 8.23,68.8 15.13,86.28 7.48,18.94 15.06,28.64 15.14,28.74A8,8 0,0 1,229 214.25ZM100,88a12,12 0,1 0,12 12A12,12 0,0 0,100 88ZM168,100a12,12 0,1 0,-12 12A12,12 0,0 0,168 100ZM99.58,128.84a8,8 0,0 0,-7.15 14.31l32,16a7.94,7.94 0,0 0,7.15 0l32,-16a8,8 0,0 0,-7.16 -14.31L128,143.05ZM128,176a54.07,54.07 0,0 0,-47 28.11,8 8,0 1,0 14,7.78 37.35,37.35 0,0 1,66 0,8 8,0 0,0 14,-7.78A54.07,54.07 0,0 0,128 176Z" />
+    </group>
+</vector>

@@ -1,0 +1,13 @@
+// Ordinary local active-session sleep only. Never bypass application blockers
+// or multiple-session authorization. The next rule still denies those paths.
+polkit.addRule(function(action, subject) {
+    if (action.id === "org.freedesktop.login1.suspend" &&
+            subject.user === "pocketds" && subject.local && subject.active) {
+        try {
+            polkit.spawn(["/usr/local/libexec/pocketds-daily-suspend", "check"]);
+            return polkit.Result.YES;
+        } catch (error) {
+            return polkit.Result.NO;
+        }
+    }
+});

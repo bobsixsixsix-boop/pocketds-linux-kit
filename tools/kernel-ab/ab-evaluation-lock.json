@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "experiment": "a740-ifpc",
+  "collector_schema": "pds002-baseline/v1",
+  "kernel_release": "7.1.0-100.20260730172655.pocketds.fc44.aarch64",
+  "variants": {
+    "baseline": {
+      "notes_sha256": "623ddfdf9409d44af8384b380052e55d3e068710959ebb55cbecf99a48ca55a4"
+    },
+    "candidate": {
+      "notes_sha256": "c6fd86318f8ad84380b3b4bbda0ab3b6df1a13c5881ee1585a8ac5f5ec91ca7a"
+    }
+  },
+  "fixed_controls": {
+    "kwin_wayland": {
+      "sha256": "0a71f45484a97fecd44679baef3ef921c7cfc07fe0557fb63c7e0bb2a918f111",
+      "size": 1497488
+    },
+    "a740_sqe_firmware": {
+      "sha256": "96fee336424b139100fc60b5b45a907360e4b3936d7e1d00406b9bd80ca48473",
+      "size": 76724
+    },
+    "gmu_gen70200_firmware": {
+      "sha256": "1a2a419c39046d3141fc5fed5aa7f971de2db40cc7a1d89693c3e26fad64dd98",
+      "size": 66844
+    },
+    "fan_controller": {
+      "sha256": "9f04ff7113a3e2ea8412fca17a44cd728c20f6cbb7ab5cd463d8f66dd006f0fe",
+      "size": 11955
+    }
+  },
+  "runtime_controls": {
+    "tuned_active_profile": {
+      "sha256": "0ee6cc02a328c139a04f6f4d33c26be5f65b7cdada109aec4b44bb72e2359322",
+      "size": 21
+    },
+    "fan_profile": {
+      "sha256": "34563681505b1fb98da03634b660fe13ec5be923d44cc22413b51be1669c847c",
+      "size": 11
+    }
+  },
+  "profiles": {
+    "dual-165-60": {
+      "DSI-1": [165000],
+      "DSI-2": [59999, 60000]
+    },
+    "dual-60-60": {
+      "DSI-1": [59999, 60000],
+      "DSI-2": [59999, 60000]
+    },
+    "upper-only-165": {
+      "DSI-1": [165000]
+    }
+  },
+  "minimum_rounds_per_variant": 3,
+  "minimum_duration_seconds": 2700,
+  "minimum_sample_coverage": 0.95,
+  "maximum_sample_gap_factor": 2.0,
+  "maximum_collector_cpu_percent": 0.5,
+  "maximum_gpu_sample_age_ms": 3000,
+  "maximum_gpu_temperature_c": 85.0,
+  "gpu_temperature_absolute_allowance_c": 3.0,
+  "non_regression_ratio": 1.25,
+  "pressure_absolute_allowance": 0.25,
+  "collector_cpu_seconds_allowance": 3.0
+}

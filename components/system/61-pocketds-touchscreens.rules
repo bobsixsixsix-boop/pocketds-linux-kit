@@ -1,0 +1,4 @@
+SUBSYSTEM=="input", KERNEL=="event*", ATTRS{name}=="Goodix Capacitive TouchScreen", \
+    ENV{LIBINPUT_OUTPUT_NAME}="DSI-2", TAG+="uaccess"
+SUBSYSTEM=="input", KERNEL=="event*", ATTRS{name}=="generic ft5x06*", \
+    ENV{LIBINPUT_OUTPUT_NAME}="DSI-1"

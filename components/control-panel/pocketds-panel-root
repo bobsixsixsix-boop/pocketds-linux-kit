@@ -1,0 +1,89 @@
+#!/bin/sh
+set -eu
+
+case "${1:-}" in
+    fan-manual)
+        [ "$#" -eq 2 ] || exit 2
+        value="${2:-}"
+        case "$value" in *[!0-9]*|'') exit 2;; esac
+        [ "$value" -ge 20 ] && [ "$value" -le 100 ] || exit 2
+        pwm=$((value * 255 / 100))
+        tmp_curve=$(mktemp /etc/pocketds-fancontrol/custom.conf.XXXXXX)
+        printf '0=%s\n110=%s\n' "$pwm" "$pwm" > "$tmp_curve"
+        chmod 0644 "$tmp_curve"
+        mv "$tmp_curve" /etc/pocketds-fancontrol/custom.conf
+        printf 'custom\n' > /etc/pocketds-fancontrol/profile
+        ;;
+    power)
+        [ "$#" -eq 2 ] || exit 2
+        case "${2:-}" in
+            powersave) tuned_profile=pocketds-powersave ;;
+            balanced) tuned_profile=pocketds-balanced ;;
+            performance) tuned_profile=pocketds-performance ;;
+            *) exit 2 ;;
+        esac
+        # tuned-adm is a Python frontend and adds more than a second of cold
+        # startup to every Panel tap.  The root helper is already the narrow
+        # authorization boundary, so call TuneD's exact D-Bus method directly
+        # and reject its in-band `(bs) false` failure reply.
+        reply=$(/usr/bin/busctl --system --timeout=2s call com.redhat.tuned /Tuned \
+            com.redhat.tuned.control switch_profile s "$tuned_profile") || exit $?
+        case "$reply" in
+            '(bs) true '*) ;;
+            *) printf 'TuneD rejected profile %s: %s\n' "$tuned_profile" "$reply" >&2; exit 1 ;;
+        esac
+        ;;
+    brightness)
+        [ "$#" -eq 3 ] || exit 2
+        screen="${2:-}"
+        value="${3:-}"
+        case "$value" in *[!0-9]*|'') exit 2;; esac
+        [ "$value" -ge 5 ] && [ "$value" -le 100 ] || exit 2
+        case "$screen" in
+            top) backlight=/sys/class/backlight/ae94000.dsi.0 ;;
+            bottom) backlight=/sys/class/backlight/sy7758-backlight ;;
+            *) exit 2 ;;
+        esac
+        maximum=$(cat "$backlight/max_brightness")
+        raw=$((maximum * value / 100))
+        printf '%s\n' "$raw" > "$backlight/brightness"
+        ;;
+    backlight-blank)
+        # The SY7758 driver records DPMS powerdown in bl_power but leaves its
+        # brightness property nonzero, which keeps the Pocket DS LCD visibly
+        # illuminated. Only permit the zero write after the kernel already
+        # marked that exact backlight off; normal brightness remains 5..100%.
+        [ "$#" -eq 2 ] || exit 2
+        [ "${2:-}" = bottom ] || exit 2
+        backlight=/sys/class/backlight/sy7758-backlight
+        power=$(cat "$backlight/bl_power")
+        case "$power" in
+            1|2|3|4) ;;
+            *) exit 1 ;;
+        esac
+        printf '0\n' > "$backlight/brightness"
+        ;;
+    deep-suspend-check)
+        [ "$#" -eq 1 ] || exit 2
+        exec /usr/local/libexec/pocketds-deep-suspend check
+        ;;
+    deep-suspend)
+        # The fixed root-owned lifecycle program is the only sleep interface.
+        [ "$#" -eq 2 ] || exit 2
+        seconds="${2:-}"
+        case "$seconds" in *[!0-9]*|'') exit 2;; esac
+        [ "$seconds" -ge 60 ] && [ "$seconds" -le 300 ] || exit 2
+        exec /usr/local/libexec/pocketds-deep-suspend run "$seconds"
+        ;;
+    boot-android)
+        # The transaction helper accepts only the verified Pocket DS devinfo
+        # template, changes only BootMode, keeps a backup and verifies readback.
+        [ "$#" -eq 2 ] || exit 2
+        [ "${2:-}" = CONFIRM ] || exit 2
+        /usr/bin/python3 /usr/local/libexec/pocketds-boot-mode android CONFIRM
+        exec /usr/bin/systemctl --no-block reboot
+        ;;
+    *)
+        exit 2
+        ;;
+esac

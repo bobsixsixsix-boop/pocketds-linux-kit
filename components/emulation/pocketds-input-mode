@@ -1,0 +1,748 @@
+#!/usr/bin/env bash
+# Canonical InputPlumber writer for Pocket DS. Every profile/target mutation is
+# serialized and tagged with a random lease token so old launchers cannot undo
+# a newer Guide/Panel choice, including gamepad -> joymouse -> gamepad ABA.
+set -Eeuo pipefail
+
+service=org.shadowblip.InputPlumber
+device=/org/shadowblip/InputPlumber/CompositeDevice0
+interface=org.shadowblip.Input.CompositeDevice
+force_feedback_interface=org.shadowblip.Output.ForceFeedback
+gamepad_profile=/usr/share/inputplumber/profiles/pocketds-gamepad.yaml
+joymouse_profile=/usr/share/inputplumber/profiles/pocketds-joymouse.yaml
+default_profile=/usr/share/inputplumber/profiles/default.yaml
+target_interface=org.shadowblip.Input.Target
+protocol=pds-input-v1
+busctl_bin=${POCKETDS_BUSCTL:-busctl}
+timeout_bin=${POCKETDS_TIMEOUT:-timeout}
+sleep_bin=${POCKETDS_SLEEP:-sleep}
+sys_input=${POCKETDS_SYS_INPUT:-/sys/class/input}
+flock_bin=${POCKETDS_FLOCK:-/usr/bin/flock}
+lock_file=${POCKETDS_INPUT_LOCK:-/run/pocketds-input-mode.lock}
+state_dir=${POCKETDS_INPUT_STATE_DIR:-/run/pocketds-input-mode}
+state_file=$state_dir/state
+uuid_source=${POCKETDS_UUID_SOURCE:-/proc/sys/kernel/random/uuid}
+uuid_generator=${POCKETDS_UUID_GENERATOR:-}
+
+usage() {
+    echo 'usage: pocketds-input-mode status|wait MODE|set MODE|bootstrap' >&2
+    echo '       pocketds-input-mode toggle [--nonblocking]' >&2
+    echo '       pocketds-input-mode acquire MODE' >&2
+    echo '       pocketds-input-mode restore-token TOKEN EXPECTED TARGET' >&2
+    echo '       pocketds-input-mode recover-token TOKEN TARGET' >&2
+    echo '       pocketds-input-mode reconcile' >&2
+    echo 'MODE: gamepad|joymouse' >&2
+}
+
+valid_mode() {
+    [[ ${1:-} == gamepad || ${1:-} == joymouse ]]
+}
+
+run_busctl() {
+    "$timeout_bin" -k 0.5s 0.75s "$busctl_bin" "$@"
+}
+
+force_feedback_supported=0
+inspect_force_feedback() {
+    local introspection
+    force_feedback_supported=0
+    if ! introspection=$(run_busctl introspect "$service" "$device"); then
+        echo 'Could not inspect InputPlumber force-feedback support' >&2
+        return 1
+    fi
+    if ! awk -v interface="$force_feedback_interface" \
+            '$1 == interface && $2 == "interface" { found = 1 } \
+             END { exit(found ? 0 : 1) }' <<<"$introspection"; then
+        # InputPlumber 0.75 has no force-feedback output interface.  Keeping
+        # that rollback binary usable is intentional.
+        return 0
+    fi
+    force_feedback_supported=1
+}
+
+stop_force_feedback() {
+    ((force_feedback_supported)) || return 0
+    if ! run_busctl call "$service" "$device" \
+            "$force_feedback_interface" Stop >/dev/null; then
+        echo 'InputPlumber force-feedback Stop failed' >&2
+        return 1
+    fi
+}
+
+profile_path() {
+    run_busctl get-property "$service" "$device" "$interface" ProfilePath \
+        2>/dev/null | sed -n 's/^s "\(.*\)"$/\1/p'
+}
+
+target_devices() {
+    run_busctl get-property "$service" "$device" "$interface" TargetDevices \
+        2>/dev/null
+}
+
+read_target_snapshot() {
+    local raw count field path type name target_id
+    local -a fields
+    raw=$(target_devices) || return
+    read -r -a fields <<<"$raw"
+    [[ ${#fields[@]} -ge 2 && ${fields[0]} == as && \
+       ${fields[1]} =~ ^[0-9]+$ ]] || return 1
+    count=${fields[1]}
+    [[ ${#fields[@]} -eq $((count + 2)) ]] || return 1
+    target_snapshot_raw=$raw
+    target_snapshot_paths=()
+    target_snapshot_types=()
+    target_snapshot_names=()
+    target_snapshot_ids=()
+    for field in "${fields[@]:2}"; do
+        [[ $field == \"*\" ]] || return 1
+        path=${field#\"}
+        path=${path%\"}
+        [[ $path =~ ^/[A-Za-z0-9_/]+$ ]] || return 1
+        type=$(run_busctl get-property "$service" "$path" \
+            "$target_interface" DeviceType 2>/dev/null | \
+            sed -n 's/^s "\([a-z0-9-]*\)"$/\1/p')
+        name=$(run_busctl get-property "$service" "$path" \
+            "$target_interface" Name 2>/dev/null | \
+            sed -n 's/^s "\(.*\)"$/\1/p')
+        case "$type:$name" in
+            'xbox-elite:Microsoft X-Box One Elite pad') target_id=xbox-elite ;;
+            'xbox-series:Microsoft Xbox Series S|X Controller') target_id=xbox-series ;;
+            'mouse:InputPlumber Mouse') target_id=mouse ;;
+            'keyboard:InputPlumber Keyboard') target_id=keyboard ;;
+            'dbus:DBus Device') target_id=dbus ;;
+            *) return 1 ;;
+        esac
+        target_snapshot_paths+=("$path")
+        target_snapshot_types+=("$type")
+        target_snapshot_names+=("$name")
+        target_snapshot_ids+=("$target_id")
+    done
+}
+
+target_ids_match() {
+    local expected_mode=$1 expected_id actual_id matches
+    local -a expected_ids
+    case "$expected_mode" in
+        gamepad) expected_ids=(xbox-elite keyboard dbus) ;;
+        joymouse) expected_ids=(mouse keyboard dbus) ;;
+        default) expected_ids=(xbox-series mouse keyboard dbus) ;;
+        *) return 2 ;;
+    esac
+    [[ ${#target_snapshot_ids[@]} -eq ${#expected_ids[@]} ]] || return 1
+    for expected_id in "${expected_ids[@]}"; do
+        matches=0
+        for actual_id in "${target_snapshot_ids[@]}"; do
+            [[ $actual_id != "$expected_id" ]] || matches=$((matches + 1))
+        done
+        [[ $matches -eq 1 ]] || return 1
+    done
+}
+
+default_snapshot_matches() {
+    local profile
+    profile=$(profile_path || true)
+    [[ $profile == "$default_profile" ]] || return 1
+    read_target_snapshot || return
+    target_ids_match default
+}
+
+current_mode() {
+    case "$(profile_path || true)" in
+        "$gamepad_profile") echo gamepad ;;
+        "$joymouse_profile") echo joymouse ;;
+        '') echo unavailable ;;
+        *) echo other ;;
+    esac
+}
+
+snapshot_matches() {
+    local mode=$1 profile=$2 targets=$3
+    case "$mode" in
+        gamepad)
+            [[ $profile == "$gamepad_profile" ]] || return 1
+            ;;
+        joymouse)
+            [[ $profile == "$joymouse_profile" ]] || return 1
+            ;;
+        *) return 2 ;;
+    esac
+    read_target_snapshot && [[ $target_snapshot_raw == "$targets" ]] && \
+        target_ids_match "$mode"
+}
+
+event_ready() {
+    local mode=$1 name_file name
+    shopt -s nullglob
+    for name_file in "$sys_input"/event*/device/name; do
+        IFS= read -r name <"$name_file" || continue
+        case "$mode:$name" in
+            gamepad:Microsoft\ X-Box\ One\ Elite*) return 0 ;;
+            joymouse:InputPlumber\ Mouse*) return 0 ;;
+        esac
+    done
+    return 1
+}
+
+restore_detached_snapshot_raw() {
+    local profile=$1
+    shift
+    local -a targets=("$@")
+    [[ $profile == /* && ${#targets[@]} -gt 0 ]] || return 2
+    run_busctl call "$service" "$device" "$interface" \
+        SetTargetDevices as 1 dbus >/dev/null || return
+    run_busctl call "$service" "$device" "$interface" \
+        LoadProfilePath s "$profile" >/dev/null || return
+    run_busctl call "$service" "$device" "$interface" \
+        SetTargetDevices as "${#targets[@]}" "${targets[@]}" >/dev/null || return
+}
+
+apply_profile_targets_raw() {
+    local profile=$1 previous_profile
+    shift
+    local -a targets=("$@") previous_targets
+    [[ $profile == /* && ${#targets[@]} -gt 0 ]] || return 2
+
+    previous_profile=$(profile_path) || return
+    [[ $previous_profile == /* ]] || return 1
+    read_target_snapshot || return
+    previous_targets=("${target_snapshot_ids[@]}")
+
+    # Capability probing is deliberately before the first target mutation.
+    # Once detached, every failure path restores this exact entry snapshot
+    # without requiring another ForceFeedback call.
+    inspect_force_feedback || return
+    if run_busctl call "$service" "$device" "$interface" \
+            SetTargetDevices as 1 dbus >/dev/null && \
+       stop_force_feedback && \
+       run_busctl call "$service" "$device" "$interface" \
+            LoadProfilePath s "$profile" >/dev/null && \
+       run_busctl call "$service" "$device" "$interface" \
+            SetTargetDevices as "${#targets[@]}" "${targets[@]}" >/dev/null; then
+        return 0
+    fi
+
+    echo 'Input target mutation failed; restoring its exact entry snapshot' >&2
+    if ! restore_detached_snapshot_raw "$previous_profile" \
+            "${previous_targets[@]}"; then
+        echo 'CRITICAL: exact input target snapshot restore failed' >&2
+    fi
+    return 1
+}
+
+state_matches() {
+    local mode=$1 profile targets
+    profile=$(profile_path || true)
+    targets=$(target_devices || true)
+    snapshot_matches "$mode" "$profile" "$targets" && event_ready "$mode"
+}
+
+wait_mode() {
+    local mode=$1 stable=0 previous='' snapshot attempt profile targets
+    valid_mode "$mode" || { usage; return 2; }
+    for attempt in $(seq 1 10); do
+        profile=$(profile_path || true)
+        targets=$(target_devices || true)
+        snapshot="$profile|$targets"
+        if snapshot_matches "$mode" "$profile" "$targets" && event_ready "$mode"; then
+            if [[ $snapshot == "$previous" ]]; then
+                stable=$((stable + 1))
+            else
+                stable=1
+                previous=$snapshot
+            fi
+            if ((stable >= 3)); then
+                return 0
+            fi
+        else
+            stable=0
+            previous=$snapshot
+        fi
+        "$sleep_bin" 0.1
+    done
+    echo "InputPlumber did not reach stable $mode mode" >&2
+    return 1
+}
+
+apply_mode_raw() {
+    local mode=$1 profile
+    local -a targets
+    case "$mode" in
+        gamepad)
+            profile=$gamepad_profile
+            targets=(xbox-elite keyboard dbus)
+            ;;
+        joymouse)
+            profile=$joymouse_profile
+            targets=(mouse keyboard dbus)
+            ;;
+        *) usage; return 2 ;;
+    esac
+
+    apply_profile_targets_raw "$profile" "${targets[@]}"
+}
+
+apply_snapshot_raw() {
+    local profile=$1
+    shift
+    local -a targets=("$@")
+    [[ $profile == "$default_profile" && ${#targets[@]} -eq 4 ]] || return 2
+    target_snapshot_ids=("${targets[@]}")
+    target_ids_match default || return 2
+    apply_profile_targets_raw "$profile" "${targets[@]}"
+}
+
+wait_default() {
+    local stable=0 previous='' snapshot attempt
+    for attempt in $(seq 1 10); do
+        if default_snapshot_matches; then
+            snapshot="$target_snapshot_raw"
+            if [[ $snapshot == "$previous" ]]; then
+                stable=$((stable + 1))
+            else
+                stable=1
+                previous=$snapshot
+            fi
+            if ((stable >= 3)); then
+                return 0
+            fi
+        else
+            stable=0
+            previous=''
+        fi
+        "$sleep_bin" 0.1
+    done
+    echo 'InputPlumber did not return to its stable default profile' >&2
+    return 1
+}
+
+file_link_count_and_size() {
+    local path=$1 result
+    if result=$(stat -c '%h %s' "$path" 2>/dev/null); then
+        printf '%s\n' "$result"
+    else
+        stat -f '%l %z' "$path" 2>/dev/null
+    fi
+}
+
+validate_state_path() {
+    local metadata links size
+    [[ -d $state_dir && ! -L $state_dir ]] || {
+        echo "Input state directory is missing or unsafe: $state_dir" >&2
+        return 1
+    }
+    if [[ -e $state_file || -L $state_file ]]; then
+        [[ -f $state_file && ! -L $state_file ]] || {
+            echo "Input state file is unsafe: $state_file" >&2
+            return 1
+        }
+        metadata=$(file_link_count_and_size "$state_file") || return
+        read -r links size <<<"$metadata"
+        [[ $links == 1 && $size -le 128 ]] || {
+            echo "Input state file identity or size is unsafe: $state_file" >&2
+            return 1
+        }
+    fi
+}
+
+acquire_transition_lock() {
+    local policy=${1:-blocking}
+    [[ -f $lock_file && ! -L $lock_file ]] || {
+        echo "Input transition lock is missing or unsafe: $lock_file" >&2
+        return 1
+    }
+    validate_state_path
+    exec 9<"$lock_file"
+    if [[ $policy == nonblocking ]]; then
+        if "$flock_bin" -E 75 -n 9; then
+            :
+        else
+            return $?
+        fi
+    elif ! "$flock_bin" -w 8 9; then
+        echo 'Timed out waiting for the InputPlumber transition lock' >&2
+        return 1
+    fi
+}
+
+new_token() {
+    local token
+    if [[ -n $uuid_generator ]]; then
+        token=$("$uuid_generator") || return
+    else
+        [[ -f $uuid_source && ! -L $uuid_source ]] || {
+            echo "Input token source is missing or unsafe: $uuid_source" >&2
+            return 1
+        }
+        IFS= read -r token <"$uuid_source" || return
+    fi
+    [[ $token =~ ^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$ ]] || {
+        echo 'Input token generator returned an invalid UUID.' >&2
+        return 1
+    }
+    printf '%s\n' "$token"
+}
+
+write_state_locked() {
+    local token=$1 mode=$2 temporary=''
+    [[ $mode == gamepad || $mode == joymouse || \
+       $mode == transitioning || $mode == unknown ]] || return 2
+    [[ $token =~ ^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$ ]] || return 2
+    umask 007
+    temporary=$(mktemp "$state_dir/.state.XXXXXX") || return
+    if ! printf '%s %s %s\n' "$protocol" "$token" "$mode" >"$temporary" || \
+       ! chmod 0640 "$temporary" || ! mv -f -- "$temporary" "$state_file"; then
+        rm -f -- "$temporary"
+        return 1
+    fi
+    validate_state_path
+}
+
+read_state_locked() {
+    local parsed_protocol parsed_token parsed_mode extra line_count
+    validate_state_path
+    [[ -f $state_file ]] || return 1
+    line_count=$(wc -l <"$state_file" | tr -d '[:space:]')
+    [[ $line_count == 1 ]] || return 1
+    read -r parsed_protocol parsed_token parsed_mode extra <"$state_file" || return
+    [[ $parsed_protocol == "$protocol" && -z ${extra:-} && \
+       $parsed_token =~ ^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$ && \
+       ( $parsed_mode == gamepad || $parsed_mode == joymouse || \
+         $parsed_mode == transitioning || $parsed_mode == unknown ) ]] || return 1
+    state_token=$parsed_token
+    state_mode=$parsed_mode
+}
+
+stable_current_mode() {
+    local observed
+    observed=$(current_mode)
+    valid_mode "$observed" || {
+        echo "Refusing input transition from unknown mode: $observed" >&2
+        return 1
+    }
+    state_matches "$observed" || {
+        echo "Refusing input transition: current $observed mode is not stable" >&2
+        return 1
+    }
+    printf '%s\n' "$observed"
+}
+
+transition_locked() {
+    local target=$1 emit_receipt=${2:-0} previous token transition_ok=0 rollback_ok=0
+    valid_mode "$target" || { usage; return 2; }
+    previous=$(stable_current_mode) || return
+    token=$(new_token) || return
+    write_state_locked "$token" transitioning || {
+        echo 'Could not invalidate the previous input lease; refusing D-Bus mutation.' >&2
+        return 1
+    }
+    if [[ $emit_receipt -eq 1 ]]; then
+        # The supervisor must possess a recovery token before the first D-Bus
+        # mutation. A closed receipt pipe therefore remains a no-mutation exit.
+        trap '' PIPE
+        if ! printf '%s %s %s\n' "$protocol" "$previous" "$token"; then
+            if ! write_state_locked "$token" "$previous"; then
+                write_state_locked "$token" unknown || true
+                echo 'CRITICAL: receipt failed and lease metadata could not be restored' >&2
+            fi
+            trap - PIPE
+            return 1
+        fi
+        trap - PIPE
+    fi
+
+    if apply_mode_raw "$target" && wait_mode "$target"; then
+        transition_ok=1
+    fi
+    if ((transition_ok)); then
+        if ! write_state_locked "$token" "$target"; then
+            echo 'Input mode changed but its lease state remains transitioning.' >&2
+            return 1
+        fi
+        return 0
+    fi
+
+    echo "Input transition to $target failed; restoring $previous" >&2
+    if wait_mode "$previous"; then
+        rollback_ok=1
+    elif apply_mode_raw "$previous" && wait_mode "$previous"; then
+        rollback_ok=1
+    fi
+    if ((rollback_ok)); then
+        if write_state_locked "$token" "$previous"; then
+            echo "Input transition rolled back to stable $previous mode" >&2
+        else
+            write_state_locked "$token" unknown || true
+            echo 'CRITICAL: input runtime rolled back but lease metadata did not' >&2
+        fi
+    else
+        if ! write_state_locked "$token" unknown; then
+            echo 'CRITICAL: input rollback and unknown-state publication both failed' >&2
+        else
+            echo "CRITICAL: input rollback to $previous failed; keep the SSH recovery session open" >&2
+        fi
+    fi
+    return 1
+}
+
+set_mode() {
+    local mode=$1
+    acquire_transition_lock blocking
+    transition_locked "$mode"
+}
+
+toggle_mode() {
+    local policy=blocking observed target
+    [[ $# -le 1 ]] || { usage; return 2; }
+    if [[ ${1:-} == --nonblocking ]]; then
+        policy=nonblocking
+    elif [[ -n ${1:-} ]]; then
+        usage
+        return 2
+    fi
+    acquire_transition_lock "$policy"
+    observed=$(stable_current_mode) || return
+    case "$observed" in
+        gamepad) target=joymouse ;;
+        joymouse) target=gamepad ;;
+    esac
+    transition_locked "$target"
+}
+
+acquire_mode() {
+    local mode=$1
+    acquire_transition_lock blocking
+    transition_locked "$mode" 1
+}
+
+restore_token() {
+    local expected_token=$1 expected=$2 target=$3 observed replacement
+    valid_mode "$expected" && valid_mode "$target" || { usage; return 2; }
+    [[ $expected_token =~ ^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$ ]] || {
+        usage
+        return 2
+    }
+    acquire_transition_lock blocking
+    if ! read_state_locked; then
+        echo 'Input lease state is missing or malformed; refusing restore.' >&2
+        return 1
+    fi
+    if [[ $state_token != "$expected_token" ]]; then
+        return 0
+    fi
+
+    # The supervisor can be forced to terminate an acquire helper after the
+    # receipt was delivered but while InputPlumber is between profile/target
+    # writes.  The exact token proves that no newer Guide/Panel choice has won
+    # since that receipt.  Recover an explicitly incomplete generation to its
+    # recorded pre-session target instead of merely publishing `unknown` and
+    # leaving a partially rebuilt virtual device behind.
+    if [[ $state_mode == transitioning || $state_mode == unknown ]]; then
+        replacement=$(new_token) || return
+        write_state_locked "$replacement" transitioning || return
+        if apply_mode_raw "$target" && wait_mode "$target"; then
+            write_state_locked "$replacement" "$target"
+            return
+        fi
+        write_state_locked "$replacement" unknown || \
+            echo 'CRITICAL: token recovery failed and unknown state could not be published' >&2
+        echo "Input lease recovery to $target failed" >&2
+        return 1
+    fi
+    observed=$(current_mode)
+    if ! valid_mode "$observed" || ! state_matches "$observed"; then
+        replacement=$(new_token) || return
+        write_state_locked "$replacement" unknown || return
+        echo 'Input lease matched but runtime state is unstable; restore was refused.' >&2
+        return 1
+    fi
+    case "$state_mode:$observed" in
+        "$expected:$expected"|transitioning:"$expected") ;;
+        "$target:$target"|transitioning:"$target")
+            replacement=$(new_token) || return
+            write_state_locked "$replacement" "$target"
+            return
+            ;;
+        *)
+            replacement=$(new_token) || return
+            write_state_locked "$replacement" "$observed" || return
+            echo 'Input lease matched but runtime state drifted; restore was refused.' >&2
+            return 1
+            ;;
+    esac
+    if [[ $expected == "$target" ]]; then
+        replacement=$(new_token) || return
+        write_state_locked "$replacement" "$observed"
+        return
+    fi
+    transition_locked "$target"
+}
+
+recover_token() {
+    local expected_token=$1 target=$2 observed replacement other
+    valid_mode "$target" || { usage; return 2; }
+    [[ $expected_token =~ ^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$ ]] || {
+        usage
+        return 2
+    }
+    acquire_transition_lock blocking
+    if ! read_state_locked; then
+        echo 'Input lease state is missing or malformed; refusing recovery.' >&2
+        return 1
+    fi
+
+    observed=$(current_mode)
+    if [[ $state_token != "$expected_token" ]]; then
+        # A newer canonical writer owns the generation. Never overwrite it.
+        # A stable current value is enough to retire this older recovery
+        # journal; an unstable newer generation remains fail-closed so its own
+        # bootstrap/operator recovery can finish first.
+        if valid_mode "$observed" && state_matches "$observed"; then
+            if [[ $observed == "$target" ]]; then
+                printf 'pds-input-recover-v1 already-target\n'
+            else
+                printf 'pds-input-recover-v1 superseded\n'
+            fi
+            return 0
+        fi
+        echo 'Input recovery token was superseded by an unstable generation.' >&2
+        return 1
+    fi
+
+    if [[ $observed == "$target" ]] && state_matches "$target"; then
+        replacement=$(new_token) || return
+        write_state_locked "$replacement" "$target" || return
+        printf 'pds-input-recover-v1 already-target\n'
+        return 0
+    fi
+
+    # Keep the journal's token authoritative until the requested target is
+    # stable. A timeout or SIGKILL at any point therefore leaves the same token
+    # retryable by the next supervisor instead of stranding a new, unknown
+    # generation that the journal can no longer identify.
+    write_state_locked "$expected_token" transitioning || return
+    if apply_mode_raw "$target" && wait_mode "$target"; then
+        replacement=$(new_token) || return
+        write_state_locked "$replacement" "$target" || return
+        printf 'pds-input-recover-v1 restored\n'
+        return 0
+    fi
+    if ! write_state_locked "$expected_token" unknown; then
+        echo 'CRITICAL: retryable input recovery state could not be published' >&2
+    fi
+    echo "Input recovery to $target failed; the same token remains retryable" >&2
+    return 1
+}
+
+reconcile_state() {
+    local observed token
+    acquire_transition_lock blocking
+    observed=$(stable_current_mode) || return
+    token=$(new_token) || return
+    write_state_locked "$token" "$observed"
+}
+
+bootstrap_state() {
+    local observed token previous_profile attempt source_ready=0
+    local -a previous_targets
+    acquire_transition_lock blocking
+
+    # systemd considers InputPlumber started before its composite D-Bus object
+    # and exact target set have necessarily settled. Wait only for one of the
+    # two explicitly accepted sources: an already-stable managed mode, or the
+    # exact vendor default snapshot. No mutation is allowed during this wait.
+    for attempt in $(seq 1 50); do
+        observed=$(current_mode)
+        if valid_mode "$observed" && state_matches "$observed"; then
+            # A valid stable record is already authoritative. Preserve its
+            # token so restarting the listener cannot invalidate a live
+            # game-session lease.
+            if read_state_locked && [[ $state_mode == "$observed" ]]; then
+                return 0
+            fi
+            token=$(new_token) || return
+            write_state_locked "$token" "$observed"
+            return
+        fi
+        if default_snapshot_matches; then
+            source_ready=1
+            break
+        fi
+        "$sleep_bin" 0.1
+    done
+
+    # The vendor listener starts while InputPlumber still exposes its exact
+    # built-in default profile. That is the only unmanaged state from which a
+    # mutation is permitted. Ordinary set/toggle continue to reject it.
+    ((source_ready)) || {
+        echo "Refusing input bootstrap from unmanaged mode: $observed" >&2
+        return 1
+    }
+    previous_profile=$default_profile
+    previous_targets=("${target_snapshot_ids[@]}")
+    token=$(new_token) || return
+    write_state_locked "$token" transitioning || {
+        echo 'Could not invalidate the previous input lease; refusing bootstrap.' >&2
+        return 1
+    }
+    if apply_mode_raw gamepad && wait_mode gamepad; then
+        write_state_locked "$token" gamepad
+        return
+    fi
+
+    echo 'Input bootstrap failed; restoring the exact Pocket DS default targets' >&2
+    if wait_default || \
+       { apply_snapshot_raw "$previous_profile" "${previous_targets[@]}" && wait_default; }; then
+        if write_state_locked "$token" unknown; then
+            echo 'Input bootstrap rolled back to the vendor default profile' >&2
+        else
+            echo 'CRITICAL: bootstrap runtime rolled back but metadata did not' >&2
+        fi
+    else
+        if ! write_state_locked "$token" unknown; then
+            echo 'CRITICAL: bootstrap rollback and unknown-state publication both failed' >&2
+        else
+            echo 'CRITICAL: input bootstrap rollback failed; keep SSH recovery available' >&2
+        fi
+    fi
+    return 1
+}
+
+case ${1:-} in
+    status)
+        [[ $# -eq 1 ]] || { usage; exit 2; }
+        current_mode
+        ;;
+    wait)
+        [[ $# -eq 2 ]] || { usage; exit 2; }
+        wait_mode "$2"
+        ;;
+    set)
+        [[ $# -eq 2 ]] || { usage; exit 2; }
+        set_mode "$2"
+        ;;
+    toggle)
+        [[ $# -le 2 ]] || { usage; exit 2; }
+        toggle_mode "${2:-}"
+        ;;
+    acquire)
+        [[ $# -eq 2 ]] || { usage; exit 2; }
+        acquire_mode "$2"
+        ;;
+    restore-token)
+        [[ $# -eq 4 ]] || { usage; exit 2; }
+        restore_token "$2" "$3" "$4"
+        ;;
+    recover-token)
+        [[ $# -eq 3 ]] || { usage; exit 2; }
+        recover_token "$2" "$3"
+        ;;
+    reconcile)
+        [[ $# -eq 1 ]] || { usage; exit 2; }
+        reconcile_state
+        ;;
+    bootstrap)
+        [[ $# -eq 1 ]] || { usage; exit 2; }
+        bootstrap_state
+        ;;
+    *) usage; exit 2 ;;
+esac

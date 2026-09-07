@@ -1,0 +1,9 @@
+patch:
+  # Keep the full Rime Ice dictionary useful in daily text instead of acting
+  # like a static lookup table.  These are deliberately explicit so a future
+  # upstream default change cannot silently disable personal ranking, sentence
+  # composition or completion on the Pocket DS.
+  translator/enable_user_dict: true
+  translator/enable_sentence: true
+  translator/enable_completion: true
+  translator/enable_word_completion: true

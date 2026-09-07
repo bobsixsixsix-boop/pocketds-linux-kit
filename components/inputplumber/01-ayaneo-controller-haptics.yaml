@@ -1,0 +1,61 @@
+# Pocket DS override for InputPlumber d3932cb4 + bounded Pulse.
+version: 1
+kind: CompositeDevice
+name: AYANEO Layout
+
+matches:
+  - udev:
+      sys_path: /sys/firmware/devicetree/base
+      attributes:
+        - name: model
+          value: AYANEO Pocket EVO
+  - udev:
+      sys_path: /sys/firmware/devicetree/base
+      attributes:
+        - name: model
+          value: AYANEO Pocket DS
+  - udev:
+      sys_path: /sys/firmware/devicetree/base
+      attributes:
+        - name: model
+          value: AYANEO Pocket S 2K
+
+single_source: false
+
+source_devices:
+  - group: gamepad
+    evdev:
+      vendor_id: "1c4f"
+      product_id: "0002"
+      handler: event*
+    capability_map_id: ayaneo_mcu_xbox
+  - group: gamepad
+    evdev:
+      vendor_id: "045e"
+      product_id: "028e"
+      handler: event*
+    capability_map_id: ayaneo_mcu_xbox
+  # Pocket DS gamepad input in AYANEO DirectInput mode.
+  - group: gamepad
+    evdev:
+      vendor_id: "4001"
+      product_id: "0428"
+      handler: event*
+    capability_map_id: ayaneo_mcu_xbox
+  # The same USB interface carries the two physical rumble motors.  This is
+  # output-only and is handled by InputPlumber PR #670; no application writes
+  # /dev/hidraw directly.
+  - group: gamepad
+    hidraw:
+      vendor_id: 0x4001
+      product_id: 0x0428
+      interface_num: 0
+
+options:
+  auto_manage: true
+
+target_devices:
+  - xbox-series
+  - mouse
+  - keyboard
+  - dbus

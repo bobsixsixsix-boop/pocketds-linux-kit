@@ -1,0 +1,27 @@
+[Desktop Entry]
+Version=1.0
+Name=Chromium
+Name[zh_CN]=Chromium 浏览器
+GenericName=Web Browser
+GenericName[zh_CN]=网页浏览器
+Comment=Access the Internet
+Comment[zh_CN]=访问互联网
+Exec=/usr/local/bin/pocketds-chromium-v4l2 %U
+Terminal=false
+Type=Application
+Icon=/opt/pocketds-chromium-v4l2-151.0.7922.137/usr/share/icons/hicolor/256x256/apps/chromium.png
+Categories=Network;WebBrowser;
+StartupNotify=true
+StartupWMClass=chromium
+MimeType=x-scheme-handler/unknown;x-scheme-handler/about;application/pdf;application/rdf+xml;application/rss+xml;application/xhtml+xml;application/xhtml_xml;application/xml;image/gif;image/jpeg;image/png;image/webp;text/html;text/xml;x-scheme-handler/http;x-scheme-handler/https;
+Actions=new-window;new-private-window;
+
+[Desktop Action new-window]
+Name=New Window
+Name[zh_CN]=新建窗口
+Exec=/usr/local/bin/pocketds-chromium-v4l2 --new-window
+
+[Desktop Action new-private-window]
+Name=New Incognito Window
+Name[zh_CN]=新建无痕窗口
+Exec=/usr/local/bin/pocketds-chromium-v4l2 --incognito

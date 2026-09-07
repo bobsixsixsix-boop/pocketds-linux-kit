@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "artifact_id": "pds002-ifpc-native-lid-runtime-v1",
+  "device_id": "ayaneo-pocket-ds-qcs8550",
+  "kernel_release": "7.1.0-100.20260730172655.pocketds.fc44.aarch64",
+  "source_commit": "a4975ce7c8eec079bd0cf7ec3890e100e016813f",
+  "revert_commit": "d84f65cc8cd7af0bf62cca52d13583394851cfe8",
+  "inputs": {
+    "candidate_package_bootimg": {
+      "filename": "candidate-package-boot.img",
+      "sha256": "7ff037958ce47cdbaa71d418d7b0da225f9a2bce67c81520b72fc05134c2e9fe",
+      "size": 17090560
+    },
+    "candidate_raw_image": {
+      "filename": "candidate-raw-Image",
+      "sha256": "ccfe5f24d9710d624bc99b4bcbe1dafde06914795a1802645b02b55f43bfdcba",
+      "size": 34515456
+    },
+    "custom_dtb": {
+      "filename": "qcs8550-ayaneo-pocketds-native-lid.dtb",
+      "sha256": "195345de379195df466b999cf7c7ba53764dfd9c0bb12b18214083e530979556",
+      "size": 135820
+    },
+    "candidate_report": {
+      "filename": "ifpc-candidate-evidence-v3.json",
+      "sha256": "d84ea7af4e237ed89c68b0b5062f4ac7175eab5363af9bd463d8d329f3c5f87e",
+      "size": 8047
+    },
+    "rollback_preflight_report": {
+      "filename": "rollback-static-preflight-v2.json",
+      "sha256": "fcec19447429f2b551afc67307860887fec37a61659aa97a73be63b06bee927e",
+      "size": 4033
+    }
+  },
+  "package_boot": {
+    "page_size": 2048,
+    "kernel_size": 17087089,
+    "gzip_size": 16951562,
+    "gzip_sha256": "b0c484c93dfe20d2967718596c9370901ef7f62220ec5f041f8432e47b7f5bae",
+    "dtb_size": 135527,
+    "dtb_sha256": "0557cee113d4e34fcae274c69400a8a53653e60229a1f333eafde83b2dfe6994",
+    "image_id_hex": "47311b42b8d46da51cb0adc692d7661c65a5c355000000000000000000000000"
+  },
+  "runtime_boot": {
+    "filename": "ifpc-native-lid-runtime-boot-v1.img",
+    "sha256": "b29b7c34da3b5406c60cdb7f9cd878de68ce0622de86cb6fab0e314d73c798a1",
+    "size": 17090560,
+    "page_size": 2048,
+    "kernel_size": 17087382,
+    "gzip_size": 16951562,
+    "gzip_sha256": "b0c484c93dfe20d2967718596c9370901ef7f62220ec5f041f8432e47b7f5bae",
+    "dtb_size": 135820,
+    "dtb_sha256": "195345de379195df466b999cf7c7ba53764dfd9c0bb12b18214083e530979556",
+    "image_id_hex": "b1ae63bbad931bc5d1e9d6de38de15cbadde935f000000000000000000000000"
+  }
+}

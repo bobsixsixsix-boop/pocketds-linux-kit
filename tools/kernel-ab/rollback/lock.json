@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "artifact_id": "pds002-live-baseline-rollback-v2",
+  "device_id": "ayaneo-pocket-ds-qcs8550",
+  "kernel_release": "7.1.0-100.20260730172655.pocketds.fc44.aarch64",
+  "source_commit": "a4975ce7c8eec079bd0cf7ec3890e100e016813f",
+  "artifacts": {
+    "rollback_bootimg": {
+      "filename": "pds002-live-baseline-rollback-v2.img",
+      "sha256": "e4e0a38ab2f247dc67b6b4521f2fcc57123528ea50edda46ea08d305d9336c94",
+      "size": 17090560
+    },
+    "runtime_report": {
+      "filename": "runtime-evidence-v3.json",
+      "sha256": "2f3a9ef78dca68394f86b14b82efe8c632eb066989acb2c1bd34665e5247c342",
+      "size": 3654
+    },
+    "source_report": {
+      "filename": "source-evidence-v1.json",
+      "sha256": "e3a53d79ac0240f4b36aff29c8cc371b59dc203f697164df025bc35be762f93c",
+      "size": 3905
+    },
+    "custom_dtb": {
+      "filename": "qcs8550-ayaneo-pocketds-native-lid.dtb",
+      "sha256": "195345de379195df466b999cf7c7ba53764dfd9c0bb12b18214083e530979556",
+      "size": 135820
+    },
+    "baseline_payload_report": {
+      "filename": "baseline-payload-evidence-v4.json",
+      "sha256": "c3d9613f468ca7a5f61d85b179756a5a144b1535dae513109b02b5bd391f618b",
+      "size": 7683
+    },
+    "candidate_report": {
+      "filename": "ifpc-candidate-evidence-v3.json",
+      "sha256": "d84ea7af4e237ed89c68b0b5062f4ac7175eab5363af9bd463d8d329f3c5f87e",
+      "size": 8047
+    }
+  },
+  "baseline_packages": {
+    "signed_reference_rpm": {
+      "filename": "reference-kernel.rpm",
+      "sha256": "3d1502c7995fbd4b496796dc66777242c373240209902290899f38160efe2cb9",
+      "size": 37131042
+    },
+    "attested_rebuilt_rpm": {
+      "filename": "attested-rebuilt-kernel.rpm",
+      "sha256": "37b2f27c8c956c1c0ae36800cdbd38f5a2ddf2a0fd470577d16af0144fc9a479",
+      "size": 37131050
+    }
+  },
+  "payload": {
+    "manifest_sha256": "4654c0aa99fcf447b6c589986a1c286a33357aef2e164a65ab79f464ec6b1ada",
+    "entry_count": 499,
+    "regular_file_count": 341,
+    "directory_count": 156,
+    "symlink_count": 2,
+    "regular_file_bytes": 81183506,
+    "rpm_entry_count": 496,
+    "implicit_directories": [
+      "boot",
+      "lib",
+      "lib/modules"
+    ],
+    "package_boot_image_path": "boot/Image-7.1.0-100.20260730172655.pocketds.fc44.aarch64",
+    "package_boot_image_sha256": "cf910fef42e06aaae7f983d3e29ec920705e311e768721428b481a033670d55b",
+    "raw_image_path": "lib/modules/7.1.0-100.20260730172655.pocketds.fc44.aarch64/Image",
+    "raw_image_sha256": "b77e3cecf7c49689017965b5b19829d8224144179fdd4c6c41d79c04e3239ba1",
+    "raw_image_size": 34515456,
+    "page_size": 2048,
+    "kernel_size": 17087383,
+    "gzip_size": 16951563,
+    "gzip_sha256": "1549b173e8ea6e32c749c8c730211f2e9c48255556be7231ffc8352bc652a87d",
+    "dtb_size": 135820,
+    "dtb_sha256": "195345de379195df466b999cf7c7ba53764dfd9c0bb12b18214083e530979556",
+    "image_id_hex": "da1d98ea3f9109c9319a7071d5850845d5df0535000000000000000000000000"
+  },
+  "recovery_validation": {
+    "status": "not_run",
+    "successful_boots": 0,
+    "successful_recovery_tests": 0,
+    "independent_recovery_path": false
+  }
+}

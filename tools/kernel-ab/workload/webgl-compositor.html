@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PDS-002 deterministic WebGL compositor workload</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #081018; }
+    #gpu { position: fixed; inset: 0; width: 100%; height: 100%; }
+    #compositor { position: fixed; inset: 0; pointer-events: none; contain: strict; }
+    .card {
+      position: absolute; width: 128px; height: 72px; border: 1px solid rgba(255,255,255,.22);
+      border-radius: 14px; background: rgba(12,24,42,.32); backdrop-filter: blur(8px);
+      box-shadow: 0 10px 34px rgba(0,0,0,.34); will-change: transform, opacity;
+    }
+    #status {
+      position: fixed; left: 20px; top: 20px; min-width: 310px; padding: 14px 16px;
+      border: 1px solid rgba(255,255,255,.24); border-radius: 12px;
+      color: #eaf7ff; background: rgba(3,12,22,.72); font: 600 16px/1.45 monospace;
+      backdrop-filter: blur(12px); white-space: pre; pointer-events: none;
+    }
+    #status.fail { color: #fff; background: #7b1421; }
+  </style>
+</head>
+<body>
+  <canvas id="gpu"></canvas>
+  <div id="compositor"></div>
+  <div id="status">initializing WebGL2…</div>
+  <script>
+  (() => {
+    "use strict";
+    const canvas = document.querySelector("#gpu");
+    const status = document.querySelector("#status");
+    const compositor = document.querySelector("#compositor");
+    const gl = canvas.getContext("webgl2", {
+      alpha: false, antialias: false, depth: false, stencil: false,
+      preserveDrawingBuffer: false, powerPreference: "high-performance"
+    });
+    const fail = message => { status.className = "fail"; status.textContent = `FAIL\n${message}`; };
+    if (!gl) { fail("WebGL2 unavailable"); return; }
+
+    const vertexSource = `#version 300 es
+      precision highp float;
+      const vec2 p[3] = vec2[3](vec2(-1.,-1.), vec2(3.,-1.), vec2(-1.,3.));
+      void main() { gl_Position = vec4(p[gl_VertexID], 0., 1.); }
+    `;
+    const fragmentSource = `#version 300 es
+      precision highp float;
+      uniform vec2 resolution;
+      uniform float seconds;
+      out vec4 color;
+      float field(vec2 p, float t) {
+        float value = 0.;
+        mat2 spin = mat2(.8253,-.5646,.5646,.8253);
+        for (int i=0; i<14; ++i) {
+          p = spin * p * 1.23 + vec2(sin(t*.37), cos(t*.29))*.11;
+          value += sin(p.x*3.1 + t) * cos(p.y*2.7 - t*.71) / float(i+1);
+        }
+        return value;
+      }
+      void main() {
+        vec2 uv = (2.*gl_FragCoord.xy-resolution.xy)/min(resolution.x,resolution.y);
+        float t = seconds * .34;
+        float a = field(uv, t);
+        float b = field(uv.yx+vec2(.37,-.21), -t*.83);
+        vec3 c = .5 + .5*cos(vec3(0.,2.1,4.2) + a*2.8 + b*1.7 + t);
+        float vignette = smoothstep(1.75,.18,length(uv)*.72);
+        color = vec4(pow(c*vignette, vec3(.82)), 1.);
+      }
+    `;
+    const compile = (kind, source) => {
+      const shader = gl.createShader(kind); gl.shaderSource(shader, source); gl.compileShader(shader);
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(shader));
+      return shader;
+    };
+    let program;
+    try {
+      program = gl.createProgram();
+      gl.attachShader(program, compile(gl.VERTEX_SHADER, vertexSource));
+      gl.attachShader(program, compile(gl.FRAGMENT_SHADER, fragmentSource));
+      gl.linkProgram(program);
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(program));
+    } catch (error) { fail(String(error).slice(0, 220)); return; }
+    gl.useProgram(program);
+    const resolution = gl.getUniformLocation(program, "resolution");
+    const seconds = gl.getUniformLocation(program, "seconds");
+
+    const cards = [];
+    for (let index=0; index<48; ++index) {
+      const card = document.createElement("div"); card.className = "card";
+      card.style.background = `hsla(${(index*47)%360},72%,58%,.13)`;
+      compositor.appendChild(card); cards.push(card);
+    }
+    const started = performance.now();
+    let frames = 0, windowFrames = 0, windowStarted = started, fps = 0;
+    const resize = () => {
+      const ratio = Math.min(devicePixelRatio || 1, 2);
+      const width = Math.max(1, Math.floor(innerWidth*ratio));
+      const height = Math.max(1, Math.floor(innerHeight*ratio));
+      if (canvas.width !== width || canvas.height !== height) { canvas.width=width; canvas.height=height; }
+      gl.viewport(0,0,width,height);
+    };
+    addEventListener("resize", resize, {passive:true}); resize();
+    canvas.addEventListener("webglcontextlost", event => { event.preventDefault(); fail("WebGL context lost"); });
+    document.addEventListener("visibilitychange", () => { if (document.hidden) fail("workload became hidden"); });
+
+    const draw = now => {
+      const elapsed = (now-started)/1000;
+      resize(); gl.uniform2f(resolution, canvas.width, canvas.height); gl.uniform1f(seconds, elapsed);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      for (let index=0; index<cards.length; ++index) {
+        const phase = elapsed*(.31+(index%7)*.017)+index*.63;
+        const x = (Math.sin(phase)*.48+.5)*Math.max(1,innerWidth-128);
+        const y = (Math.cos(phase*.83+index)*.48+.5)*Math.max(1,innerHeight-72);
+        cards[index].style.transform = `translate3d(${x.toFixed(2)}px,${y.toFixed(2)}px,0) rotate(${(phase*19)%360}deg)`;
+        cards[index].style.opacity = String(.42+.34*Math.sin(phase*.71));
+      }
+      ++frames; ++windowFrames;
+      if (now-windowStarted >= 1000) {
+        fps = windowFrames*1000/(now-windowStarted); windowFrames=0; windowStarted=now;
+        status.textContent = `PDS-002 WEBGL2 + COMPOSITOR\nFPS ${fps.toFixed(1)}  FRAMES ${frames}\nELAPSED ${elapsed.toFixed(1)} s\n${gl.getParameter(gl.RENDERER)}`;
+      }
+      requestAnimationFrame(draw);
+    };
+    requestAnimationFrame(draw);
+  })();
+  </script>
+</body>
+</html>

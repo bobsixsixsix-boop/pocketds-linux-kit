@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "upstream": "https://github.com/phosphor-icons/core",
+  "verified_revision": "2b75f3ad12b420c9504ef05df8d2564a28f8500e",
+  "verification_date": "2026-09-07",
+  "original_copy_revision": null,
+  "license": "MIT",
+  "verification_scope": "Fixed upstream reference comparison; not a reconstruction of the original copy history.",
+  "local_file": "components/android-boot-switch/res/drawable/ic_launcher_foreground.xml",
+  "license_file": "components/android-boot-switch/licenses/Phosphor-Icons-MIT.txt",
+  "upstream_license": {
+    "path": "LICENSE",
+    "url": "https://raw.githubusercontent.com/phosphor-icons/core/2b75f3ad12b420c9504ef05df8d2564a28f8500e/LICENSE",
+    "sha256": "b5b1f1da112d18ea2147decfd48ddc1bf2b5aeb6c265381579340e95b15a2bb2"
+  },
+  "icons": [
+    {
+      "name": "linux-logo",
+      "source": {
+        "path": "assets/regular/linux-logo.svg",
+        "url": "https://raw.githubusercontent.com/phosphor-icons/core/2b75f3ad12b420c9504ef05df8d2564a28f8500e/assets/regular/linux-logo.svg",
+        "sha256": "98d671ac52a3f495a3047b117fa7ad19fb210c701efffdba41cf618b0f4ef3d7"
+      },
+      "upstream_path_sha256": "7e42cd75d497b507986f37ed1f2d61e282dddc64564bfb3f78ab46b594596a33",
+      "local_path_sha256": "882ab041f214895a9b44377e97e0998676c44faa82c90bbea1fcb6d169a75b82",
+      "comparison": "adapted",
+      "adaptation": "Existing Android path rewrites relative/absolute commands and separators; Android also supplies its own fill, scale and translation. Current path and placement are retained; no original copy revision is asserted."
+    }
+  ]
+}

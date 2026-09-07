@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "upstream": "https://github.com/Azkali/Switchdeck",
+  "verified_revision": "2b7f9e2fbe1e79a92789b62e29562751d4f717e5",
+  "verification_date": "2026-09-07",
+  "original_copy_revision": null,
+  "license": "GPL-3.0-only",
+  "verification_scope": "Reverified upstream baseline and preserved Pocket DS adaptations; not a reconstruction of original copy history. No later-version grant is inferred.",
+  "upstream_credit": "Switchdeck by SildurFX | https://github.com/SildurFX/Switchdeck",
+  "sources": [
+    {
+      "path": "files/steam/launch-steam.sh",
+      "url": "https://raw.githubusercontent.com/Azkali/Switchdeck/2b7f9e2fbe1e79a92789b62e29562751d4f717e5/files/steam/launch-steam.sh",
+      "sha256": "a76002284263cc45b636e7ecbd151e842c96e2c4af29f8fc0df049b60e9cf4a1"
+    },
+    {
+      "path": "install-steam.sh",
+      "url": "https://raw.githubusercontent.com/Azkali/Switchdeck/2b7f9e2fbe1e79a92789b62e29562751d4f717e5/install-steam.sh",
+      "sha256": "920cbd785b60f017addf7a59bc45c8fe61e54e841de7b2bd63dff14ce2f5fc45"
+    }
+  ],
+  "notices": [
+    {
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/Azkali/Switchdeck/2b7f9e2fbe1e79a92789b62e29562751d4f717e5/LICENSE",
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "local_file": "components/steam/licenses/Switchdeck-GPL-3.0.txt"
+    },
+    {
+      "path": "NOTICE.txt",
+      "url": "https://raw.githubusercontent.com/Azkali/Switchdeck/2b7f9e2fbe1e79a92789b62e29562751d4f717e5/NOTICE.txt",
+      "sha256": "bbdd8f14d7c1683d4542989abacbf182d9e597c43f585dbcaf6915230749bc1e",
+      "local_file": "components/steam/licenses/Switchdeck-NOTICE.txt"
+    }
+  ],
+  "local_files": [
+    {
+      "path": "components/steam/launch-steam.sh",
+      "sha256": "fed6fa2c5ab0916ac537e2a7f2d3acca0660e442230f8bbde9db6e8e15e98565",
+      "comparison": "adapted launcher; runtime statements unchanged by this verification"
+    },
+    {
+      "path": "components/system/70-uinput.rules",
+      "sha256": "ebc36cd0bc228a342aabf999cc043682213cdabef0c1f3d4ef063a890edc130d",
+      "comparison": "operative rule matches fixed upstream installer after shell quote unescaping"
+    }
+  ],
+  "retained_adaptations": [
+    "Configurable default Steam Deck UI mode and managed desktop launcher entries.",
+    "Host SYSTEM_PATH gives the local desktop-return selector precedence.",
+    "Local Proton default and ARM64 workaround hooks, plus initial-launch marker.",
+    "Watcher process and Plasma restore ownership are cleaned up on launcher exit/restart.",
+    "Packaged launcher deployment replaces an upstream moving-branch mid-launch download."
+  ],
+  "distribution_boundary": "The script license does not cover Steam binaries. Include both retained notices when distributing this launcher or the extracted rule."
+}

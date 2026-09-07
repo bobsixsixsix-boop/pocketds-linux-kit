@@ -1,0 +1,22 @@
+[Unit]
+Description=Pocket DS observable GPU telemetry
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.local/libexec/pocketds/pocketds-gpu-telemetry.py
+Restart=on-failure
+RestartSec=3
+Nice=10
+CPUWeight=20
+MemoryMax=96M
+NoNewPrivileges=true
+LockPersonality=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+SystemCallArchitectures=native
+UMask=0077
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,121 @@
+#!/usr/bin/env bash
+# Thin ES-DE entrypoint. The common supervisor is the only owner of input mode,
+# process lifetime, and the cross-frontend session lock.
+set -Eeuo pipefail
+
+supervisor=${POCKETDS_GAME_SESSION_SUPERVISOR:-/usr/local/libexec/pocketds-game-session}
+game_runtime=${POCKETDS_GAME_RUNTIME:-"$HOME/.local/bin/pocketds-game-runtime"}
+appimage=${POCKETDS_ESDE_APPIMAGE:-"$HOME/Applications/ES-DE_aarch64.AppImage"}
+prepare=${POCKETDS_ESDE_PREPARE:-"$HOME/.local/libexec/pocketds-es-de-prepare"}
+managed_systems=${POCKETDS_ESDE_MANAGED_SYSTEMS:-"$HOME/.local/share/pocketds-linux-kit/emulation/es_systems.xml"}
+shared_managed_systems=${POCKETDS_ESDE_SHARED_SYSTEMS:-"$HOME/.local/share/pocketds-linux-kit/emulation/es_systems-shared.xml"}
+shared_root_file=${POCKETDS_SHARED_LIBRARY_ROOT_FILE:-"$HOME/.config/pocketds-linux-kit/shared-library-root"}
+expected_shared_root=${POCKETDS_SHARED_LIBRARY_MOUNT:-/mnt/pocketds-games}
+shared_frontend_home=
+active_managed_systems=$managed_systems
+inhibit_bin=${POCKETDS_SYSTEMD_INHIBIT:-systemd-inhibit}
+
+for executable in "$supervisor" "$game_runtime" "$appimage" "$prepare"; do
+    if [[ ! -x $executable || -L $executable ]]; then
+        echo "Required ES-DE component is missing or unsafe: $executable" >&2
+        exit 1
+    fi
+done
+prepare_args=(--managed-systems "$managed_systems" --require-rom-directory "$HOME/ROMs")
+if [[ -e $shared_root_file || -L $shared_root_file ]]; then
+    if [[ ! -f $shared_root_file || -L $shared_root_file ]]; then
+        echo "Shared game library configuration is unsafe: $shared_root_file" >&2
+        exit 1
+    fi
+    shared_root=
+    exec 3<"$shared_root_file"
+    if ! IFS= read -r shared_root <&3 && [[ -z $shared_root ]]; then
+        exec 3<&-
+        echo "Shared game library root is empty" >&2
+        exit 1
+    fi
+    shared_root_extra=
+    if IFS= read -r shared_root_extra <&3 || [[ -n $shared_root_extra ]]; then
+        exec 3<&-
+        echo "Shared game library root must contain exactly one line" >&2
+        exit 1
+    fi
+    exec 3<&-
+    if [[ $shared_root != "$expected_shared_root" ]]; then
+        echo "Shared game library root must be exactly $expected_shared_root" >&2
+        exit 1
+    fi
+    shared_frontend_home=$shared_root/PocketDS/Frontends
+    if [[ ! -d $shared_root/Roms \
+        || ! -f $shared_root/PocketDS/Manifests/shared-library.json \
+        || ! -d $shared_frontend_home/ES-DE \
+        || -L $shared_frontend_home \
+        || -L $shared_frontend_home/ES-DE ]]; then
+        echo "Shared game card is unavailable or incomplete: $shared_root" >&2
+        exit 1
+    fi
+    # A systemd automount has both an autofs row and the real filesystem row.
+    # Comparing findmnt's multi-line output with one path therefore rejects a
+    # healthy card.  The content checks above trigger the automount; mountpoint
+    # then verifies that the configured root is backed by a live mount.
+    if ! command -v mountpoint >/dev/null 2>&1 \
+        || ! mountpoint -q -- "$shared_root"; then
+        echo "Shared game card is not mounted at $shared_root" >&2
+        exit 1
+    fi
+    prepare_args=(
+        --esde-home "$shared_frontend_home"
+        --managed-systems "$shared_managed_systems"
+        --previous-managed-systems "$managed_systems"
+        --force-managed-systems
+        --set-rom-directory "$shared_root/Roms"
+        --require-rom-directory "$shared_root/Roms"
+        --enable-collection 精选集
+        --parse-gamelist-only
+    )
+    active_managed_systems=$shared_managed_systems
+fi
+if [[ ! -f $active_managed_systems || -L $active_managed_systems ]]; then
+    echo "Managed ES-DE systems file is missing or unsafe: $active_managed_systems" >&2
+    exit 1
+fi
+
+# This is a compare-and-swap metadata migration. It never scans or modifies ROM
+# content, and it refuses a user-selected ROM path outside the managed tree.
+"$prepare" \
+    "${prepare_args[@]}" >/dev/null
+
+app_command=("$appimage")
+if [[ -n $shared_frontend_home ]]; then
+    app_command+=(--home "$shared_frontend_home")
+fi
+if [[ ${POCKETDS_ESDE_DEBUG:-0} == 1 ]]; then
+    app_command+=(--debug)
+fi
+app_command+=("$@")
+
+# ES-DE and every single-screen emulator it starts share one Gamescope
+# compositor.  Preserve the real KDE socket so the dual-screen melonDS
+# launcher can deliberately escape this nested session.
+if [[ -n ${WAYLAND_DISPLAY:-} ]]; then
+    export POCKETDS_HOST_WAYLAND_DISPLAY=$WAYLAND_DISPLAY
+fi
+app_command=("$game_runtime" -- "${app_command[@]}")
+
+if [[ ${POCKETDS_SKIP_INHIBIT:-0} != 1 ]]; then
+    if ! command -v "$inhibit_bin" >/dev/null 2>&1; then
+        echo "Sleep inhibitor is unavailable: $inhibit_bin" >&2
+        exit 1
+    fi
+    app_command=(
+        "$inhibit_bin"
+        --what=idle:sleep
+        --who="Pocket DS ES-DE"
+        --why="Game frontend is active"
+        --mode=block
+        "${app_command[@]}"
+    )
+fi
+
+export SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS=1
+exec "$supervisor" run --backend native --name es-de -- "${app_command[@]}"

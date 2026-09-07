@@ -1,0 +1,112 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/ShadowBlip/InputPlumber/main/rootfs/usr/share/inputplumber/schema/device_profile_v1.json
+version: 1
+kind: DeviceProfile
+name: Pocket DS — Gamepad
+description: |
+  Default-equivalent gamepad profile (events pass through to the
+  virtual gamepad target). The physical AYA logo is Steam Quick Access;
+  the physical '=' key is Steam/Xbox Guide/Home. View and Guide are deferred to
+  pocketds-mode-listener so View + '=' can switch input mode without
+  leaking either single-button action.
+
+mapping:
+  # Inherit the special bindings from upstream default.yaml so
+  # the gamepad behaves the same in this profile.
+  - name: LeftTop
+    source_event:
+      gamepad:
+        button: LeftTop
+    target_events:
+      - gamepad:
+          button: LeftPaddle1
+  - name: RightTop
+    source_event:
+      gamepad:
+        button: RightTop
+    target_events:
+      - gamepad:
+          button: RightPaddle1
+  # BTN5 / physical AYA is kept separate from the brightness raw paths by the
+  # capability map, then converted here to Steam Quick Access / QAM.
+  - name: AYA internal slot → Steam Quick Access
+    source_event:
+      gamepad:
+        button: Keyboard
+    target_events:
+      - gamepad:
+          button: QuickAccess
+
+  - name: Brightness Up
+    source_event:
+      gamepad:
+        button: QuickAccess
+    target_events:
+      - dbus: ui_brightness_up
+
+  - name: Brightness Down
+    source_event:
+      gamepad:
+        button: QuickAccess2
+    target_events:
+      - dbus: ui_brightness_down
+  - name: Left Dial Counter-clockwise
+    source_event:
+      gamepad:
+        dial:
+          name: LeftStickDial
+          direction: counter-clockwise
+    target_events:
+      - keyboard: KeyVolumeDown
+  - name: Left Dial Clockwise
+    source_event:
+      gamepad:
+        dial:
+          name: LeftStickDial
+          direction: clockwise
+    target_events:
+      - keyboard: KeyVolumeUp
+  - name: Right Dial Counter-clockwise
+    source_event:
+      gamepad:
+        dial:
+          name: RightStickDial
+          direction: counter-clockwise
+    target_events:
+      - keyboard: KeyBrightnessDown
+  - name: Right Dial Clockwise
+    source_event:
+      gamepad:
+        dial:
+          name: RightStickDial
+          direction: clockwise
+    target_events:
+      - keyboard: KeyBrightnessUp
+
+  # '=' is the Steam/Xbox Guide/Home source. Defer it so its normal click can
+  # be suppressed when the user forms View + '=' across the two evdev devices.
+  - name: Equals (Guide) → deferred chord input
+    source_event:
+      gamepad:
+        button: Guide
+    target_events:
+      - dbus: ui_mode_equals
+
+  # Official Pocket DS names: controller Menu and View buttons. Menu keeps its
+  # normal Start event. View is deferred to the listener so it can remain
+  # Select when pressed alone, participate in View + '=' mode switching, and
+  # preserve the existing two-stage Menu + View game-exit chord without leaks.
+  - name: Menu (Start) → gamepad + exit chord
+    source_event:
+      gamepad:
+        button: Start
+    target_events:
+      - gamepad:
+          button: Start
+      - dbus: ui_game_menu
+
+  - name: View (Select) → deferred chord input
+    source_event:
+      gamepad:
+        button: Select
+    target_events:
+      - dbus: ui_mode_view

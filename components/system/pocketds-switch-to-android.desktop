@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=切换到 Android
+Comment=保存工作后重启到原厂 Android，保留 Linux 和游戏数据
+Exec=/usr/local/libexec/pocketds-switch-to-android
+Icon=smartphone
+Terminal=false
+StartupNotify=false
+Categories=System;

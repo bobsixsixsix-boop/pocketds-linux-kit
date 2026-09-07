@@ -1,0 +1,269 @@
+#!/usr/bin/env bash
+# One presentation boundary for single-screen games and emulators. Gamescope
+# supplies app-independent FPS and runtime limiting; dual-screen melonDS stays
+# on its dedicated host-KWin path.
+set -Eeuo pipefail
+
+gamescope=${POCKETDS_GAMESCOPE:-/usr/bin/gamescope}
+inner=${POCKETDS_GAMESCOPE_INNER:-"$HOME/.local/libexec/pocketds-gamescope-inner"}
+qdbus=${POCKETDS_QDBUS:-/usr/bin/qdbus-qt6}
+kscreen_doctor=${POCKETDS_KSCREEN_DOCTOR:-/usr/bin/kscreen-doctor}
+jq=${POCKETDS_JQ:-/usr/bin/jq}
+flock=${POCKETDS_FLOCK:-/usr/bin/flock}
+limiter=${POCKETDS_GAME_LIMIT:-"$HOME/.local/bin/pocketds-game-limit"}
+kwin_script=${POCKETDS_GAMESCOPE_KWIN_SCRIPT:-"$HOME/.local/share/pocketds-linux-kit/game-runtime/kwin-gamescope-top-screen.js"}
+runtime_dir=${POCKETDS_RUNTIME_DIR:-${XDG_RUNTIME_DIR:-/run/user/$(id -u)}}
+state_file="$runtime_dir/pocketds-gamescope-fps"
+limit_file="$runtime_dir/pocketds-gamescope-limit"
+script_name=pocketds-gamescope-top-screen
+steam_mode=0
+output_refresh=120
+
+usage() {
+    echo 'usage: pocketds-game-runtime [--steam] -- COMMAND [ARG ...]'
+}
+
+while (($#)); do
+    case "$1" in
+        --steam)
+            steam_mode=1
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        *)
+            usage >&2
+            exit 64
+            ;;
+    esac
+done
+if (($# == 0)); then
+    usage >&2
+    exit 64
+fi
+
+if [[ ${POCKETDS_DISABLE_GAMESCOPE:-0} == 1 ]]; then
+    exec "$@"
+fi
+for executable in "$gamescope" "$inner" "$qdbus" "$flock" "$limiter"; do
+    if [[ ! -x $executable || -L $executable ]]; then
+        echo "Required game-runtime component is missing or unsafe: $executable" >&2
+        exit 1
+    fi
+done
+if [[ ! -f $kwin_script || -L $kwin_script
+      || ! -d $runtime_dir || -L $runtime_dir || ! -O $runtime_dir
+      || -z ${WAYLAND_DISPLAY:-} ]]; then
+    echo 'The private KDE/Gamescope runtime is unavailable.' >&2
+    exit 1
+fi
+umask 077
+exec {runtime_lock}>"$runtime_dir/pocketds-game-runtime.lock"
+if ! "$flock" -n "$runtime_lock"; then
+    echo 'Another managed game is already using the upper display.' >&2
+    exit 1
+fi
+
+temporary=
+arranger_id=
+original_mode_id=
+restore_output_mode=0
+
+read_top_mode_id() {
+    local snapshot mode_id
+    snapshot=$("$kscreen_doctor" -j 2>/dev/null) || return 1
+    mode_id=$("$jq" -er '
+        first(.outputs[] | select(.name == "DSI-1"))
+        | .currentModeId | tostring
+    ' <<<"$snapshot") || return 1
+    [[ $mode_id =~ ^[0-9]+$ ]] || return 1
+    printf '%s\n' "$mode_id"
+}
+
+top_output_is_at_game_mode() {
+    local snapshot
+    snapshot=$("$kscreen_doctor" -j 2>/dev/null) || return 1
+    "$jq" -e --arg id "$game_mode_id" --argjson refresh "$output_refresh" '
+        any(.outputs[];
+            .name == "DSI-1"
+            and .enabled == true
+            and (.currentModeId | tostring) == $id
+            and any(.modes[];
+                (.id | tostring) == $id
+                and (.refreshRate | round) == $refresh))
+    ' >/dev/null 2>&1 <<<"$snapshot"
+}
+
+wait_for_game_mode() {
+    for _ in $(seq 1 20); do
+        if top_output_is_at_game_mode; then
+            return 0
+        fi
+        sleep 0.1
+    done
+    return 1
+}
+
+restore_top_mode() {
+    local current_mode
+    ((restore_output_mode)) || return 0
+    if ! "$kscreen_doctor" "output.DSI-1.mode.${original_mode_id}" \
+        >/dev/null 2>&1; then
+        echo "Warning: could not restore upper-display mode ${original_mode_id}." >&2
+        return 1
+    fi
+    for _ in $(seq 1 20); do
+        current_mode=$(read_top_mode_id 2>/dev/null || true)
+        if [[ $current_mode == "$original_mode_id" ]]; then
+            restore_output_mode=0
+            return 0
+        fi
+        sleep 0.1
+    done
+    echo "Warning: upper-display mode ${original_mode_id} was not restored." >&2
+    return 1
+}
+
+cleanup() {
+    local status=$?
+    trap - EXIT HUP INT TERM
+    if [[ -n $arranger_id ]]; then
+        "$qdbus" org.kde.KWin /Scripting \
+            org.kde.kwin.Scripting.unloadScript "$script_name" \
+            >/dev/null 2>&1 || true
+    fi
+    for path in "$state_file" "$limit_file"; do
+        if [[ -f $path && ! -L $path && -O $path ]]; then
+            rm -f -- "$path"
+        fi
+    done
+    [[ -z $temporary ]] || rm -f -- "$temporary"
+    restore_top_mode || true
+    exit "$status"
+}
+trap cleanup EXIT
+trap 'exit 129' HUP
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
+if [[ ${POCKETDS_SKIP_DISPLAY_PREFLIGHT:-0} != 1 ]]; then
+    for executable in "$kscreen_doctor" "$jq"; do
+        if [[ ! -x $executable || -L $executable ]]; then
+            echo "Required display preflight component is missing: $executable" >&2
+            exit 1
+        fi
+    done
+    top_enabled=false
+    display_snapshot=
+    for _ in $(seq 1 20); do
+        display_snapshot=$("$kscreen_doctor" -j 2>/dev/null || true)
+        if "$jq" -e \
+            'any(.outputs[]; .name == "DSI-1" and .enabled == true)' \
+            >/dev/null 2>&1 <<<"$display_snapshot"; then
+            top_enabled=true
+            break
+        fi
+        sleep 0.1
+    done
+    if [[ $top_enabled != true ]]; then
+        echo 'The upper display is off; open the lid before starting a game.' >&2
+        exit 1
+    fi
+    mode_pair=$("$jq" -er '
+        first(.outputs[] | select(.name == "DSI-1" and .enabled == true)) as $output
+        | first($output.modes[]
+            | select((.id | tostring) == ($output.currentModeId | tostring))) as $current
+        | (if (($current.refreshRate | round) == 120) then
+               $current
+           else
+               first($output.modes[]
+                   | select(.size == $current.size
+                       and (.refreshRate | round) == 120))
+           end) as $target
+        | select($target != null)
+        | [($output.currentModeId | tostring), ($target.id | tostring)]
+        | @tsv
+    ' <<<"$display_snapshot") || {
+        echo 'The upper display has no matching native-resolution 120 Hz mode.' >&2
+        exit 1
+    }
+    IFS=$'\t' read -r original_mode_id game_mode_id <<<"$mode_pair"
+    if [[ ! $original_mode_id =~ ^[0-9]+$ || ! $game_mode_id =~ ^[0-9]+$ ]]; then
+        echo 'The upper display reported unsafe mode identifiers.' >&2
+        exit 1
+    fi
+    if [[ $original_mode_id != "$game_mode_id" ]]; then
+        # Mark restoration as pending before the mode-set call: even a command
+        # that reports failure may have reached KWin before returning.
+        restore_output_mode=1
+        if ! "$kscreen_doctor" "output.DSI-1.mode.${game_mode_id}" \
+            >/dev/null 2>&1; then
+            echo 'Could not switch the upper display to the game 120 Hz mode.' >&2
+            exit 1
+        fi
+        if ! wait_for_game_mode; then
+            echo 'The upper display did not settle at the game 120 Hz mode.' >&2
+            exit 1
+        fi
+    fi
+else
+    game_mode_id=test
+fi
+
+# Remove only an owner-controlled regular file left by a previously killed
+# runtime. A fresh observer will publish a new sample atomically.
+if [[ -f $state_file && ! -L $state_file && -O $state_file ]]; then
+    rm -f -- "$state_file"
+fi
+temporary=$(mktemp "$runtime_dir/.pocketds-gamescope-limit.XXXXXXXX")
+initial_limit=$("$limiter" status)
+[[ $initial_limit == off ]] && initial_limit=0
+case "$initial_limit" in
+    0|24|30|40|60|120) ;;
+    *) initial_limit=0 ;;
+esac
+printf '%s\n' "$initial_limit" >"$temporary"
+chmod 0600 "$temporary"
+mv -f -T -- "$temporary" "$limit_file"
+temporary=
+
+"$qdbus" org.kde.KWin /Scripting \
+    org.kde.kwin.Scripting.unloadScript "$script_name" \
+    >/dev/null 2>&1 || true
+arranger_id=$("$qdbus" org.kde.KWin /Scripting \
+    org.kde.kwin.Scripting.loadScript "$kwin_script" "$script_name")
+if [[ ! $arranger_id =~ ^[0-9]+$ ]]; then
+    echo 'KWin refused the Gamescope top-screen arranger.' >&2
+    exit 1
+fi
+"$qdbus" org.kde.KWin "/Scripting/Script${arranger_id}" \
+    org.kde.kwin.Script.run >/dev/null
+
+gamescope_args=(
+    --backend wayland
+    -f -b
+    -W 1920 -H 1080
+    -w 1920 -h 1080
+    -r "$output_refresh"
+    --force-windows-fullscreen
+)
+# Gamescope's Steam integration flag exports STEAMDECK_MODE=true inside the
+# nested session.  Keep it for the explicit gamepad UI, but do not let it
+# override the desktop launcher's STEAMDECK_MODE=false: doing so sends a fresh
+# Fedora install through Steam Deck's SteamOS OOBE and its unavailable
+# steamos-update helper.
+if ((steam_mode)) && [[ ${STEAMDECK_MODE:-true} == true ]]; then
+    gamescope_args+=(-e)
+fi
+
+set +e
+"$gamescope" "${gamescope_args[@]}" -- "$inner" "$@"
+status=$?
+set -e
+exit "$status"

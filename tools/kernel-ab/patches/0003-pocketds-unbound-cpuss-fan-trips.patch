@@ -1,0 +1,68 @@
+From: Pocket DS local maintenance
+Subject: [EXPERIMENTAL] arm64: dts: qcom: pocketds: drop unbound cpuss fan trips
+
+Only for the retained downstream tree with standalone PWM fan control.
+This does not disable TSENS wake IRQs or alter thermal protection trips.
+
+--- a/arch/arm64/boot/dts/qcom/qcs8550-ayaneo-pocketds.dts
++++ b/arch/arm64/boot/dts/qcom/qcs8550-ayaneo-pocketds.dts
+@@ -16,6 +16,58 @@
+ 	compatible = "ayaneo,pocketds", "qcom,qcs8550", "qcom,sm8550";
+ 	rocknix-u-boot-dt-id = "u-boot-pocket-ds";
++
++	/*
++	 * This Pocket DS image uses the standalone PWM fan controller. These
++	 * unbound passive fan trips still program TSENS wake thresholds even
++	 * without cooling maps. Keep all other trips and cooling bindings.
++	 */
++	thermal-zones {
++		cpuss0-thermal {
++			trips {
++				/delete-node/ trip-point2;
++				/delete-node/ trip-point3;
++				/delete-node/ trip-point4;
++				/delete-node/ trip-point5;
++				/delete-node/ trip-point6;
++				/delete-node/ trip-point7;
++				/delete-node/ trip-point8;
++			};
++		};
++		cpuss1-thermal {
++			trips {
++				/delete-node/ trip-point2;
++				/delete-node/ trip-point3;
++				/delete-node/ trip-point4;
++				/delete-node/ trip-point5;
++				/delete-node/ trip-point6;
++				/delete-node/ trip-point7;
++				/delete-node/ trip-point8;
++			};
++		};
++		cpuss2-thermal {
++			trips {
++				/delete-node/ trip-point2;
++				/delete-node/ trip-point3;
++				/delete-node/ trip-point4;
++				/delete-node/ trip-point5;
++				/delete-node/ trip-point6;
++				/delete-node/ trip-point7;
++				/delete-node/ trip-point8;
++			};
++		};
++		cpuss3-thermal {
++			trips {
++				/delete-node/ trip-point2;
++				/delete-node/ trip-point3;
++				/delete-node/ trip-point4;
++				/delete-node/ trip-point5;
++				/delete-node/ trip-point6;
++				/delete-node/ trip-point7;
++				/delete-node/ trip-point8;
++			};
++		};
++	};
+ 
+ 	tca6424_vcc: regulator-tca6424-vcc {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "tca6424_vcc";
+

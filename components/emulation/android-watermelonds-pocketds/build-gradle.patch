@@ -1,0 +1,25 @@
+diff --git a/app/build.gradle.kts b/app/build.gradle.kts
+index 81914c4..5e06585 100644
+--- a/app/build.gradle.kts
++++ b/app/build.gradle.kts
+@@ -104,6 +104,11 @@ android {
+             dimension = "build"
+             isDefault = true
+         }
++        create("pocketDs") {
++            dimension = "build"
++            applicationIdSuffix = ".pocketds"
++            manifestPlaceholders["appName"] = "WatermelonDS Pocket DS"
++        }
+         create("nightly") {
+             dimension = "build"
+             applicationIdSuffix = ".nightly"
+@@ -119,6 +124,8 @@ android {
+         // Adds exported schema location as test app assets.
+         getByName("androidTest").assets.directories += "$projectDir/schemas"
+         getByName("main").jniLibs.srcDir("$buildDir/generated/librashader/jniLibs")
++        // Pocket DS uses the stable GitHub updater implementation from prod.
++        getByName("pocketDs").kotlin.srcDir("src/gitHubProd/java")
+     }
+     packaging {
+         jniLibs {

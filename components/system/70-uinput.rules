@@ -1,0 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# Extracted rule from Switchdeck by SildurFX (upstream GPLv3).
+# Verified against Azkali/Switchdeck install-steam.sh at
+# 2b7f9e2fbe1e79a92789b62e29562751d4f717e5; original copy revision unknown.
+# Complete notice/license and verification: ../steam/licenses/Switchdeck-SOURCES.json.
+KERNEL=="uinput", SUBSYSTEM=="misc", TAG+="uaccess", OPTIONS+="static_node=uinput"

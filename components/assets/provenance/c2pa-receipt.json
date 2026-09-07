@@ -1,0 +1,110 @@
+{
+  "schema": 1,
+  "tool": {
+    "name": "c2patool",
+    "version": "0.26.60",
+    "release": "https://github.com/contentauth/c2pa-rs/releases/tag/c2patool-v0.26.60",
+    "archive": {
+      "filename": "c2patool-v0.26.60-universal-apple-darwin.zip",
+      "size": 19955218,
+      "sha256": "4ca9a8e0937ca28b9090c35e5af1a41c252023799b9bca07f27d974e9ea57beb"
+    },
+    "binary": {
+      "size": 46628528,
+      "sha256": "3fd3d51f90317f4cffe37b44b7e397392d92dc178dce609ba48e0bcee15420a6"
+    },
+    "settings": {
+      "path": "components/assets/provenance/c2patool-settings.json",
+      "size": 82,
+      "sha256": "d4ab963ea56113b6fc3b195f21c8a8b990c306f2ca8f093e6536e31a4ae32c6e"
+    }
+  },
+  "trust": {
+    "repository": "https://github.com/c2pa-org/conformance-public",
+    "commit": "2466172859fad1215f7aaf7e3768b41a0ac29abc",
+    "signer_list": {
+      "filename": "C2PA-TRUST-LIST.pem",
+      "size": 37911,
+      "sha256": "75cacc98b79ecac33713c7ecfb58d4a0ef383f3c1f886e7409f9e37e8664aea5"
+    },
+    "tsa_list": {
+      "filename": "C2PA-TSA-TRUST-LIST.pem",
+      "size": 28863,
+      "sha256": "c688d3555f4a2f1f8d663472bbd37888ff234abdd234c25934c0f9292e4eb5c9"
+    },
+    "timestamp_trust_verified": false,
+    "timestamp_note": "The timestamp message digest validates, but c2patool 0.26.60 reports timeStamp.untrusted because its CLI does not consume a separate TSA trust list."
+  },
+  "rights": {
+    "c2pa_proves_content_integrity": true,
+    "c2pa_proves_license": false,
+    "human_author_identified": false,
+    "license_identified": false,
+    "redistribution_permission": false,
+    "release_ready": false
+  },
+  "assets": [
+    {
+      "path": "assets/wallpapers/neko-bass-upper.png",
+      "size": 2259093,
+      "sha256": "e95ac3d4098a675b4029bbd004eebccae6fb10b36a3a9bbf4c01380063b4fa2c",
+      "width": 1672,
+      "height": 941,
+      "active_manifest": "urn:c2pa:d6029d19-e881-4034-b32a-68c4a6f4e97e",
+      "claim_version": 2,
+      "claim_generator": "OpenAI Media Service API",
+      "software_agent": "gpt-image",
+      "software_version": "2.0",
+      "digital_source_type": "http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia",
+      "created_time": "2026-08-26T00:00:00Z",
+      "signature_algorithm": "Es256",
+      "signature_issuer": "OpenAI OpCo, LLC",
+      "signature_common_name": "OpenAI Media Service",
+      "signature_time": "2026-08-26T12:03:44.396015+00:00",
+      "validation_state": "Trusted",
+      "success_code_counts": {
+        "timeStamp.validated": 1,
+        "signingCredential.trusted": 1,
+        "claimSignature.insideValidity": 1,
+        "claimSignature.validated": 1,
+        "assertion.hashedURI.match": 3,
+        "assertion.dataHash.match": 1
+      },
+      "failure_codes": [],
+      "informational_codes": [
+        "timeStamp.untrusted"
+      ]
+    },
+    {
+      "path": "assets/wallpapers/tendou-kei-lower.png",
+      "size": 1787826,
+      "sha256": "892a6cb49a8c870288a387af3bf0de8c21b75b660d354800349d20cf843d4be2",
+      "width": 1448,
+      "height": 1086,
+      "active_manifest": "urn:c2pa:b3e1c298-5f28-480a-964d-5cb5dc5c5600",
+      "claim_version": 2,
+      "claim_generator": "OpenAI Media Service API",
+      "software_agent": "gpt-image",
+      "software_version": "2.0",
+      "digital_source_type": "http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia",
+      "created_time": "2026-08-26T00:00:00Z",
+      "signature_algorithm": "Es256",
+      "signature_issuer": "OpenAI OpCo, LLC",
+      "signature_common_name": "OpenAI Media Service",
+      "signature_time": "2026-08-26T11:53:18.170731+00:00",
+      "validation_state": "Trusted",
+      "success_code_counts": {
+        "timeStamp.validated": 1,
+        "signingCredential.trusted": 1,
+        "claimSignature.insideValidity": 1,
+        "claimSignature.validated": 1,
+        "assertion.hashedURI.match": 3,
+        "assertion.dataHash.match": 1
+      },
+      "failure_codes": [],
+      "informational_codes": [
+        "timeStamp.untrusted"
+      ]
+    }
+  ]
+}

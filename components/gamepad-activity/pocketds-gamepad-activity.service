@@ -1,0 +1,18 @@
+[Unit]
+Description=Pocket DS gamepad idle activity (no input emulation)
+After=plasma-kwin_wayland.service plasma-powerdevil.service
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 -B %h/.local/libexec/pocketds/pocketds-gamepad-activity
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=5
+UMask=0077
+NoNewPrivileges=yes
+LimitCORE=0
+MemoryMax=64M
+
+[Install]
+WantedBy=graphical-session.target

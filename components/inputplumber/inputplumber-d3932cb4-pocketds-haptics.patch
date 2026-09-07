@@ -1,0 +1,128 @@
+diff --git a/bindings/dbus-xml/org.shadowblip.Output.ForceFeedback.xml b/bindings/dbus-xml/org.shadowblip.Output.ForceFeedback.xml
+index d8c680b9f48265d50343cbbc72f1f04d8a0f1e94..ff9907fe41e9cb2751c6c6b64abe6b1f33b8c262 100644
+--- a/bindings/dbus-xml/org.shadowblip.Output.ForceFeedback.xml
++++ b/bindings/dbus-xml/org.shadowblip.Output.ForceFeedback.xml
+@@ -42,6 +42,13 @@
+     <method name="Rumble">
+       <arg name="value" type="d" direction="in"/>
+     </method>
++    <!--
++     Send one bounded rumble pulse and stop it before returning
++     -->
++    <method name="Pulse">
++      <arg name="value" type="d" direction="in"/>
++      <arg name="duration_ms" type="u" direction="in"/>
++    </method>
+     <!--
+      Stop all currently playing force feedback effects
+      -->
+diff --git a/rootfs/usr/share/polkit-1/actions/org.shadowblip.InputPlumber.policy b/rootfs/usr/share/polkit-1/actions/org.shadowblip.InputPlumber.policy
+index b7c4bcfdb154d01105e786514d117bd5e3913df5..f279d54b7cac2084776b4a4902b3120467fc34e2 100644
+--- a/rootfs/usr/share/polkit-1/actions/org.shadowblip.InputPlumber.policy
++++ b/rootfs/usr/share/polkit-1/actions/org.shadowblip.InputPlumber.policy
+@@ -984,6 +984,16 @@
+     </defaults>
+   </action>
+
++  <action id="org.shadowblip.Output.ForceFeedback.Pulse">
++    <description>Allow sending a bounded force feedback pulse</description>
++    <message>Authentication is required to send a force feedback pulse</message>
++    <defaults>
++      <allow_any>no</allow_any>
++      <allow_inactive>auth_admin</allow_inactive>
++      <allow_active>auth_admin</allow_active>
++    </defaults>
++  </action>
++
+   <action id="org.shadowblip.Output.ForceFeedback.Stop">
+     <description>Allow stopping all force feedback effects</description>
+     <message>Authentication is required to stop force feedback</message>
+diff --git a/src/dbus/interface/force_feedback.rs b/src/dbus/interface/force_feedback.rs
+index f08ab4b781e7d6ad0feef1be14a99424717b11c3..6d76dfda4e4f7cf18e650096846e9c78a02a457d 100644
+--- a/src/dbus/interface/force_feedback.rs
++++ b/src/dbus/interface/force_feedback.rs
+@@ -1,4 +1,4 @@
+-use std::{error::Error, future::Future};
++use std::{error::Error, future::Future, time::Duration};
+
+ use packed_struct::types::{Integer, SizedInteger};
+ use zbus::{fdo, message::Header, Connection};
+@@ -12,6 +12,20 @@ use crate::{
+
+ use super::Unregisterable;
+
++const MAX_PULSE_VALUE: f64 = 0.70;
++const MIN_PULSE_DURATION_MS: u32 = 5;
++const MAX_PULSE_DURATION_MS: u32 = 50;
++
++fn bounded_pulse(value: f64, duration_ms: u32) -> (f64, Duration) {
++    let value = if value.is_finite() {
++        value.clamp(0.0, MAX_PULSE_VALUE)
++    } else {
++        0.0
++    };
++    let duration_ms = duration_ms.clamp(MIN_PULSE_DURATION_MS, MAX_PULSE_DURATION_MS);
++    (value, Duration::from_millis(duration_ms.into()))
++}
++
+ /// [ForceFeedbacker] is any device that can implement force feedback
+ pub trait ForceFeedbacker {
+     fn get_enabled(&self) -> impl Future<Output = Result<bool, Box<dyn Error>>> + Send;
+@@ -123,6 +137,35 @@ where
+         Ok(())
+     }
+
++    /// Send one short, bounded rumble pulse and always stop it before returning.
++    async fn pulse(
++        &mut self,
++        value: f64,
++        duration_ms: u32,
++        #[zbus(connection)] conn: &Connection,
++        #[zbus(header)] hdr: Header<'_>,
++    ) -> fdo::Result<()> {
++        check_polkit(conn, Some(hdr), "org.shadowblip.Output.ForceFeedback.Pulse").await?;
++
++        let (value, duration) = bounded_pulse(value, duration_ms);
++        let rumble_error = self
++            .device
++            .rumble(value)
++            .await
++            .err()
++            .map(|err| err.to_string());
++        if let Some(message) = rumble_error {
++            let _ = self.device.stop().await;
++            return Err(fdo::Error::Failed(message));
++        }
++        tokio::time::sleep(duration).await;
++        self.device
++            .stop()
++            .await
++            .map_err(|err| fdo::Error::Failed(err.to_string()))?;
++        Ok(())
++    }
++
+     /// Stop all currently playing force feedback effects
+     async fn stop(
+         &mut self,
+@@ -140,3 +183,21 @@ where
+
+ impl<T> Unregisterable for ForceFeedbackInterface<T> where T: ForceFeedbacker + Send + Sync + 'static
+ {}
++
++#[cfg(test)]
++mod tests {
++    use std::time::Duration;
++
++    use super::bounded_pulse;
++
++    #[test]
++    fn bounds_keyboard_pulse_strength_and_duration() {
++        assert_eq!(bounded_pulse(0.10, 12), (0.10, Duration::from_millis(12)));
++        assert_eq!(bounded_pulse(1.0, 500), (0.70, Duration::from_millis(50)));
++        assert_eq!(bounded_pulse(-1.0, 0), (0.0, Duration::from_millis(5)));
++        assert_eq!(
++            bounded_pulse(f64::NAN, 12),
++            (0.0, Duration::from_millis(12))
++        );
++    }
++}

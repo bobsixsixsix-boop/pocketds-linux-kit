@@ -1,0 +1,20 @@
+[Unit]
+Description=Pocket DS dual-display lid standby
+After=plasma-powerdevil.service plasma-kwin_wayland.service
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+Environment=QT_QPA_PLATFORM=wayland
+Environment=QT_ACCESSIBILITY=0
+ExecStart=%h/.local/libexec/pocketds/pocketds-light-standby daemon
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=5
+UMask=0077
+LimitCORE=0
+CoredumpFilter=0x0
+MemoryMax=64M
+
+[Install]
+WantedBy=graphical-session.target

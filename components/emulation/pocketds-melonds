@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+# Native dual-window melonDS entrypoint for Pocket DS's two internal displays.
+set -Eeuo pipefail
+
+app_id=net.kuribo64.melonDS
+supervisor=${POCKETDS_GAME_SESSION_SUPERVISOR:-/usr/local/libexec/pocketds-game-session}
+flatpak_bin=${POCKETDS_FLATPAK:-/usr/bin/flatpak}
+qdbus=${POCKETDS_QDBUS:-/usr/bin/qdbus-qt6}
+prepare=${POCKETDS_MELONDS_PREPARE:-"$HOME/.local/libexec/pocketds-melonds-prepare"}
+fullscreen_helper=${POCKETDS_MELONDS_FULLSCREEN:-"$HOME/.local/libexec/pocketds-melonds-fullscreen"}
+config=${POCKETDS_MELONDS_CONFIG:-"$HOME/.var/app/$app_id/config/melonDS/melonDS.toml"}
+save_dir=${POCKETDS_MELONDS_SAVE_DIR:-"$HOME/Saves/melonDS"}
+state_dir=${POCKETDS_MELONDS_STATE_DIR:-"$HOME/States/melonDS"}
+shared_root=${POCKETDS_SHARED_LIBRARY_MOUNT:-/mnt/pocketds-games}
+kwin_script=${POCKETDS_MELONDS_KWIN_SCRIPT:-"$HOME/.local/share/pocketds-linux-kit/emulation/kwin-melonds-dualscreen.js"}
+inhibit_bin=${POCKETDS_SYSTEMD_INHIBIT:-systemd-inhibit}
+host_wayland_display=${POCKETDS_HOST_WAYLAND_DISPLAY:-${WAYLAND_DISPLAY:-}}
+script_name=pocketds-melonds-dualscreen
+arranger_id=
+fullscreen_pid=
+
+for executable in "$supervisor" "$flatpak_bin" "$qdbus" "$prepare" "$fullscreen_helper"; do
+    if [[ ! -x $executable || -L $executable ]]; then
+        echo "Required melonDS component is missing or unsafe: $executable" >&2
+        exit 1
+    fi
+done
+for regular_file in "$kwin_script"; do
+    if [[ ! -f $regular_file || -L $regular_file ]]; then
+        echo "Required melonDS file is missing or unsafe: $regular_file" >&2
+        exit 1
+    fi
+done
+if ! "$flatpak_bin" info --user "$app_id" >/dev/null 2>&1; then
+    echo "melonDS Flatpak is not installed for this user: $app_id" >&2
+    exit 1
+fi
+if [[ ! -d $shared_root || -L $shared_root ]]; then
+    echo "The shared game library is missing or unsafe: $shared_root" >&2
+    exit 1
+fi
+if [[ -z $host_wayland_display \
+      || $host_wayland_display == /nonexistent/pocketds-gamescope-wayland ]]; then
+    echo 'The host KDE Wayland socket is unavailable for dual-screen melonDS.' >&2
+    exit 1
+fi
+
+"$prepare" --config "$config" --save-dir "$save_dir" --state-dir "$state_dir"
+
+cleanup() {
+    local status=$?
+    trap - EXIT INT TERM HUP
+    "$flatpak_bin" kill "$app_id" >/dev/null 2>&1 || true
+    if [[ -n $fullscreen_pid ]] && kill -0 "$fullscreen_pid" 2>/dev/null; then
+        kill "$fullscreen_pid" 2>/dev/null || true
+        wait "$fullscreen_pid" 2>/dev/null || true
+    fi
+    if [[ -n $arranger_id ]]; then
+        "$qdbus" org.kde.KWin /Scripting \
+            org.kde.kwin.Scripting.unloadScript "$script_name" \
+            >/dev/null 2>&1 || true
+    fi
+    exit "$status"
+}
+trap cleanup EXIT INT TERM HUP
+
+"$qdbus" org.kde.KWin /Scripting \
+    org.kde.kwin.Scripting.unloadScript "$script_name" \
+    >/dev/null 2>&1 || true
+arranger_id=$("$qdbus" org.kde.KWin /Scripting \
+    org.kde.kwin.Scripting.loadScript "$kwin_script" "$script_name")
+if [[ ! $arranger_id =~ ^[0-9]+$ ]]; then
+    echo 'KWin refused the melonDS dual-screen arranger.' >&2
+    exit 1
+fi
+"$qdbus" org.kde.KWin "/Scripting/Script${arranger_id}" \
+    org.kde.kwin.Script.run >/dev/null
+
+"$fullscreen_helper" --timeout 15 &
+fullscreen_pid=$!
+
+app_command=(
+    /usr/bin/env
+    WAYLAND_DISPLAY="$host_wayland_display"
+    XDG_SESSION_TYPE=wayland
+    QT_QPA_PLATFORM=wayland
+    "$flatpak_bin" run --user --filesystem="$shared_root:ro" "$app_id" "$@"
+)
+if [[ ${POCKETDS_SKIP_INHIBIT:-0} != 1 ]]; then
+    if ! command -v "$inhibit_bin" >/dev/null 2>&1; then
+        echo "Sleep inhibitor is unavailable: $inhibit_bin" >&2
+        exit 1
+    fi
+    app_command=(
+        "$inhibit_bin"
+        --what=idle:sleep
+        --who="Pocket DS melonDS"
+        --why="Nintendo DS emulation session in progress"
+        --mode=block
+        "${app_command[@]}"
+    )
+fi
+
+set +e
+if [[ -n ${POCKETDS_GAME_SESSION_TOKEN:-} ]]; then
+    "$supervisor" join \
+        --token "$POCKETDS_GAME_SESSION_TOKEN" \
+        -- "${app_command[@]}"
+else
+    "$supervisor" run \
+        --backend native \
+        --name melonds \
+        --performance \
+        -- "${app_command[@]}"
+fi
+status=$?
+set -e
+exit "$status"

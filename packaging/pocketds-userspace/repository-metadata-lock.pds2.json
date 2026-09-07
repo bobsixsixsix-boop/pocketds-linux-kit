@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "archive": {
+    "lock_sha256": "308324e557cb366e7adfe5afd74d74332ed53972489f32f07a84d5625e01d085",
+    "records_sha256": "fcfd45ca652707f4ad5fb16ccd49c258898e2bed0e1a3bf3203b0ce190104d89",
+    "package_count": 322
+  },
+  "generator": {
+    "distro": "fedora-44",
+    "architecture": "aarch64",
+    "nvr": "createrepo_c-1.2.1-5.fc44.aarch64",
+    "executable_size": 72464,
+    "executable_sha256": "3e7e3ec49ff9bfe3ff1a2748fbafb6254379fe52e02e053438164ec03e149c1d",
+    "rpm_verify_clean": true,
+    "independent_result_count": 2,
+    "parameters": [
+      "--quiet",
+      "--checksum=sha256",
+      "--repomd-checksum=sha256",
+      "--no-database",
+      "--general-compress-type=xz",
+      "--revision=1787875200",
+      "--set-timestamp-to-revision",
+      "--workers=1"
+    ],
+    "input_file_mtime": 1787875200
+  },
+  "repository": {
+    "revision": 1787875200,
+    "repomd": {
+      "filename": "repomd.xml",
+      "size": 1563,
+      "sha256": "c45ef7800681004df2d6e17436de3c02739d3be2a680aab95e9040402878bf39"
+    },
+    "metadata": [
+      {
+        "type": "filelists",
+        "filename": "69b675460ea4f28ad0defc8a6a9b2b89e8f94c1549da84db73e4f1ca78431eb4-filelists.xml.xz",
+        "size": 192140,
+        "sha256": "69b675460ea4f28ad0defc8a6a9b2b89e8f94c1549da84db73e4f1ca78431eb4",
+        "open_size": 2571057,
+        "open_sha256": "077e5ca0860ca7c8429a5aec32ab688b68a8d13ac62f3e893c98264413db7dae"
+      },
+      {
+        "type": "other",
+        "filename": "62a0311efa289295e006b765d3397a3f23e9a3762df8b1aed7883a951a29b74b-other.xml.xz",
+        "size": 67740,
+        "sha256": "62a0311efa289295e006b765d3397a3f23e9a3762df8b1aed7883a951a29b74b",
+        "open_size": 644225,
+        "open_sha256": "f3212060a7e2f3073ab62a2cf1af265b9566b24c70c11cdd7d29618533c18123"
+      },
+      {
+        "type": "primary",
+        "filename": "7b878830ee9f484e2eecf7f7ce5b170a801548c6c857d36edaaca4243359db4c-primary.xml.xz",
+        "size": 104380,
+        "sha256": "7b878830ee9f484e2eecf7f7ce5b170a801548c6c857d36edaaca4243359db4c",
+        "open_size": 903549,
+        "open_sha256": "1b0c7f5e3a221f21d6cc093b10a61e536f04a0da831575ec9b22dbe01620f857"
+      }
+    ],
+    "primary_location_checksum_sha256": "3b5a03e00cdf46fd089ff60ef77c756af76fdebb573c9dcd017a1c5ad2cead02"
+  },
+  "policy": {
+    "detached_repomd_signature_required": true,
+    "detached_repomd_signature_verified": false,
+    "project_rpm_signature_verified": false,
+    "release_ready": false
+  }
+}

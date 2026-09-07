@@ -1,0 +1,74 @@
+{
+  "schema": 1,
+  "artifact": {
+    "source_lock_sha256": "2d7d8fd968daefa5b09d344c2ff594263560e159c34c57550cf0a7e577384b81",
+    "build_lock_sha256": "49cc77046b045ec44dca0b1659270deb4ca82ed7ea6b6df22b6f77026d4f7578",
+    "archive_lock_sha256": "7d970599eca1bb7e20e95ab8e60b863f93cdf65bc79bca3fda9d81efa4d28953",
+    "binary_rpm_sha256": "457ee254ff2ae15b9a0cee2a839077b02e990da1015dbdcfbc4207b654c25cdf"
+  },
+  "builder": {
+    "distro": "fedora-44",
+    "architecture": "aarch64",
+    "mock_config": "fedora-44-aarch64",
+    "mock_nvr": "mock-6.8-1.fc44.noarch",
+    "initial_install_offline": true,
+    "dependency_archives_content_locked": true,
+    "remove_offline": true,
+    "reinstall_offline": true
+  },
+  "stages": [
+    {
+      "name": "baseline",
+      "package_count": 187,
+      "package_manifest_sha256": "0acd112356ffc0aefcdd9cb2786a5672e1d4b410cac4e4d868a17afa099107f5"
+    },
+    {
+      "name": "dependency-install",
+      "package_count": 323,
+      "package_manifest_sha256": "314281f9504b8bbe13b64e81e0e6264f286fbb74ac781c0c7d6bbf83223e5542"
+    },
+    {
+      "name": "remove",
+      "package_count": 322,
+      "package_manifest_sha256": "ede29f9ead6a139c2558bef6ef33ca7285b04a161995f14378df99db655b4a3a"
+    },
+    {
+      "name": "offline-reinstall",
+      "package_count": 323,
+      "package_manifest_sha256": "314281f9504b8bbe13b64e81e0e6264f286fbb74ac781c0c7d6bbf83223e5542"
+    }
+  ],
+  "installed_contract": {
+    "rpm_verify_output": [
+      "S.5......  c /etc/fstab"
+    ],
+    "legacy_packages_absent": [
+      "onboard",
+      "onboard-data"
+    ],
+    "legacy_paths_absent": [
+      "/etc/sudoers.d/10-wheel-nopasswd",
+      "/usr/bin/pocketds-onboard",
+      "/usr/bin/pocketds-osk-toggle",
+      "/usr/bin/pocketds-osk-listener",
+      "/usr/lib/systemd/user/pocketds-osk-listener.service",
+      "/usr/lib/systemd/user/graphical-session.target.wants/pocketds-osk-listener.service",
+      "/usr/share/inputplumber/devices/05-ignore-onboard-osk.yaml",
+      "/usr/share/onboard/themes/Switch.theme",
+      "/usr/share/onboard/themes/SwitchColor.colors",
+      "/usr/share/glib-2.0/schemas/95-pocketds-onboard.gschema.override",
+      "/etc/skel/.config/kwinrulesrc",
+      "/usr/local/share/dbus-1/services/org.onboard.Onboard.service"
+    ],
+    "critical_payload_paths": [
+      "/usr/bin/pocketds-fancontrol",
+      "/usr/lib/systemd/system/pocketds-fancontrol.service",
+      "/usr/share/alsa/ucm2/Qualcomm/sm8550/APS/HiFi.conf"
+    ],
+    "system_wants": {
+      "pocketds-fancontrol.service": "/usr/lib/systemd/system/pocketds-fancontrol.service",
+      "pocketds-fs-resize.service": "/usr/lib/systemd/system/pocketds-fs-resize.service",
+      "pocketds-mode-listener.service": "/usr/lib/systemd/system/pocketds-mode-listener.service"
+    }
+  }
+}

@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# Apply narrowly scoped workarounds for known ARM64/FEX game failures.
+set -Eeuo pipefail
+
+steam_root=${POCKETDS_STEAM_ROOT:-${HOME:?}/.local/share/Steam}
+game_dir="$steam_root/steamapps/common/Stardew Valley"
+native_ucrt="$game_dir/ucrtbase.dll"
+quarantined_ucrt="$game_dir/ucrtbase.dll.pocketds-disabled"
+
+link_count() {
+    stat -c '%h' -- "$1" 2>/dev/null || stat -f '%l' -- "$1"
+}
+
+# FEX issue #5541: Stardew Valley's bundled ARM64X ucrtbase.dll crosses back
+# into x86_64 code incorrectly. Wine's builtin ucrtbase works, so quarantine
+# the bundled copy. Reapply on every cold Steam start because an update or
+# file verification can restore it.
+[[ -e $native_ucrt ]] || exit 0
+if [[ -L $game_dir || ! -d $game_dir || ! -O $game_dir
+      || -L $native_ucrt || ! -f $native_ucrt || ! -O $native_ucrt
+      || $(link_count "$native_ucrt") != 1 ]]; then
+    echo 'pocketds-steam-arm64-workarounds: unsafe Stardew Valley runtime file' >&2
+    exit 1
+fi
+if [[ -e $quarantined_ucrt ]] &&
+   [[ -L $quarantined_ucrt || ! -f $quarantined_ucrt || ! -O $quarantined_ucrt ]]; then
+    echo 'pocketds-steam-arm64-workarounds: unsafe Stardew Valley backup file' >&2
+    exit 1
+fi
+
+mv -f -- "$native_ucrt" "$quarantined_ucrt"
+echo 'pocketds-steam-arm64-workarounds: applied Stardew Valley FEX workaround' >&2

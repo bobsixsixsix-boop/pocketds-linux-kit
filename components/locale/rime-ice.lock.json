@@ -1,0 +1,8 @@
+{
+    "schema_version": 1,
+    "repository": "https://github.com/iDvel/rime-ice.git",
+    "commit": "fbb516b2786e4d5444383706d13c31c2e4d10c08",
+    "commit_date": "2026-08-31T17:44:46+08:00",
+    "schema": "rime_ice",
+    "license": "GPL-3.0-only"
+}

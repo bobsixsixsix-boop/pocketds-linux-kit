@@ -1,0 +1,7 @@
+# Stamped by mkosi.postinst.chroot at build time.
+# Sourceable from shell scripts.
+IMAGE_ID=pocketds
+IMAGE_VARIANT=fedora
+IMAGE_BASE_DISTRO=fedora
+IMAGE_TARGET_DEVICE=ayaneo-pocketds
+IMAGE_TARGET_SOC=qcs8550

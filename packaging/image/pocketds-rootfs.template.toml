@@ -1,0 +1,12 @@
+name = "pocketds-linux-rootfs"
+description = "Non-flashable Fedora 44 aarch64 rootfs staging artifact"
+version = "0.1.0"
+distro = "fedora-44"
+
+[[packages]]
+name = "pocketds-linux-kit"
+version = "__PIN_REQUIRED__"
+
+[[packages]]
+name = "pocketds-userspace"
+version = "20260507-20260730174706.pds2.fc44"

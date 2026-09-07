@@ -1,0 +1,29 @@
+[Unit]
+Description=Pocket DS conditional Hall sensor lid switch
+After=systemd-udev-settle.service
+Before=display-manager.service
+ConditionPathExists=/dev/gpiochip4
+ConditionPathExists=/dev/uinput
+
+[Service]
+Type=simple
+ExecStart=/usr/local/libexec/pocketds-lid-switch
+Restart=on-failure
+RestartSec=1
+UMask=0077
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectHome=yes
+ProtectSystem=strict
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_UNIX
+RestrictNamespaces=yes
+LockPersonality=yes
+DevicePolicy=closed
+DeviceAllow=/dev/gpiochip4 rw
+DeviceAllow=/dev/uinput rw
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "specification": {
+    "version": "3.0.1",
+    "documentation": "https://spdx.github.io/spdx-spec/v3.0.1/serializations/",
+    "context_iri": "https://spdx.org/rdf/3.0.1/spdx-context.jsonld",
+    "model_commit": "a745f63e8643d5ae0f0851fcfa6836085308f80b",
+    "spec_commit": "61a649da8ca27924ac1ca8d2a061cb228839b24c"
+  },
+  "artifacts": {
+    "context": {
+      "filename": "spdx-context.jsonld",
+      "url": "https://spdx.org/rdf/3.0.1/spdx-context.jsonld",
+      "size": 36127,
+      "sha256": "c72b0928f094c83e5c127784edb1ebca2af74a104fcacc007c332b23cbc788bd"
+    },
+    "json_schema": {
+      "filename": "spdx-json-schema.json",
+      "url": "https://spdx.org/schema/3.0.1/spdx-json-schema.json",
+      "size": 265678,
+      "sha256": "582c64e809d5b3ef9bd0c4de13a32391b47b0284a3e8d199569fb96f649234b1"
+    },
+    "semantic_model": {
+      "filename": "spdx-model.ttl",
+      "url": "https://spdx.org/rdf/3.0.1/spdx-model.ttl",
+      "size": 182034,
+      "sha256": "30ebb4af2d70a9809044ef46f44cc3dc5125226d70f818a50ed2e1d5f404c593"
+    }
+  },
+  "validator": {
+    "python": "python3-libs-3.14.3-2.fc44.aarch64",
+    "jsonschema": "python3-jsonschema-4.23.0-7.fc44.noarch",
+    "rdflib": "python3-rdflib-7.1.4-7.fc44.noarch",
+    "pyshacl": "python3-pyshacl-0.30.1-6.fc44.noarch"
+  },
+  "policy": {
+    "json_schema_required": true,
+    "owl_shacl_required": true,
+    "network_allowed": false,
+    "legal_conclusion": "NOT_DETERMINED",
+    "release_ready": false
+  }
+}

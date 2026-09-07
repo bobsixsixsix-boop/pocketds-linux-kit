@@ -1,0 +1,189 @@
+{
+  "schema_version": 1,
+  "experiment_id": "pds002-ifpc-only",
+  "source_commit": "a4975ce7c8eec079bd0cf7ec3890e100e016813f",
+  "revert_commit": "d84f65cc8cd7af0bf62cca52d13583394851cfe8",
+  "package_nevra": "kernel-7.1.0-100.20260730172655.pocketds.fc44.aarch64",
+  "baseline_artifacts": {
+    "source_rpm": {
+      "filename": "kernel.src.rpm",
+      "sha256": "03076822c95a0ec0315d0d400ac0163e86c1ef46eb783bc72621e99f0fed7c03",
+      "size": 259026310
+    },
+    "reference_rpm": {
+      "filename": "reference-kernel.rpm",
+      "sha256": "3d1502c7995fbd4b496796dc66777242c373240209902290899f38160efe2cb9",
+      "size": 37131042
+    }
+  },
+  "candidate_artifacts": {
+    "source_rpm": {
+      "filename": "kernel-ifpc-revert.src.rpm",
+      "sha256": "1d6d23ebcd895725dc0fde9bb097f2b9f741f721f8a2627618174cea3496a26c",
+      "size": 259027283
+    },
+    "binary_rpm": {
+      "filename": "kernel-ifpc-revert.aarch64.rpm",
+      "sha256": "070fea36c7cc293b43133d0ae6914b7747cb2a938b623dc5097c5c7824ca5e7f",
+      "size": 37130797
+    },
+    "package_manifest": {
+      "filename": "packages.nevra",
+      "sha256": "66e7c67c43ad740150ba80038789f384348ce869fc24d6d08691a1952fdb881b",
+      "size": 11598
+    },
+    "compiler_summary": {
+      "filename": "compiler.txt",
+      "sha256": "ffee3bb7b23e81d7ec72fceb3f7cb3cc2a23907d9e404f477e09f4f1902bf526",
+      "size": 80
+    },
+    "wrapper_manifest": {
+      "filename": "wrappers.sha256",
+      "sha256": "0f4a6ca55fb64264b66f838d7a12e3fa2d92e1298150f8c9f236e4e2d2799d08",
+      "size": 172
+    },
+    "build_log": {
+      "filename": "candidate-build-root.log",
+      "sha256": "a5c4d22c67cd3c47781342ada1cbf057a411ae81125d11c06d19a8ca341d3654",
+      "size": 760865
+    },
+    "baseline_spec": {
+      "filename": "kernel-baseline.spec",
+      "sha256": "8e938ba614226e318bb09ff80b4788ea3b94821d0e15114bb585abf4538bfc74",
+      "size": 15810
+    },
+    "candidate_spec": {
+      "filename": "kernel-ifpc.spec",
+      "sha256": "e6c45c6593f0b614859f7ca5aa3be3e1cc62e000bee11e65f637acb3c4911ceb",
+      "size": 15910
+    }
+  },
+  "reproduced_candidate_artifacts": {
+    "binary_rpm": {
+      "filename": "kernel-ifpc-revert-reproduced.aarch64.rpm",
+      "sha256": "beecd536e422f3a41d103b81ffb1e2ee6df697b8d304806cf3e1fd59be765af9",
+      "size": 37130797
+    },
+    "package_manifest": {
+      "filename": "packages.nevra",
+      "sha256": "66e7c67c43ad740150ba80038789f384348ce869fc24d6d08691a1952fdb881b",
+      "size": 11598
+    },
+    "compiler_summary": {
+      "filename": "compiler.txt",
+      "sha256": "ffee3bb7b23e81d7ec72fceb3f7cb3cc2a23907d9e404f477e09f4f1902bf526",
+      "size": 80
+    },
+    "wrapper_manifest": {
+      "filename": "wrappers.sha256",
+      "sha256": "0f4a6ca55fb64264b66f838d7a12e3fa2d92e1298150f8c9f236e4e2d2799d08",
+      "size": 172
+    },
+    "build_log": {
+      "filename": "candidate-build-root.log",
+      "sha256": "7f18a7fc5cebb2c67f852741d9a4fab5dc395844ad42f5818bf2538b26404e26",
+      "size": 606713
+    }
+  },
+  "recipe_files": {
+    "revert_patch": {
+      "path": "../patches/0002-revert-a740-ifpc.patch",
+      "sha256": "cefa9b570876057f74bc3695b6328780bf2b69c77d64e0583446826f72f4f4fb",
+      "size": 1663
+    },
+    "spec_patch": {
+      "path": "ifpc-kernel-spec.patch",
+      "sha256": "85a4e966ec2d08bf197b85e30a83f775463c74ac8ddc3cff872f92998278b51a",
+      "size": 171
+    }
+  },
+  "environment": {
+    "installed_package_count": 326,
+    "installed_package_manifest_sha256": "66e7c67c43ad740150ba80038789f384348ce869fc24d6d08691a1952fdb881b",
+    "compiler_lines": [
+      "gcc (GCC) 16.1.1 20260515 (Red Hat 16.1.1-2)",
+      "libfaketime-0.9.12-12.fc44.aarch64"
+    ],
+    "date_wrapper_sha256": "336acc81b65710fc4316fb53e0a89e41bcf4bd0851fbbefc7ea63dcbf61335f2",
+    "make_wrapper_sha256": "fa15dfc3f19361a46d84d836b87570040c60aa3a25ec1fd193f6b498e333c167"
+  },
+  "source_rpm": {
+    "spec_filename": "kernel.spec",
+    "patch_filename": "0002-revert-a740-ifpc.patch",
+    "unchanged_members": {
+      "linux-7.1-rc2.tar.gz": {
+        "sha256": "715b639c67d31b7abd4a3ccc02ad644e780ef369d4b4a27101698211272866bf",
+        "size": 262099891
+      },
+      "pocketds-initramfs.tar.zst": {
+        "sha256": "b1f3313944e50899b0b6ee81b617c526fae296e4d7e7972e20937e5c6809b86a",
+        "size": 3232141
+      },
+      "rocknix-linux.aarch64.conf": {
+        "sha256": "0faed47042d8031b995cc77641ce3f86d329aeea1c6e612a431a92d5a947aa08",
+        "size": 231558
+      }
+    },
+    "baseline_spec_sha256": "8e938ba614226e318bb09ff80b4788ea3b94821d0e15114bb585abf4538bfc74",
+    "candidate_spec_sha256": "e6c45c6593f0b614859f7ca5aa3be3e1cc62e000bee11e65f637acb3c4911ceb",
+    "added_patch_sha256": "cefa9b570876057f74bc3695b6328780bf2b69c77d64e0583446826f72f4f4fb",
+    "baseline_entry_count": 4,
+    "candidate_entry_count": 5
+  },
+  "payload": {
+    "baseline_manifest_sha256": "4654c0aa99fcf447b6c589986a1c286a33357aef2e164a65ab79f464ec6b1ada",
+    "candidate_manifest_sha256": "73593580e8b5bd748c8b897b4ef9b9c6cfa26ea24dc16e307fe708a37b4e421d",
+    "entry_count": 499,
+    "regular_file_count": 341,
+    "directory_count": 156,
+    "symlink_count": 2,
+    "regular_file_bytes": 81183506,
+    "rpm_entry_count": 496,
+    "implicit_directory_count": 3,
+    "unchanged_entry_count": 497,
+    "unchanged_regular_file_count": 339,
+    "changed_files": {
+      "boot_image": {
+        "path": "boot/Image-7.1.0-100.20260730172655.pocketds.fc44.aarch64",
+        "size": 17090560,
+        "baseline_sha256": "cf910fef42e06aaae7f983d3e29ec920705e311e768721428b481a033670d55b",
+        "candidate_sha256": "7ff037958ce47cdbaa71d418d7b0da225f9a2bce67c81520b72fc05134c2e9fe"
+      },
+      "raw_image": {
+        "path": "lib/modules/7.1.0-100.20260730172655.pocketds.fc44.aarch64/Image",
+        "size": 34515456,
+        "baseline_sha256": "b77e3cecf7c49689017965b5b19829d8224144179fdd4c6c41d79c04e3239ba1",
+        "candidate_sha256": "ccfe5f24d9710d624bc99b4bcbe1dafde06914795a1802645b02b55f43bfdcba"
+      }
+    },
+    "raw_image_delta": {
+      "different_byte_count": 29,
+      "quirk_offset": 21010240,
+      "baseline_quirk_hex": "b8",
+      "candidate_quirk_hex": "38",
+      "ifpc_pointer_offset": 21011216,
+      "baseline_ifpc_pointer_hex": "609c40810080ffff",
+      "candidate_ifpc_pointer_hex": "0000000000000000",
+      "build_id_offset": 27395556,
+      "baseline_build_id_hex": "8669714a825554324fdfd99fc6ffebaa33e5d755",
+      "candidate_build_id_hex": "2757c6af4c956e14ea106d87233503503b6ba75c",
+      "relr_offset": 32635892,
+      "baseline_relr_hex": "3f",
+      "candidate_relr_hex": "2f"
+    },
+    "boot_derivation": {
+      "page_size": 2048,
+      "dtb_size": 135527,
+      "dtb_sha256": "0557cee113d4e34fcae274c69400a8a53653e60229a1f333eafde83b2dfe6994",
+      "baseline_kernel_size": 17087090,
+      "candidate_kernel_size": 17087089,
+      "baseline_gzip_size": 16951563,
+      "candidate_gzip_size": 16951562,
+      "baseline_gzip_sha256": "1549b173e8ea6e32c749c8c730211f2e9c48255556be7231ffc8352bc652a87d",
+      "candidate_gzip_sha256": "b0c484c93dfe20d2967718596c9370901ef7f62220ec5f041f8432e47b7f5bae",
+      "baseline_id_hex": "08f1a87c888fe6c244d3deea6c65b22410318cb7000000000000000000000000",
+      "candidate_id_hex": "47311b42b8d46da51cb0adc692d7661c65a5c355000000000000000000000000",
+      "header_different_byte_count": 21
+    }
+  }
+}

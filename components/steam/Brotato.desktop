@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Brotato
+Name[zh_CN]=土豆兄弟
+Comment=Launch through the managed Pocket DS Steam runtime
+Comment[zh_CN]=通过受管 Pocket DS Steam 运行时启动
+Exec=env STEAMDECK_MODE=false /home/pocketds/.local/bin/pocketds-steam-session steam://rungameid/1942280
+TryExec=/home/pocketds/.local/bin/pocketds-steam-session
+Icon=steam_icon_1942280
+Terminal=false
+Type=Application
+Categories=Game;

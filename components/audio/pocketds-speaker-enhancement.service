@@ -1,0 +1,19 @@
+[Unit]
+Description=Pocket DS built-in speaker enhancement
+PartOf=graphical-session.target
+Requires=filter-chain.service
+After=graphical-session.target pipewire.service pipewire-pulse.service wireplumber.service filter-chain.service
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/libexec/pocketds/pocketds-speaker-enhancement activate
+ExecStop=%h/.local/libexec/pocketds/pocketds-speaker-enhancement deactivate
+RemainAfterExit=true
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+UMask=0077
+
+[Install]
+WantedBy=default.target

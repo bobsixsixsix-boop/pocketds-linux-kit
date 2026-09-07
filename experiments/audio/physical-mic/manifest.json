@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "id": "pds018b-physical-mic-dmic0",
+  "status": "experimental",
+  "default_install": false,
+  "base_commit": "88d307fd727ca073b3249f63a9d451eacfc887be",
+  "base_hifi_sha256": "18b874b47ff7e83e8b81f014e78ccedbe188b327af14cb44dbf3c9717d279258",
+  "base_card_sha256": "8d882cb105842de399f51b5c0f42ea161dfd7a8b43227d8d9087187b08bfd92f",
+  "overlay_hifi_sha256": "dce6705f426b7bddd56ada90dbaebf5b072a3539dc84c1dc4fdceb63966a3edc",
+  "overlay_card_sha256": "8d882cb105842de399f51b5c0f42ea161dfd7a8b43227d8d9087187b08bfd92f",
+  "speaker_mm1_pair": "1,0",
+  "capture_pcm": "hw:${CardId},2",
+  "ucm_device": "Mic",
+  "kernel": {
+    "release": "7.1.0-100.20260730172655.pocketds.fc44.aarch64",
+    "source_repository": "https://gitlab.com/linux-pocketds/linux.git",
+    "source_ref": "refs/heads/pocketds/v7.1-rc2",
+    "source_commit": "a4975ce7c8eec079bd0cf7ec3890e100e016813f",
+    "dts_path": "arch/arm64/boot/dts/qcom/qcs8550-ayaneo-pocket-common.dtsi",
+    "dts_sha256": "350cacc75d42afeecf35e9944615f0bc2cbe420d128b6e33778a08f8844d2d20",
+    "contract": [
+      "VA_CODEC_DMA_TX_0",
+      "VA DMIC0 to vdd-micb",
+      "VA DMIC1 to vdd-micb",
+      "dmic01_default",
+      "dmic23_default",
+      "vdd-micb-supply"
+    ]
+  },
+  "ucm_reference": {
+    "repository": "https://github.com/alsa-project/alsa-ucm-conf.git",
+    "commit": "00175aa645c482111d096c3d8230f182a875d286",
+    "live_package": "alsa-ucm 1.2.16.1-1.fc44 noarch",
+    "sequences": {
+      "DMIC0EnableSeq.conf": "65a28399678c91ecbb88345b99dfad96adeab43747f88ab85f554f85129531a1",
+      "DMIC0DisableSeq.conf": "69908cb72a1be42309447a4dd9cad1a02e5a869876874c2d9f01506d2c7c223d",
+      "DMIC1EnableSeq.conf": "ad638327f00aaff89b6f19ce4151fbf4c345c2d9394088074eda11b106e8f9eb",
+      "DMIC1DisableSeq.conf": "a362159080f8e8898996be687c8e0b51c989c1fa1d0a5dea1954f7f179e240b9"
+    }
+  },
+  "live_read_only_observation": {
+    "capture_pcms": [
+      "00-02 MultiMedia3 Capture",
+      "00-03 MultiMedia4 Capture"
+    ],
+    "physical_pipewire_sources": 0,
+    "stream_tested": false
+  },
+  "validation": {
+    "kernel_capture_prerequisites": true,
+    "ucm_reference_sequences": true,
+    "acoustic": false,
+    "channel_map": false,
+    "gain": false,
+    "suspend_resume": false,
+    "privacy": false
+  }
+}
