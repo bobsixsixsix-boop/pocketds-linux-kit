@@ -36,6 +36,8 @@ PYTHONPYCACHEPREFIX="$build_dir/pycache" \
     "$repo_root/components/touchpad/touchpad_raw.py" \
     "$repo_root/components/codex-quota/pocketds-codex-quota" \
     "$repo_root/components/fan/pocketds-fancontrol-connected-idle.py" \
+    "$repo_root/components/fan/pocketds-tuned-ppd.py" \
+    "$repo_root/tests/tuned-ppd-bridge.py" \
     "$repo_root/components/brightness/pocketds-brightness.py" \
     "$repo_root/components/gamepad-activity/pocketds-gamepad-activity.py" \
     "$repo_root/tools/gamepad-activity/wayland-idle-probe.py" \

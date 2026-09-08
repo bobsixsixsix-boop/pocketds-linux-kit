@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!DOCTYPE policyconfig PUBLIC "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
+<policyconfig>
+  <vendor>Pocket DS Linux Kit</vendor>
+  <!-- A separate namespace avoids duplicate action IDs from the retained
+       power-profiles-daemon RPM. Only an active local session is authorized. -->
+  <action id="org.pocketds.TunedPowerProfiles.switch-profile">
+    <description>Switch the Pocket DS power profile</description>
+    <message>Authentication is required to switch the power profile.</message>
+    <defaults>
+      <allow_any>no</allow_any>
+      <allow_inactive>no</allow_inactive>
+      <allow_active>yes</allow_active>
+    </defaults>
+  </action>
+  <action id="org.pocketds.TunedPowerProfiles.hold-profile">
+    <description>Temporarily hold a Pocket DS power profile</description>
+    <message>Authentication is required to hold a power profile.</message>
+    <defaults>
+      <allow_any>no</allow_any>
+      <allow_inactive>no</allow_inactive>
+      <allow_active>yes</allow_active>
+    </defaults>
+  </action>
+  <action id="org.pocketds.TunedPowerProfiles.release-profile">
+    <description>Release a Pocket DS power profile hold</description>
+    <message>Authentication is required to release a power profile hold.</message>
+    <defaults>
+      <allow_any>no</allow_any>
+      <allow_inactive>no</allow_inactive>
+      <allow_active>yes</allow_active>
+    </defaults>
+  </action>
+</policyconfig>

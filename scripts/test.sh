@@ -329,6 +329,7 @@ python3 "$repo_root/tests/power-safety-config.py"
 
 echo '[test] TuneD performance profile routing'
 python3 "$repo_root/tests/power-profile-config.py"
+python3 "$repo_root/tests/tuned-ppd-bridge.py"
 
 echo '[test] live TuneD acceptance harness (mocked)'
 python3 "$repo_root/tests/power-profile-live-mock.py"

@@ -1,0 +1,31 @@
+[Unit]
+Description=Pocket DS desktop power profiles via TuneD
+Requires=tuned.service
+After=tuned.service
+Before=display-manager.service
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
+[Service]
+Type=dbus
+BusName=org.freedesktop.UPower.PowerProfiles
+ExecStart=/usr/bin/python3 -Es /usr/local/libexec/pocketds/pocketds-tuned-ppd --run
+Restart=on-failure
+RestartSec=5
+TimeoutStartSec=30
+TimeoutStopSec=15
+User=root
+UMask=0022
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/etc/tuned
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+PrivateDevices=yes
+PrivateTmp=yes
+RestrictSUIDSGID=yes
+
+[Install]
+WantedBy=graphical.target

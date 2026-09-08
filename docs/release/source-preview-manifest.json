@@ -1,7 +1,7 @@
 {
   "archive": {
     "path": "source.tar.gz",
-    "sha256": "cc356298d628b2f7eb8e3232e7905ca61cac472e4dd237d67f9c50341555d87a"
+    "sha256": "11305f3b3a9f05d53ca696aef8d441f045320bab61e90e24b99133ee8966bad2"
   },
   "draft_only": true,
   "excluded_files": [
@@ -88,8 +88,8 @@
     {
       "mode": "0644",
       "path": "README.md",
-      "sha256": "7700a101856be494a79969823e879706c23cbe61deb57076c56444b917ef328d",
-      "size": 7110
+      "sha256": "8631e0a12c86cdc3fa505e61579ab2af3bb5d4b20765af5e6cecc49e0d027d04",
+      "size": 7406
     },
     {
       "mode": "0644",
@@ -501,6 +501,24 @@
     },
     {
       "mode": "0644",
+      "path": "components/fan/net.hadess.PowerProfiles.service",
+      "sha256": "3745b34930bbc596ac0edffad13ea3a1fd67ae468b4c0bc482a26b1325d651eb",
+      "size": 158
+    },
+    {
+      "mode": "0644",
+      "path": "components/fan/org.freedesktop.UPower.PowerProfiles.service",
+      "sha256": "dd5d2dfe85cd04fbf0f5859ef55d21b9323272e7c101e61eae54a26d33c0a0f2",
+      "size": 170
+    },
+    {
+      "mode": "0644",
+      "path": "components/fan/org.pocketds.TunedPowerProfiles.policy",
+      "sha256": "2421b795f0e1dc7df9d53866156c2601beecd9c0b93a4f2477a12dd928e41647",
+      "size": 1580
+    },
+    {
+      "mode": "0644",
       "path": "components/fan/pocketds-fancontrol-connected-idle.conf",
       "sha256": "a436be4720c1384771890d756231309489106e795912cd75e72856868e4fffa4",
       "size": 94
@@ -510,6 +528,18 @@
       "path": "components/fan/pocketds-fancontrol-connected-idle.py",
       "sha256": "93d2fa4bcf6767f66bed8fd1f782f1a3258f83ca2bb40845e6336ec93e2319e5",
       "size": 14404
+    },
+    {
+      "mode": "0644",
+      "path": "components/fan/pocketds-tuned-ppd.py",
+      "sha256": "668de1957044299e00caa3754a6c11e916e36703570c7852f05da33f6fc43114",
+      "size": 10014
+    },
+    {
+      "mode": "0644",
+      "path": "components/fan/pocketds-tuned-ppd.service",
+      "sha256": "464ffc9a75779282fb6df6597f4bed7cb2c7dca72259f3706d2c2233c67f7310",
+      "size": 670
     },
     {
       "mode": "0644",
@@ -1342,8 +1372,8 @@
     {
       "mode": "0644",
       "path": "docs/DEPENDENCIES.md",
-      "sha256": "b7869787387b966b9441a45efbad8244227cb4ef594602027e712b143bd43e9e",
-      "size": 7567
+      "sha256": "6104215aad7f442720b013d959cc8e6bb27069f603a1e373316991591248f77a",
+      "size": 8315
     },
     {
       "mode": "0644",
@@ -2106,6 +2136,12 @@
       "path": "docs/research/2026-09-08-keyboard-symbol-geometry.md",
       "sha256": "9b155d9b701580311443e63369f161c82e997bd044f6651cc102b57f2e800f93",
       "size": 3923
+    },
+    {
+      "mode": "0644",
+      "path": "docs/research/2026-09-08-tuned-ppd-bridge.md",
+      "sha256": "868d58e762bb3017890470b5763a8901ad48756be15d775a3588f8d1624a5e64",
+      "size": 6086
     },
     {
       "mode": "0644",
@@ -6730,8 +6766,8 @@
     {
       "mode": "0755",
       "path": "scripts/check.sh",
-      "sha256": "df94c7236849347fbaa6a94e81dda75cb50ddc3a70d25acffbd58b5f773bb641",
-      "size": 12819
+      "sha256": "d6d62ab2cbde6c4a98f1e8aac6e42432ef0746cc282350d335204c7731e8624f",
+      "size": 13885
     },
     {
       "mode": "0644",
@@ -6850,14 +6886,14 @@
     {
       "mode": "0755",
       "path": "scripts/install.sh",
-      "sha256": "ed8568d94abae5c4ed7a487a0dbceca879241d4c2ddfc86a68b6ed8e47f0fcef",
-      "size": 30570
+      "sha256": "2ea44fd9974c17dfbedc3cef025efde941968f391478b85306e200f55c08415b",
+      "size": 32854
     },
     {
       "mode": "0755",
       "path": "scripts/lint.sh",
-      "sha256": "7a1d77d361bbe059d0e0979f8ffab73ccec55b1eeb233f741c27b167d86fa94b",
-      "size": 17668
+      "sha256": "bee4ec59d7e5e35c8833199d85eeecdb05705e3ceff2c85aa36a144e4d1b84fe",
+      "size": 17769
     },
     {
       "mode": "0755",
@@ -7246,8 +7282,8 @@
     {
       "mode": "0755",
       "path": "scripts/test.sh",
-      "sha256": "82f2817359262b6fed4f7c823a6beaa360c292ca9ca4e4a269be494b20b0b201",
-      "size": 16291
+      "sha256": "28589fe5844e727173088aacd25052a9f4cc2b212b9c07edfb0a8d6af1bc8441",
+      "size": 16338
     },
     {
       "mode": "0644",
@@ -8164,8 +8200,8 @@
     {
       "mode": "0755",
       "path": "tests/power-profile-config.py",
-      "sha256": "2c96210a3e59ebaf940cc83133539bc10e12a6eee377cb330d3204f41b545e36",
-      "size": 2834
+      "sha256": "c468cd81c0799170c6dec5af5dc50cda2e0d077656898479ba9fa0efe597462b",
+      "size": 4389
     },
     {
       "mode": "0755",
@@ -8322,6 +8358,12 @@
       "path": "tests/touchpad-reader-lifecycle.py",
       "sha256": "7db2e459ef4ecb3894f98afc014a4a71ff72ad1968838bfbc0de9ca97ec262cb",
       "size": 17282
+    },
+    {
+      "mode": "0644",
+      "path": "tests/tuned-ppd-bridge.py",
+      "sha256": "164d55ed4bffdba57159a2fb84be5ccb81ffe3a0384db539a66eff5e0aeb4f2f",
+      "size": 12736
     },
     {
       "mode": "0644",
@@ -8781,6 +8823,6 @@
   "publication_authorized": false,
   "scan_limitations": "Pattern scan only; arbitrary, encoded or split secrets may be missed. Licensing and publication approval are not assessed.",
   "schema": 1,
-  "source_commit": "68d0dea21f495b0266e8ced4c79dbd6f3cbe7d5f",
-  "source_commit_time": 1788875619
+  "source_commit": "fcdd1febec755bfabdad169c2b4e863c0af6cca5",
+  "source_commit_time": 1788881450
 }

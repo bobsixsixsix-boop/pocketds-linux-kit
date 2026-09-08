@@ -1,0 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+[D-BUS Service]
+Name=org.freedesktop.UPower.PowerProfiles
+Exec=/bin/false
+User=root
+SystemdService=pocketds-tuned-ppd.service

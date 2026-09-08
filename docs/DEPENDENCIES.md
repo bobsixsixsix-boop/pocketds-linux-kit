@@ -22,6 +22,15 @@ Panel 直接调用 TuneD 的系统 D-Bus 并安装三套 Pocket DS profile，因
 和系统 D-Bus 激活，只做 disable 仍会在登录 KDE 时与 TuneD 竞速并将其停止。
 TuneD 必须是 Panel 性能档唯一的运行时权威。
 
+KDE 的“电源管理方案”通过 `pocketds-tuned-ppd.service` 接入同一套 TuneD。
+这个薄启动器复用 `tuned` 软件包内的官方 `tuned.ppd.controller` 和 D-Bus exporter，
+不另写调频逻辑；已验证模块来自 Fedora `tuned-2.27.0-1.fc44`。
+`--apps` 和 `--all` 都安装现有三档映射、兼容启动器、本地 D-Bus 激活文件和
+只授权活动本地会话的 Polkit 策略。`/usr/local/share/dbus-1/system-services/`
+覆盖优先级高于原包的 `/usr/share` 激活文件，不改动原包文件或解除其 mask。
+启动时沿用当前 Pocket DS 档位，Panel 与 KDE 的操作均交给同一个 TuneD。
+详情及验证边界见 [电源方案兼容接口](research/2026-09-08-tuned-ppd-bridge.md)。
+
 `plasma-milou` 提供 KWin 概览和 Plasma 搜索使用的 `org.kde.milou` QML 模块。
 Pocket DS 的图形栈保护策略会排除通配的 `plasma*` 更新；安装前必须先预览事务，并且
 只在事务为“新增 `plasma-milou`、零升级、零删除”时临时清空该次命令的 exclude，不能

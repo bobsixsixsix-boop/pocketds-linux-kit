@@ -48,7 +48,7 @@ if [[ $EUID -eq 0 ]]; then
     exit 1
 fi
 
-for command in arecord c++ cmp install kdialog kwriteconfig6 pactl parecord python3 rpm sha256sum systemctl sudo tuned-adm; do
+for command in arecord busctl c++ cmp install kdialog kwriteconfig6 pactl parecord python3 rpm sha256sum systemctl sudo tuned-adm; do
     command -v "$command" >/dev/null 2>&1 || {
         echo "Missing required command: $command" >&2
         exit 1
@@ -98,7 +98,7 @@ done
 python3 - <<'PY'
 import importlib
 
-required = ("dbus", "evdev", "gi", "pyatspi")
+required = ("dbus", "evdev", "gi", "pyatspi", "tuned.ppd.controller")
 missing = []
 for module in required:
     try:
@@ -111,7 +111,7 @@ if missing:
         "Missing required Python runtime module(s): "
         + ", ".join(missing)
         + ". On Fedora install python3-evdev, python3-dbus, "
-          "python3-gobject, and python3-pyatspi before retrying."
+          "python3-gobject, python3-pyatspi, and tuned before retrying."
     )
 PY
 
@@ -207,6 +207,7 @@ start_updated_user_service() {
 
 install_apps() {
     local active_profile ppd_enable_state tuned_verified target
+    local expected_ppd_profile ppd_profile bridge_ready
     echo '[install] control panel'
     # Install the fixed lifecycle and non-root logind deny rule before the
     # narrow validating dispatcher can reference it.
@@ -229,6 +230,10 @@ install_apps() {
         /etc/sudoers.d/90-pocketds-linux-kit 0440
 
     echo '[install] Pocket DS performance profiles'
+    if sudo systemctl is-active --quiet pocketds-tuned-ppd.service; then
+        sudo systemctl stop pocketds-tuned-ppd.service
+    fi
+    install_root_file "$repo_root/components/fan/ppd.conf" /etc/tuned/ppd.conf
     for profile in pocketds-balanced pocketds-performance pocketds-powersave; do
         install_root_file "$repo_root/components/fan/profiles/$profile/tuned.conf" \
             "/etc/tuned/profiles/$profile/tuned.conf"
@@ -267,6 +272,46 @@ install_apps() {
     done
     if ((tuned_verified == 0)); then
         echo 'TuneD could not verify the active Pocket DS profile.' >&2
+        exit 1
+    fi
+
+    # Reuse TuneD's packaged official PPD controller without replacing the
+    # power-profiles-daemon RPM required by pocketds-base. Local activation
+    # files take precedence over that RPM's /usr/share entries; its unit stays
+    # masked. Both desktop controls therefore reach the same TuneD authority.
+    install_root_file "$repo_root/components/fan/pocketds-tuned-ppd.py" \
+        /usr/local/libexec/pocketds/pocketds-tuned-ppd 0755
+    install_root_file "$repo_root/components/fan/pocketds-tuned-ppd.service" \
+        /etc/systemd/system/pocketds-tuned-ppd.service
+    install_root_file "$repo_root/components/fan/org.pocketds.TunedPowerProfiles.policy" \
+        /usr/share/polkit-1/actions/org.pocketds.TunedPowerProfiles.policy
+    for target in org.freedesktop.UPower.PowerProfiles net.hadess.PowerProfiles; do
+        install_root_file "$repo_root/components/fan/$target.service" \
+            "/usr/local/share/dbus-1/system-services/$target.service"
+    done
+    sudo systemctl daemon-reload
+    sudo busctl --system --timeout=5s call org.freedesktop.DBus /org/freedesktop/DBus \
+        org.freedesktop.DBus ReloadConfig
+    sudo systemctl enable --now pocketds-tuned-ppd.service
+    sudo systemctl is-active --quiet pocketds-tuned-ppd.service
+    case "$active_profile" in
+        pocketds-powersave) expected_ppd_profile=power-saver ;;
+        pocketds-performance) expected_ppd_profile=performance ;;
+        *) expected_ppd_profile=balanced ;;
+    esac
+    bridge_ready=0
+    for _ in {1..20}; do
+        if ppd_profile=$(busctl --system --timeout=2s get-property \
+            org.freedesktop.UPower.PowerProfiles /org/freedesktop/UPower/PowerProfiles \
+            org.freedesktop.UPower.PowerProfiles ActiveProfile 2>/dev/null) &&
+           [[ $ppd_profile == "s \"$expected_ppd_profile\"" ]]; then
+            bridge_ready=1
+            break
+        fi
+        sleep 0.1
+    done
+    if ((bridge_ready == 0)); then
+        echo 'KDE power-profile bridge did not report the preserved TuneD profile.' >&2
         exit 1
     fi
 
@@ -539,7 +584,6 @@ install_system() {
 
     install_root_file "$repo_root/components/system/umtprd.conf" \
         /etc/umtprd/umtprd.conf
-    install_root_file "$repo_root/components/fan/ppd.conf" /etc/tuned/ppd.conf
 
     wait_online_dropin=/etc/systemd/system/NetworkManager-wait-online.service.d/10-pocketds-fast-online.conf
     if sudo test -e "$wait_online_dropin"; then

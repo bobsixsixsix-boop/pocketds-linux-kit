@@ -262,7 +262,7 @@ for unit in pocketds-brightness.service pocketds-keyboard.service \
     fi
 done
 
-for unit in tuned.service pocketds-fancontrol.service \
+for unit in tuned.service pocketds-tuned-ppd.service pocketds-fancontrol.service \
     pocketds-mode-listener.service inputplumber.service; do
     if systemctl is-active --quiet "$unit"; then
         pass "$unit active"
@@ -270,6 +270,26 @@ for unit in tuned.service pocketds-fancontrol.service \
         warn "$unit inactive"
     fi
 done
+
+active_tuned_profile=$(cat /etc/tuned/active_profile 2>/dev/null || true)
+case "$active_tuned_profile" in
+    pocketds-powersave) expected_ppd_profile=power-saver ;;
+    pocketds-balanced) expected_ppd_profile=balanced ;;
+    pocketds-performance) expected_ppd_profile=performance ;;
+    *) expected_ppd_profile=unknown ;;
+esac
+if [[ $(systemctl is-enabled power-profiles-daemon.service 2>/dev/null || true) == masked ]] &&
+   ! systemctl is-active --quiet power-profiles-daemon.service &&
+   [[ $expected_ppd_profile != unknown ]] &&
+   ppd_profile=$(busctl --system --auto-start=no --timeout=2s call \
+       org.freedesktop.UPower.PowerProfiles /org/freedesktop/UPower/PowerProfiles \
+       org.freedesktop.DBus.Properties Get ss \
+       org.freedesktop.UPower.PowerProfiles ActiveProfile 2>/dev/null) &&
+   [[ $ppd_profile == "v s \"$expected_ppd_profile\"" ]]; then
+    pass 'KDE power profiles and Panel agree through the TuneD bridge'
+else
+    warn 'KDE power-profile bridge is missing, mismatched, or has a competing daemon'
+fi
 
 if rpm -q plasma-milou >/dev/null 2>&1 &&
    [[ -r /usr/lib64/qt6/qml/org/kde/milou/qmldir ]]; then

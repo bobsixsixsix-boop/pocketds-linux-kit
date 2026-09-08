@@ -1,0 +1,22 @@
+{
+  "schema": "pocketds.public-source-import.v3",
+  "source_commit": "fcdd1febec755bfabdad169c2b4e863c0af6cca5",
+  "files_verified": 1466,
+  "archive_sha256": "11305f3b3a9f05d53ca696aef8d441f045320bab61e90e24b99133ee8966bad2",
+  "manifest_sha256": "093e21a7264a7de7df3bcfebe8bd08a456e97feced1733e3f103bbf7cddf555e",
+  "previous_source_commit": "68d0dea21f495b0266e8ced4c79dbd6f3cbe7d5f",
+  "previous_manifest_sha256": "06682725dc759bccec52a229e3636dda6b95d4557dbd63411f1834c004ce350c",
+  "previous_files_verified": 1459,
+  "previous_modes_verified": true,
+  "new_modes_verified": true,
+  "preserved_github_paths": [
+    ".github/alpha3-source-import-complete.json",
+    ".github/powerdevil-abi-source-import-complete.json",
+    ".github/source-import-complete.json",
+    ".github/workflows/import-alpha3-source.yml",
+    ".github/workflows/import-powerdevil-abi-source.yml",
+    ".github/workflows/import-reviewed-source.yml"
+  ],
+  "original_git_history_imported": false,
+  "published_sd_alpha3_changed": false
+}

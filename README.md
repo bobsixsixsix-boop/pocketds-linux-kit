@@ -41,6 +41,8 @@ Steam、ES-DE、Moonlight 等集成入口不代表这些应用已随项目分发
 
 已有可正常工作的 Pocket DS Linux 环境，可按[安装、升级与撤回](docs/INSTALL.md)更新 Kit。安装器依赖既有 `pocketds` 桌面账户和布局，执行前请核对指南中的依赖与改动范围。
 
+最新源码的 `--apps`／`--all` 安装入口加入 [TuneD 电源方案桥接](docs/research/2026-09-08-tuned-ppd-bridge.md)，让 KDE 的电源方案与 Panel 使用同一套三档 TuneD 配置。该桥接未加入已冻结的 Alpha3 镜像；此次只更新源码，没有发布新镜像。
+
 | 需要 | 入口 |
 | --- | --- |
 | 理解组件和调用关系 | [架构](docs/ARCHITECTURE.md) |

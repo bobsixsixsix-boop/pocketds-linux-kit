@@ -3,6 +3,7 @@
 
 from configparser import ConfigParser
 from pathlib import Path
+import xml.etree.ElementTree as ET
 
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -67,5 +68,34 @@ assert "tuned-ppd" in DEPENDENCIES
 assert "jq tuned-ppd" not in DEPENDENCIES
 assert "mask" in DEPENDENCIES
 assert "D-Bus" in DEPENDENCIES
+
+# Every install scope must expose the same three profiles to KDE. Keeping
+# activation in /usr/local preserves the original package-owned files.
+apps = INSTALLER.split('install_apps() {', 1)[1].split('\ninstall_system()', 1)[0]
+assert 'components/fan/ppd.conf' in apps
+assert INSTALLER.count('components/fan/ppd.conf') == 1
+assert 'sudo systemctl enable --now pocketds-tuned-ppd.service' in apps
+assert '/usr/local/share/dbus-1/system-services/$target.service' in apps
+assert apps.index('enable --now tuned.service') < apps.index('enable --now pocketds-tuned-ppd.service')
+for name in ('org.freedesktop.UPower.PowerProfiles', 'net.hadess.PowerProfiles'):
+    activation = ConfigParser()
+    activation.read(ROOT / f'components/fan/{name}.service')
+    assert dict(activation['D-BUS Service']) == {
+        'name': name, 'exec': '/bin/false', 'user': 'root',
+        'systemdservice': 'pocketds-tuned-ppd.service',
+    }
+
+# Both API names share our authorization namespace, without weakening the
+# retained daemon's policy or granting remote/inactive callers access.
+policy = ET.parse(ROOT / 'components/fan/org.pocketds.TunedPowerProfiles.policy')
+actions = policy.findall('action')
+assert {a.attrib['id'] for a in actions} == {
+    'org.pocketds.TunedPowerProfiles.' + action
+    for action in ('switch-profile', 'hold-profile', 'release-profile')
+}
+for action in actions:
+    assert {e.tag: e.text for e in action.find('defaults')} == {
+        'allow_any': 'no', 'allow_inactive': 'no', 'allow_active': 'yes',
+    }
 
 print("  [OK] Panel, PPD, CPU/GPU limits and fan scripts share TuneD profiles")
