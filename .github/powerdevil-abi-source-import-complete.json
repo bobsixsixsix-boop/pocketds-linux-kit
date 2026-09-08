@@ -1,0 +1,8 @@
+{
+  "schema": "pocketds.public-source-import.v2",
+  "source_commit": "68d0dea21f495b0266e8ced4c79dbd6f3cbe7d5f",
+  "files_verified": 1459,
+  "original_git_history_imported": false,
+  "archive_sha256": "cc356298d628b2f7eb8e3232e7905ca61cac472e4dd237d67f9c50341555d87a",
+  "previous_source_commit": "b7f5e71f03a9a37acab4813ecbd1a9c7c0b3ef75"
+}

@@ -1,0 +1,10 @@
+{
+  "schema": "pocketds.qt6111-core-identity.v1",
+  "path": "/usr/lib64/libQt6Core.so.6.11.1",
+  "sha256": "2a7e86dbcbf0bd63585d64c8b43347e6e55a32f404b29d16a260c3a9a2f4f403",
+  "bytes": 7423408,
+  "binary_package_sha256": "c89d062ec7276221277830baee46dd336e27fa36ed82472f4f5dcbeef7247124",
+  "obtained_from_recorded_dependency_rpm": true,
+  "device_accessed": false,
+  "binary_package": "qt6-qtbase-6.11.1-1.fc44.aarch64.rpm"
+}

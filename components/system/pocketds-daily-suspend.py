@@ -20,9 +20,20 @@ THERMAL = '922d6bea11837b70b162d53a50a0bc2153adf3dd412421ba5bdf91f8b70fc68f'
 LID_QUIRK = Path('/usr/share/libinput/99-pocketds-lid.quirks')
 LID_QUIRK_SHA = '552cb3a61fdd2505cbd8d60acbb58d263a793b1f52c334fc3108d28821b938ad'
 DPMS_PLUGIN = Path('/usr/lib64/qt6/plugins/powerdevil/action/powerdevil_dpmsaction.so')
-# Filled only from the independently built and verified patched artifact.
-# An unpinned or replaced distribution plugin must never authorize deep sleep.
-DPMS_PLUGIN_SHA = '49358da688b5c2a661af11c3a2f3533a68973584d9a8bb2c4dfe7c2a0a713744'
+# Each pair was checked as a whole package against this exact QtCore binary.
+# The two cross-pairs fail QML ABI checks; a version label is not acceptance.
+POWERDEVIL_RUNTIME_PAIRS = (
+    {'name': 'published-alpha3-qt6112-pocketds1',
+     'dpms_sha256': '49358da688b5c2a661af11c3a2f3533a68973584d9a8bb2c4dfe7c2a0a713744',
+     'qtcore_path': '/usr/lib64/libQt6Core.so.6.11.2', 'qtcore_size': 7358544,
+     'qtcore_sha256': '945beb4bb99aad4ce333ee6d406ad72eec913f87e34a0b86c81f36775a2fcb17'},
+    {'name': 'daily-qt6111-pocketds2',
+     'dpms_sha256': 'fe6fe3635c5d3239ca3044806185eef56f04f69d6b43e6abcfbc4a4da8a2b48a',
+     'qtcore_path': '/usr/lib64/libQt6Core.so.6.11.1', 'qtcore_size': 7423408,
+     'qtcore_sha256': '2a7e86dbcbf0bd63585d64c8b43347e6e55a32f404b29d16a260c3a9a2f4f403'},
+)
+QTCORE_ALIAS = Path('/usr/lib64/libQt6Core.so.6')
+QTCORE_MAX = 16 * 1024 * 1024
 DPMS_PLUGIN_MAX = 2 * 1024 * 1024
 PROC = Path('/proc')
 POWERDEVIL_BUS_NAME = 'org.kde.Solid.PowerManagement'
@@ -107,12 +118,42 @@ def read_regular_bounded(path, maximum, root_owned=False):
 
 
 def powerdevil_artifact():
-    require(isinstance(DPMS_PLUGIN_SHA, str) and re.fullmatch(r'[0-9a-f]{64}', DPMS_PLUGIN_SHA),
-            'patched PowerDevil artifact is not pinned')
+    require(isinstance(POWERDEVIL_RUNTIME_PAIRS, (tuple, list)) and POWERDEVIL_RUNTIME_PAIRS,
+            'patched PowerDevil runtime pairs are not pinned')
+    for pair in POWERDEVIL_RUNTIME_PAIRS:
+        require(isinstance(pair, dict) and isinstance(pair.get('name'), str) and pair['name']
+                and all(isinstance(pair.get(key), str)
+                and re.fullmatch(r'[0-9a-f]{64}', pair[key])
+                for key in ('dpms_sha256', 'qtcore_sha256'))
+                and isinstance(pair.get('qtcore_path'), str)
+                and Path(pair['qtcore_path']).is_absolute()
+                and type(pair.get('qtcore_size')) is int and 0 < pair['qtcore_size'] <= QTCORE_MAX,
+                'patched PowerDevil runtime pair is not pinned')
     data, info = read_regular_bounded(DPMS_PLUGIN, DPMS_PLUGIN_MAX, root_owned=True)
-    require(sha(data) == DPMS_PLUGIN_SHA, 'PowerDevil resume plugin differs from verified artifact')
-    return {'sha256': DPMS_PLUGIN_SHA, 'identity': file_identity(info),
-            'device': (os.major(info.st_dev), os.minor(info.st_dev)), 'inode': info.st_ino}
+    checksum = sha(data)
+    selected = [pair for pair in POWERDEVIL_RUNTIME_PAIRS if pair['dpms_sha256'] == checksum]
+    require(selected, 'PowerDevil resume plugin differs from verified artifacts')
+    alias_info = QTCORE_ALIAS.lstat()
+    require(alias_info.st_uid == 0 and stat.S_ISLNK(alias_info.st_mode), 'untrusted QtCore loader alias')
+    qt_path = QTCORE_ALIAS.resolve(strict=True)
+    selected = [pair for pair in selected if pair['qtcore_path'] == str(qt_path)]
+    require(len(selected) == 1, 'PowerDevil/QtCore runtime pair is not verified')
+    pair = selected[0]
+    qt_data, qt_info = read_regular_bounded(qt_path, QTCORE_MAX, root_owned=True)
+    require(len(qt_data) == pair['qtcore_size'] and sha(qt_data) == pair['qtcore_sha256'],
+            'QtCore runtime differs from the verified PowerDevil pair')
+    require(file_identity(QTCORE_ALIAS.lstat()) == file_identity(alias_info)
+            and QTCORE_ALIAS.resolve(strict=True) == qt_path,
+            'QtCore loader alias changed during verification')
+    require(file_identity(DPMS_PLUGIN.lstat()) == file_identity(info),
+            'PowerDevil plugin was replaced during runtime-pair verification')
+    return {'sha256': checksum, 'identity': file_identity(info),
+            'device': (os.major(info.st_dev), os.minor(info.st_dev)), 'inode': info.st_ino,
+            'runtime_pair': pair['name'],
+            'qtcore': {'path': str(qt_path), 'sha256': pair['qtcore_sha256'],
+                       'identity': file_identity(qt_info), 'alias_identity': file_identity(alias_info),
+                       'device': (os.major(qt_info.st_dev), os.minor(qt_info.st_dev)),
+                       'inode': qt_info.st_ino}}
 
 
 def powerdevil_bus(uid, method, name, signature):
@@ -155,31 +196,46 @@ def powerdevil_resume_ready():
     require(len(identities) == 1 and all(int(value) == uid for value in identities[0]),
             'PowerDevil process is not owned by the desktop user')
     maps, _ = read_regular_bounded(PROC / str(pid) / 'maps', 4 * 1024 * 1024)
-    mapped = []
-    for line in maps.decode('utf-8', errors='strict').splitlines():
-        fields = line.split(maxsplit=5)
-        if len(fields) != 6:
-            continue
-        pathname = fields[5]
-        plain_path = pathname.removesuffix(' (deleted)')
-        if Path(plain_path).name != DPMS_PLUGIN.name:
-            continue
-        require(pathname == str(DPMS_PLUGIN), 'PowerDevil loaded a deleted or alternate resume plugin')
-        device = fields[3].split(':')
-        require(len(device) == 2 and all(re.fullmatch(r'[0-9a-fA-F]+', part) for part in device)
-                and fields[4].isdigit() and re.fullmatch(r'[r-][w-][x-][ps]', fields[1]),
-                'malformed PowerDevil plugin mapping')
-        require(tuple(int(part, 16) for part in device) == artifact['device']
-                and int(fields[4]) == artifact['inode'], 'PowerDevil still maps a different resume plugin')
-        mapped.append(fields[1])
-    require(any('x' in permissions for permissions in mapped), 'PowerDevil has not loaded the verified resume plugin')
+    qtcore = artifact['qtcore']
+    for checked_path, checked_artifact, label in (
+            (DPMS_PLUGIN, artifact, 'resume plugin'),
+            (Path(qtcore['path']), qtcore, 'QtCore runtime')):
+        mapped = []
+        for line in maps.decode('utf-8', errors='strict').splitlines():
+            fields = line.split(maxsplit=5)
+            if len(fields) != 6:
+                continue
+            pathname = fields[5]
+            plain_path = pathname.removesuffix(' (deleted)')
+            candidate_name = Path(plain_path).name
+            relevant = (candidate_name.startswith('libQt6Core.so') if label == 'QtCore runtime'
+                        else candidate_name == DPMS_PLUGIN.name)
+            if not relevant:
+                continue
+            require(pathname == str(checked_path), 'PowerDevil loaded a deleted or alternate ' + label)
+            device = fields[3].split(':')
+            require(len(device) == 2 and all(re.fullmatch(r'[0-9a-fA-F]+', part) for part in device)
+                    and fields[4].isdigit() and re.fullmatch(r'[r-][w-][x-][ps]', fields[1]),
+                    'malformed PowerDevil ' + label + ' mapping')
+            require(tuple(int(part, 16) for part in device) == checked_artifact['device']
+                    and int(fields[4]) == checked_artifact['inode'],
+                    'PowerDevil still maps a different ' + label)
+            mapped.append(fields[1])
+        require(any('x' in permissions for permissions in mapped),
+                'PowerDevil has not loaded the verified ' + label)
     require(process_start(pid) == started
             and powerdevil_bus(uid, 'GetNameOwner', POWERDEVIL_BUS_NAME, 's') == owner,
             'PowerDevil owner changed during verification')
     require(file_identity(DPMS_PLUGIN.lstat()) == artifact['identity'],
             'PowerDevil plugin was replaced during verification')
+    require(file_identity(Path(qtcore['path']).lstat()) == qtcore['identity']
+            and file_identity(QTCORE_ALIAS.lstat()) == qtcore['alias_identity']
+            and str(QTCORE_ALIAS.resolve(strict=True)) == qtcore['path'],
+            'QtCore runtime or loader alias was replaced during verification')
     return {'owner': owner, 'pid': pid, 'sha256': artifact['sha256'],
-            'device': artifact['device'], 'inode': artifact['inode']}
+            'device': artifact['device'], 'inode': artifact['inode'],
+            'runtime_pair': artifact['runtime_pair'], 'qtcore_sha256': qtcore['sha256']}
+
 
 
 def counters():

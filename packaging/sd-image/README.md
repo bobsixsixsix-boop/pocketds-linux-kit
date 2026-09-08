@@ -31,7 +31,19 @@ The build order is:
    `/var/lib/bluetooth/mesh` directories only after confirming they are empty,
    using `rmdir` semantics. The sealer rejects these paths even when empty;
    stop and inspect the clean-root inputs if either directory contains data.
-6. Run `scripts/pocketds-sd-image-seal.py` with `--root`, `--source-root`,
+6. Before sealing or assembly, explicitly validate PowerDevil inside an isolated
+   copy of the actual composed runtime. Run
+   `scripts/powerdevil-runtime-abi.py --installed --expected-elf-count 22` there,
+   and run the separate cold QML probe with a clean environment, empty caches
+   and disconnected buses as described in the
+   [PowerDevil instructions](../../components/powerdevil/README.md).
+   Require all 22 ELF checks and both module loads/type registrations to pass;
+   stop on any failure. Record the resolved runtime packages and bind the tested
+   files to the final image. The sealer does not run these explicit checks
+   automatically. The unchanged Alpha3 recipe retains `pocketds1` with its
+   verified Qt 6.11.2 runtime; the Qt 6.11.1 `pocketds2` candidate is not a
+   replacement for that image. RPM dependency satisfaction alone is insufficient.
+7. Run `scripts/pocketds-sd-image-seal.py` with `--root`, `--source-root`,
    `--source-archive`, `--export-manifest` (the same source export's
    `manifest.json`), `--boot-image`, `--haptics-binary`, `--modules` and
    `--module-manifest` (the frozen 332-file final kernel-module receipt).
@@ -39,7 +51,7 @@ The build order is:
    All 317 baseline module hashes must match
    `kernel-modules.sha256`; the newly rebuilt RFCOMM addition is separately
    hash-checked and still needs a hardware retest.
-7. Run `scripts/pocketds-sd-image-assemble.py --root ROOT --definitions REPART
+8. Run `scripts/pocketds-sd-image-assemble.py --root ROOT --definitions REPART
    --output NEW.raw`, where `REPART` is this directory's `repart/`. This creates
    a regular file only. Inspect both filesystems and verify the FAT's
    `/boot/Image` checksum before compressing the image with zstd. Also verify the

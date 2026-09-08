@@ -1,72 +1,139 @@
-# Pocket DS: keep a closed lid dark after resume
+# Pocket DS PowerDevil resume gate and package compatibility
 
-`0001-pocketds-resume-lid-gate.patch` targets KDE PowerDevil **6.7.3**. It adds one gate immediately before the normal `DPMS::onResumeFromSuspend()` display-on request. Existing Timer, Telephony, and Network handling is unchanged. The normal `registerStandardIdleTimeout()` still runs when this gate declines to turn the displays on.
+`0001-pocketds-resume-lid-gate.patch` targets PowerDevil 6.7.3. It checks the
+exact `ayaneo,pocketds` compatible token and makes a fresh system-bus login1
+`LidClosed` request immediately before the normal display-on request after
+resume. Only a valid boolean `false` reply permits display-on. Closed,
+malformed, error and timeout replies keep the displays off. The request has a
+1000 ms bound; other models retain upstream behavior. The normal idle-timeout
+registration still runs. This patch does not change wake-source classification,
+KWin, input handling, lid actions, display layout or the explicit opening wakeup
+path. Verification must never read the upper display's `actual_brightness`.
 
-The gate applies only when `/proc/device-tree/compatible` contains the exact NUL-terminated `ayaneo,pocketds` token. On this model, it makes a fresh system-bus `org.freedesktop.DBus.Properties.Get` request for `org.freedesktop.login1.Manager.LidClosed`. Only a successful reply with exactly one `QDBusVariant` containing boolean `false` permits display-on. Closed, missing, malformed, error, and timeout replies keep the displays off. The synchronous call uses an explicit **1000 ms** timeout, so no late asynchronous callback can turn them on later. Other machine identities retain upstream behavior and do not make this D-Bus request.
+The adjacent header must be identical to the header added by the patch. Its
+private D-Bus fixture checks token/reply handling, open and closed cases, errors
+and the one-second timeout. These tests do not replace an attended physical
+sleep/resume test.
 
-This is a resume-only correction. It does not change KWin, wake-source classification, physical input, lid actions, output layout, or the explicit wakeup API used by the existing lid helper when opening. It does not retry, turn displays off after a flash, or schedule another sleep.
+## Runtime compatibility is a whole-package check
 
-## Source and evidence
+The `pocketds1` package was built with Qt 6.11.2. On a Qt 6.11.1 installation,
+its battery and brightness QML plugins failed to load because a constructor's
+required symbol version differed from the installed Qt export. RPM dependency
+satisfaction and a successful DPMS plugin check did not catch this failure.
+That specific package/runtime pairing is incompatible.
 
-- Upstream: [KDE PowerDevil v6.7.3, dpms.cpp](https://github.com/KDE/powerdevil/blob/v6.7.3/daemon/actions/bundled/dpms.cpp), original SHA-256 `8df402535f4ae55e50956001374766ea52211d8e0c18c76e585658742268ff38`.
-- The patch includes the complete new `daemon/actions/bundled/pocketds-resume-gate.h`. The adjacent header is the canonical copy used by the standalone Qt tests; it must remain byte-identical to the header produced by applying the patch.
-- [SuspendController](https://github.com/KDE/powerdevil/blob/v6.7.3/daemon/controllers/suspendcontroller.cpp) classifies wake sources using `wakeup_count` deltas. RTC01 returned while physically closed; the recorded display-on interval began about 0.47 seconds after `PrepareForSleep(false)` and about 94 seconds before actual opening. All platform wakeup counts remained zero despite RTC events. Changing classification would also change PowerDevil's automatic re-suspend behavior, so this patch leaves it alone.
-- Validation must retain the existing cache-only observer rule: never read the upper display's `actual_brightness`.
+This is not a claim that `pocketds1` fails with Qt 6.11.2. The published Alpha3
+image contains QtBase 6.11.2-2.fc44, QtDeclarative 6.11.2-1.fc44, Frameworks
+6.29.0 and Plasma Workspace 6.7.4-2.fc44. All 22 ELF relocation checks and both explicit cold-QML module checks passed
+against that actual image runtime. Conversely, the Qt 6.11.1 `pocketds2` build
+failed its QML private-ABI checks in a separate copy of the Alpha3 Qt 6.11.2
+root, despite satisfying RPM dependencies. Neither cross-pair is accepted:
+`pocketds1`/Qt 6.11.1 and `pocketds2`/Qt 6.11.2 both fail. Forward compatibility
+is not guaranteed for private Qt ABI. A daily installation's result cannot be
+used as an SD image result. Alpha3 and its original artifacts stay unchanged.
 
-## Frozen build identity (2026-09-07)
+`scripts/powerdevil-runtime-abi.py --installed --expected-elf-count 22` enumerates the installed RPM's
+file table and runs clean-environment `ldd -r` checks over every distinct ELF,
+including both QML plugins. `--root` checks an unpacked RPM against the runtime
+of the process executing the checker. To check an image, run the checker inside
+an isolated copy of that image's root; pointing the VM-host checker at an
+unpacked directory is not an image runtime check. Missing libraries, undefined
+symbols, missing symbol versions, unexpected loader errors, unsafe files and
+timeouts fail the check. These are explicit read-only checks, with no service
+restart, installation or sleep request.
 
-The candidate is `powerdevil-6.7.3-1.fc44.pocketds1.aarch64.rpm`, built from the Fedora 44 `powerdevil-6.7.3-1.fc44` source package in an isolated Fedora 44 aarch64 mock root. PowerDevil remains **6.7.3**; only the package release and this patch change. This work does not upgrade the target's Plasma, Qt, or Fedora version.
+## Qt 6.11.1 candidate
 
-| Artifact | Bytes | SHA-256 |
-| --- | ---: | --- |
-| Candidate RPM | 1,894,495 | `e450007842afc9283fad14679be6c6494ed64768e24b8cd0a5cd0256ba6bbd13` |
-| Installed DPMS plugin | 73,504 | `49358da688b5c2a661af11c3a2f3533a68973584d9a8bb2c4dfe7c2a0a713744` |
+`powerdevil-pocketds2.spec` preserves PowerDevil 6.7.3 and the exact existing
+resume patch, with release `1.fc44.pocketds2`. Its build requirements pin QtBase
+6.11.1-1.fc44 (including private headers), QtDeclarative 6.11.1-3.fc44,
+Frameworks 6.28.0-1.fc44 and Plasma Workspace 6.7.3-1.fc44. The complete source and runtime packages are recorded in the separate
+`powerdevil-6.7.3-1.fc44.pocketds2-qt6111-source-and-abi.tar.gz` provenance
+bundle (SHA-256
+`89478e82196038679ac01f704bd98302946dc5a78ff085e477e9426b3599474e`).
+That bundle is a Qt 6.11.1 candidate record, not an Alpha3 image update.
 
-The plugin path is `/usr/lib64/qt6/plugins/powerdevil/action/powerdevil_dpmsaction.so`. Build inputs, the frozen RPM, full logs, and `candidate-manifest.json` are retained in the task evidence directory `outputs/powerdevil-closed-resume-20260907/`; its README records acquisition and rollback provenance. Rebuilds must use a new output directory and must not overwrite these frozen artifacts or silently replace the allowed hash.
+| Artifact | SHA-256 |
+| --- | --- |
+| RPM | `e1e0b84a976e80e98080959f4407ddf34d65074ef0212543df21383f7d7359ff` |
+| Source RPM | `6245df3ad918219b6062a09b90e13d41ed071a6ae46a9c7e9c457c7d0773a073` |
+| DPMS plugin | `fe6fe3635c5d3239ca3044806185eef56f04f69d6b43e6abcfbc4a4da8a2b48a` |
 
-The original source package came from Fedora Koji build **3035183**, using Fedora spec revision `c28e5da743677d6b00105de873839330461935e7`. The downloaded Koji RPM/SRPM artifacts are **unsigned**; successful RPM digest checks are not signature verification. A downloadable Fedora-signed copy was not obtained. The locally rebuilt candidate is not a Fedora-signed package either.
+`powerdevil-pocketds2-lock.json` binds the full set of 22 ELF paths, sizes and
+hashes, the spec, and the explicit QML probe. All 22 ELF checks and the two QML
+module loads/type registrations passed on the Qt 6.11.1 target. The private
+resume-gate fixture passed. These results establish that tested runtime's
+package compatibility; they do not establish a different image's compatibility
+or completed hardware sleep/reboot acceptance. The physical buttons and a new
+physical sleep/reboot cycle have not been accepted for this candidate.
 
-Separately, the source tarball `powerdevil-6.7.3.tar.xz` has SHA-256 `72e362963d67488cb55b9d6c563a66bbe043553980269f2e2c2b691f023e2f35`, matching the [KDE 6.7.3 release page](https://kde.org/info/plasma-6.7.3/). Its detached KDE signature was successfully verified using the official Plasma release keyring: Bhushan Shah, signing subkey `B3CB366552540BE06EE9AD9711968C44928CAEFC`. This verifies the upstream source, not a signature on either RPM.
+## Explicit cold QML check
 
-Both the unchanged baseline and candidate completed full package builds. Candidate `%prep` compared the patched header with the fixture's canonical header byte for byte; `%check` ran the real Qt/private D-Bus fixture, **1/1 passed in 0.99 seconds**. All 69 candidate runtime requirements were checked against the device, with no new requirements introduced. The build used Qt 6.11.2 development files; the device remains on Qt 6.11.1. These results establish build and dependency readiness, **not completion of physical closed-lid RTC or Hall acceptance**.
-
-## Deployment verification and upgrade behavior
-
-Before installation, verify the staged RPM against the frozen RPM hash and perform the normal package transaction test. Keep daily deep sleep disabled through package replacement and the controlled PowerDevil restart. Replacing the file alone is insufficient: an existing process can still map the deleted old plugin.
-
-After installation, use the updated daily verifier from this repository. These checks are read-only and do not request sleep:
+Build the probe using the target's Qt development packages:
 
 ```sh
-rpm -q powerdevil
-rpm -V powerdevil
-sha256sum /usr/lib64/qt6/plugins/powerdevil/action/powerdevil_dpmsaction.so
-sudo -n /usr/local/libexec/pocketds-daily-suspend verify
+cmake -S components/powerdevil/tests -B /tmp/powerdevil-tests \
+  -DPOCKETDS_BUILD_QML_LOAD_PROBE=ON
+cmake --build /tmp/powerdevil-tests
+ctest --test-dir /tmp/powerdevil-tests --output-on-failure
 ```
 
-The package query should report `powerdevil-6.7.3-1.fc44.pocketds1.aarch64`; the plugin hash must match the table. The verifier additionally checks root ownership and permissions, the live session-bus owner of `org.kde.Solid.PowerManagement`, that process's desktop UID, and executable plugin mappings with the exact installed device/inode. Deleted or alternate plugin mappings, changing process ownership, and file replacement during verification are rejected. The returned `powerdevil_preflight` identifies the checked process and artifact; checking only package metadata or the on-disk hash does not establish this running-process condition.
-
-The ordinary `check` path performs the small on-disk artifact check without process inspection. The root `pre` path repeats the full running-plugin verification before every actual sleep, after the storage-health gate. If a later distribution upgrade replaces the patched plugin, daily deep sleep is refused until the replacement is reviewed and explicitly approved; distribution upgrades themselves remain available. `verify-deployment` adds inhibitor checks before any deliberate daily opt-in. Successful deployment verification still requires a separate attended physical acceptance run before claiming that closed-lid resume is fixed.
-
-## Apply and build
-
-From the unmodified PowerDevil 6.7.3 source root:
+The probe is deliberately excluded from automatic CTest registration. Run it
+explicitly in an isolated target runtime, with a new empty HOME/runtime
+location, a clean environment and no connection to a real session or system
+bus:
 
 ```sh
-patch --dry-run -p1 < /path/to/0001-pocketds-resume-lid-gate.patch
+env -i PATH=/usr/bin:/bin LC_ALL=C HOME=/tmp/empty-probe-home \
+  XDG_RUNTIME_DIR=/tmp/empty-probe-runtime QML_DISABLE_DISK_CACHE=1 \
+  DBUS_SYSTEM_BUS_ADDRESS=unix:path=/nonexistent \
+  DBUS_SESSION_BUS_ADDRESS=unix:path=/nonexistent \
+  /path/to/qml-plugin-load --check-installed
+```
+
+Require `status: pass`, the expected actual `runtime_qt`, and both `loaded` and
+`type_registered` for `org.kde.plasma.private.batterymonitor` and
+`org.kde.plasma.private.brightnesscontrolplugin`. The probe registers types
+without constructing battery/brightness controller objects. It does not test
+power-plan availability, button behavior or suspend/resume. Re-run whole-package
+and cold-QML checks after relevant Qt/Plasma changes.
+
+## Source and rebuild
+
+The KDE source tarball hash is
+`72e362963d67488cb55b9d6c563a66bbe043553980269f2e2c2b691f023e2f35`.
+Its detached signature was verified with the official Plasma release keyring.
+The Fedora baseline source was build 3035183, spec revision
+`c28e5da743677d6b00105de873839330461935e7`. The local RPM is not Fedora signed.
+
+Apply the patch to the unmodified 6.7.3 source and compare the header before
+building the complete package with the target-matched spec:
+
+```sh
 patch -p1 < /path/to/0001-pocketds-resume-lid-gate.patch
-cmp daemon/actions/bundled/pocketds-resume-gate.h /path/to/components/powerdevil/pocketds-resume-gate.h
+cmp daemon/actions/bundled/pocketds-resume-gate.h \
+  /path/to/components/powerdevil/pocketds-resume-gate.h
 ```
 
-Build using the matching distribution package's existing recipe. The header adds only Qt Core/DBus APIs already used by PowerDevil; no upstream CMake change is needed. No installer or automatic deployment is included here. This patch needs rebuilding and review when the distribution upgrades PowerDevil.
+The daily deep-sleep gate accepts two exact DPMS/QtCore hash pairs: the published
+Alpha3 `pocketds1` with its Qt 6.11.2 binary, and the `pocketds2` candidate with
+its Qt 6.11.1 binary. Installing this source on unchanged Alpha3 therefore
+preserves its known compatible pair; it does not install the Qt 6.11.1 package
+or enable deep sleep. Both cross-pairs and an unreviewed Qt binary with the same
+filename are refused. The small artifact check reads bounded DPMS and QtCore
+files; it does not run a loader probe or query a desktop service. The full
+preflight additionally checks the running PowerDevil process's executable
+mappings for both exact device/inode identities, ownership and session-bus
+identity. Replaced, deleted, alternate or stale QtCore/DPMS mappings are rejected.
+A package/runtime update needs new complete ELF and cold-QML evidence before
+adding a new accepted pair. That process check remains
+necessary after an explicit deployment; it is not a substitute for the package
+ABI and cold-QML checks. Daily deep sleep remains opt-in and needs attended
+physical acceptance.
 
-## Isolated behavior tests
+- [KDE PowerDevil 6.7.3 source](https://github.com/KDE/powerdevil/tree/v6.7.3)
+- [KDE Plasma 6.7.3 release](https://kde.org/info/plasma-6.7.3/)
 
-With Qt 6 Core/DBus development files, CMake, and `dbus-run-session` available:
-
-```sh
-cmake -S components/powerdevil/tests -B /tmp/pocketds-resume-gate-build
-cmake --build /tmp/pocketds-resume-gate-build
-ctest --test-dir /tmp/pocketds-resume-gate-build --output-on-failure
-```
-
-The tests exercise the actual header using Qt values and a private D-Bus daemon. A child process implements a synthetic login1 service only on that private session bus. They check exact compatible tokens, untouched behavior on other models, strict reply types, disconnected/error replies, actual open/closed property replies, and a genuinely unanswered property request whose one-second timeout is measured. They never connect to the host system bus, invoke the production filesystem wrapper, change device state, or suspend anything. These fixtures establish the request/decision contract; they do not replace physical closed-lid RTC and Hall acceptance.
+The published-image positive test and the cross-runtime negative test are recorded in
+[the Alpha3 ABI addendum](../../docs/release/alpha3-powerdevil-abi-20260908.md).

@@ -72,3 +72,5 @@ Alpha3 包含完整 KDE 系统、上述桌面组件和已选定的系统适配�
 内核、固件、Fedora 软件包及其他第三方程序分别适用原有授权条件；项目默认许可证不改变它们的 GPL 版本选项、MIT、BSD 等条款。ROCKNIX 开机标志另适用 CC BY-NC-SA 4.0 的署名、非商业和相同方式共享条件，详见 Release 附带通知。
 
 `docs/release/` 和嵌入构建材料中的源码快照保留了准备过程与当时的发布状态；当前可用内容以本页及 Releases 实际附件为准。镜像对应的冻结源码以 Release 源码附件和逐文件清单为准；本页的发布说明更新不改变镜像内的源码快照。Alpha 发布不代表稳定版验收完成。
+
+电源管理的兼容性说明见 [PowerDevil Qt ABI 检查](components/powerdevil/README.md)。已发布的 Alpha3 保持原有 Qt 6.11.2 / pocketds1 软件包；pocketds2 是 Qt 6.11.1 日用系统的独立候选，不能直接替换 Alpha3 的电源管理软件包。

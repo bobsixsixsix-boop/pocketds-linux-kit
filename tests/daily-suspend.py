@@ -388,9 +388,16 @@ class PowerDevilResumeTests(unittest.TestCase):
     def setUp(self):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
-        self.directory = Path(temporary.name)
+        self.directory = Path(temporary.name).resolve()
         self.plugin = self.directory / 'powerdevil_dpmsaction.so'
         self.plugin.write_bytes(b'fixture verified ELF artifact')
+        self.qtcore = self.directory / 'libQt6Core.so.6.11.2'
+        self.qtcore.write_bytes(b'fixture verified QtCore ABI')
+        self.qt_alias = self.directory / 'libQt6Core.so.6'
+        self.qt_alias.symlink_to(self.qtcore)
+        self.pairs = ({'name': 'fixture-pair', 'dpms_sha256': M.sha(self.plugin.read_bytes()),
+                       'qtcore_path': str(self.qtcore), 'qtcore_size': self.qtcore.stat().st_size,
+                       'qtcore_sha256': M.sha(self.qtcore.read_bytes())},)
         self.proc = self.directory / 'proc' / '1650'
         self.proc.mkdir(parents=True)
         self.start = 12345
@@ -409,7 +416,8 @@ class PowerDevilResumeTests(unittest.TestCase):
                                                    'st_size', 'st_mtime_ns', 'st_ctime_ns')})
 
         patches = [mock.patch.object(M, 'DPMS_PLUGIN', self.plugin),
-                   mock.patch.object(M, 'DPMS_PLUGIN_SHA', M.sha(self.plugin.read_bytes())),
+                   mock.patch.object(M, 'POWERDEVIL_RUNTIME_PAIRS', self.pairs),
+                   mock.patch.object(M, 'QTCORE_ALIAS', self.qt_alias),
                    mock.patch.object(M, 'PROC', self.proc.parent),
                    mock.patch.object(M.os, 'fstat', side_effect=lambda fd: metadata(real_fstat(fd))),
                    mock.patch.object(Path, 'lstat', autospec=True, side_effect=lambda path: metadata(real_lstat(path))),
@@ -425,11 +433,17 @@ class PowerDevilResumeTests(unittest.TestCase):
         # Include ')' and spaces in comm to exercise real /proc/stat parsing.
         (self.proc / 'stat').write_text('1650 (powerdevil ) fixture) S ' + ' '.join(['0'] * 18 + [str(self.start), '0']) + '\n')
 
-    def write_maps(self, inode=None, device=None, pathname=None, permissions='r-xp'):
+    def write_maps(self, inode=None, device=None, pathname=None, permissions='r-xp',
+                   qt_inode=None, qt_pathname=None, qt_permissions='r-xp'):
         info = self.plugin.stat()
         device = device or f'{os.major(info.st_dev):02x}:{os.minor(info.st_dev):02x}'
         pathname = str(self.plugin) if pathname is None else pathname
         (self.proc / 'maps').write_text(f'1000-2000 {permissions} 00000000 {device} {info.st_ino if inode is None else inode} {pathname}\n')
+        qt_info = self.qtcore.stat()
+        qt_device = f'{os.major(qt_info.st_dev):02x}:{os.minor(qt_info.st_dev):02x}'
+        with (self.proc / 'maps').open('a') as stream:
+            stream.write(f'3000-4000 {qt_permissions} 00000000 {qt_device} {qt_info.st_ino if qt_inode is None else qt_inode} {self.qtcore if qt_pathname is None else qt_pathname}\n')
+
 
     def bus_reply(self, command, **kwargs):
         method = command[-3]
@@ -451,8 +465,8 @@ class PowerDevilResumeTests(unittest.TestCase):
         self.assertEqual(self.bus.call_args_list[1].args[0][-1], ':1.50')
 
     def test_unpinned_artifact_fails_before_reading_or_bus(self):
-        for pin in (None, '', 'current', '0' * 63):
-            with self.subTest(pin=pin), mock.patch.object(M, 'DPMS_PLUGIN_SHA', pin), mock.patch.object(M, 'read_regular_bounded') as read:
+        for pin in (None, (), 'current', ({'dpms_sha256': '0' * 63},)):
+            with self.subTest(pin=pin), mock.patch.object(M, 'POWERDEVIL_RUNTIME_PAIRS', pin), mock.patch.object(M, 'read_regular_bounded') as read:
                 with self.assertRaisesRegex(RuntimeError, 'not pinned'):
                     M.powerdevil_artifact()
                 read.assert_not_called()
@@ -596,7 +610,7 @@ class PowerDevilResumeTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, 'changed while reading'):
                 M.powerdevil_artifact()
 
-    def test_eligible_uses_only_small_artifact_check_not_runtime_queries(self):
+    def test_eligible_uses_only_bounded_pair_check_not_runtime_queries(self):
         with mock.patch.object(M, 'eligibility_policy'), mock.patch.object(M, 'powerdevil_resume_ready') as runtime, mock.patch.object(M, 'storage_health') as storage:
             M.eligible()
             runtime.assert_not_called()
@@ -608,6 +622,87 @@ class PowerDevilResumeTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, 'I/O fault'):
                 M.full_check()
             artifact.assert_not_called()
+
+    def test_exact_runtime_pairs_reject_both_cross_combinations(self):
+        first_plugin = self.plugin.read_bytes()
+        second_plugin = b'fixture second reviewed DPMS artifact'
+        second_qt = self.directory / 'libQt6Core.so.6.11.1'
+        second_qt.write_bytes(b'fixture second reviewed QtCore ABI')
+        pairs = self.pairs + ({'name': 'fixture-qt6111-p2', 'dpms_sha256': M.sha(second_plugin),
+                              'qtcore_path': str(second_qt), 'qtcore_size': second_qt.stat().st_size,
+                              'qtcore_sha256': M.sha(second_qt.read_bytes())},)
+        with mock.patch.object(M, 'POWERDEVIL_RUNTIME_PAIRS', pairs):
+            self.assertEqual(M.powerdevil_artifact()['runtime_pair'], 'fixture-pair')
+            self.plugin.write_bytes(second_plugin)
+            with self.assertRaisesRegex(RuntimeError, 'runtime pair is not verified'):
+                M.powerdevil_artifact()  # pocketds2 with the published Qt 6.11.2 runtime.
+            self.qt_alias.unlink(); self.qt_alias.symlink_to(second_qt)
+            self.assertEqual(M.powerdevil_artifact()['runtime_pair'], 'fixture-qt6111-p2')
+            self.plugin.write_bytes(first_plugin)
+            with self.assertRaisesRegex(RuntimeError, 'runtime pair is not verified'):
+                M.powerdevil_artifact()  # pocketds1 with the daily Qt 6.11.1 runtime.
+        self.bus.assert_not_called()
+
+    def test_same_qt_filename_with_changed_bytes_is_rejected(self):
+        self.qtcore.write_bytes(b'changed QtCore despite same version filename')
+        with self.assertRaisesRegex(RuntimeError, 'QtCore runtime differs'):
+            M.powerdevil_artifact()
+        self.bus.assert_not_called()
+
+    def test_stale_deleted_or_alternate_live_qtcore_is_rejected(self):
+        for kwargs, reason in [({'qt_inode': self.qtcore.stat().st_ino + 1}, 'different QtCore'),
+                               ({'qt_pathname': str(self.qtcore) + ' (deleted)'}, 'deleted'),
+                               ({'qt_pathname': '/tmp/libQt6Core.so.6.11.2'}, 'alternate'),
+                               ({'qt_pathname': str(self.directory / 'libQt6Core.so.6.11.1')}, 'alternate'),
+                               ({'qt_permissions': 'r--p'}, 'not loaded')]:
+            with self.subTest(kwargs=kwargs):
+                self.write_maps(**kwargs)
+                with self.assertRaisesRegex(RuntimeError, reason):
+                    M.powerdevil_resume_ready()
+
+    def test_deleted_qtcore_rejected_even_with_a_good_mapping(self):
+        self.write_maps(qt_pathname=str(self.qtcore) + ' (deleted)')
+        bad = (self.proc / 'maps').read_text()
+        self.write_maps()
+        with (self.proc / 'maps').open('a') as stream: stream.write(bad)
+        with self.assertRaisesRegex(RuntimeError, 'deleted'):
+            M.powerdevil_resume_ready()
+
+    def test_qtcore_exchange_after_maps_read_is_rejected(self):
+        original = self.bus_reply
+        def exchange(command, **kwargs):
+            if self.bus.call_count == 3:
+                replacement = self.directory / 'replacement-qt'
+                replacement.write_bytes(self.qtcore.read_bytes())
+                os.replace(replacement, self.qtcore)
+            return original(command, **kwargs)
+        self.bus.side_effect = exchange
+        with self.assertRaisesRegex(RuntimeError, 'QtCore.*replaced'):
+            M.powerdevil_resume_ready()
+
+    def test_qt_loader_alias_exchange_during_read_is_rejected(self):
+        original_read = M.read_regular_bounded
+        def exchange(path, *args, **kwargs):
+            result = original_read(path, *args, **kwargs)
+            if path == self.qtcore:
+                self.qt_alias.unlink(); self.qt_alias.symlink_to(self.qtcore)
+            return result
+        with mock.patch.object(M, 'read_regular_bounded', side_effect=exchange):
+            with self.assertRaisesRegex(RuntimeError, 'alias changed'):
+                M.powerdevil_artifact()
+
+    def test_dpms_exchange_while_qtcore_is_checked_rejects_mixed_snapshot(self):
+        original_read = M.read_regular_bounded
+        def exchange(path, *args, **kwargs):
+            result = original_read(path, *args, **kwargs)
+            if path == self.qtcore:
+                replacement = self.directory / 'replacement-plugin'
+                replacement.write_bytes(self.plugin.read_bytes())
+                os.replace(replacement, self.plugin)
+            return result
+        with mock.patch.object(M, 'read_regular_bounded', side_effect=exchange):
+            with self.assertRaisesRegex(RuntimeError, 'plugin was replaced'):
+                M.powerdevil_artifact()
 
     def test_pre_rejects_stale_running_plugin_without_recording_a_sleep(self):
         with mock.patch.object(M, 'eligibility_policy'), mock.patch.object(M.os.path, 'lexists', return_value=False), mock.patch.object(M, 'full_check', side_effect=RuntimeError('PowerDevil still maps a different resume plugin')), mock.patch.object(M, 'save_runtime') as save:

@@ -1,0 +1,87 @@
+{
+  "schema": "pocketds.alpha3-powerdevil-abi-evidence.v1",
+  "date": "2026-09-08",
+  "scope": "Loader and cold QML type-registration checks for the recorded SD Alpha3 image; no physical UI or sleep validation.",
+  "published_image": {
+    "name": "pocketds-kde-kit-20260908-alpha3",
+    "compressed_sha256": "26e7ac082762772722d13f90e54d01bed5f9441d81ed33a830a31e8eab7d397c",
+    "raw_sha256": "aac48a404f392efbdf5ecf90ad2e3044355915783e22b09204ca8ee1dba50a0f",
+    "raw_size": 9127874560,
+    "source_commit": "b7f5e71f03a9a37acab4813ecbd1a9c7c0b3ef75"
+  },
+  "runtime": {
+    "qtbase": "6.11.2-2.fc44.aarch64",
+    "qtdeclarative": "6.11.2-1.fc44.aarch64",
+    "kf6-kcoreaddons": "6.29.0-1.fc44.aarch64",
+    "plasma-workspace": "6.7.4-2.fc44.aarch64"
+  },
+  "installed_powerdevil": {
+    "package": "powerdevil-6.7.3-1.fc44.pocketds1.aarch64",
+    "elf_count": 22,
+    "elf_relocation_status": "pass",
+    "elf_failures": 0,
+    "cold_qml": {
+      "modules": [
+        {
+          "library": "/usr/lib64/qt6/qml/org/kde/plasma/private/batterymonitor/libbatterymonitorplugin.so",
+          "loaded": true,
+          "module": "org.kde.plasma.private.batterymonitor",
+          "type_registered": true
+        },
+        {
+          "library": "/usr/lib64/qt6/qml/org/kde/plasma/private/brightnesscontrolplugin/libbrightnesscontrolplugin.so",
+          "loaded": true,
+          "module": "org.kde.plasma.private.brightnesscontrolplugin",
+          "type_registered": true
+        }
+      ],
+      "runtime_qt": "6.11.2",
+      "status": "pass"
+    },
+    "probe_sha256": "32fe1547da8ff4275d891a0ee65bb40ce30f38c94091d4a9b0a6c57fe87dbfe0",
+    "probe_source_sha256": "85979cb5c1270996b6b4490ce79c4286ca80ce01e991426cfd8593c2b4537dd2",
+    "probe_environment": "Fresh process; empty private HOME/cache/runtime; disk cache disabled; no inherited Qt/QML/LD settings; disconnected buses.",
+    "controllers_constructed": false
+  },
+  "actual_image_binding": {
+    "status": "pass",
+    "tested_path_records": 2229,
+    "distinct_resolved_paths": 2015,
+    "tested_inputs_manifest_sha256": "5018a7d23f920451486762afd80ff1715f1e50672cc4b37fbcb1d28f3c725d70",
+    "includes": "22 PowerDevil ELF files, their resolved loader dependencies, installed PowerDevil/QtBase/QtDeclarative package files and loader/RPM metadata",
+    "read_only": true,
+    "raw_image_unchanged": true,
+    "owned_mounts_unmounted": true,
+    "owned_loop_detached": true,
+    "independent_binding_receipt_sha256": "f1c645cd36a046b68415885f1144a54aef0d2af678c261269bca59a70a4dbfd1"
+  },
+  "separate_candidate_test": {
+    "package": "powerdevil-6.7.3-1.fc44.pocketds2.aarch64",
+    "rpm_sha256": "e1e0b84a976e80e98080959f4407ddf34d65074ef0212543df21383f7d7359ff",
+    "built_for_qt": "6.11.1",
+    "tested_runtime_qt": "6.11.2",
+    "rpm_dependency_preflight_passed": true,
+    "elf_count": 22,
+    "elf_failures": 2,
+    "failed_modules": [
+      "org.kde.plasma.private.batterymonitor",
+      "org.kde.plasma.private.brightnesscontrolplugin"
+    ],
+    "missing_symbol": "_ZN23QUntypedPropertyBindingC1EP23QPropertyBindingPrivate",
+    "symbol_version": "Qt_6.11_PRIVATE_API",
+    "cold_qml_status": "fail",
+    "selected_for_alpha3": false,
+    "only_disposable_clone_modified": true
+  },
+  "limits": {
+    "physical_hardware_tested": false,
+    "controller_objects_created": false,
+    "actual_brightness_or_sleep_actions_executed": false,
+    "alpha3_republished_or_modified": false
+  },
+  "evidence_receipts": {
+    "installed_elf_receipt_sha256": "d827c21873e940ee1e901ab74e03d7ac9f9810804e5f51d3b80bb00d78b51bd3",
+    "cold_qml_receipt_sha256": "07cbfa42a6a4b4e6c4a664900029a728775d864f76047a6be8017ec3ebd71c2c",
+    "candidate_comparison_receipt_sha256": "1ee2afc4df8620e242162d40e098490d3a588aa70eb4cf418fca624c3627aed9"
+  }
+}

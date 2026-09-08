@@ -10,3 +10,12 @@ target_link_libraries(resume-gate PRIVATE Qt6::Core Qt6::DBus)
 enable_testing()
 add_test(NAME resume-gate COMMAND "${DBUS_RUN_SESSION}" -- $<TARGET_FILE:resume-gate>)
 set_tests_properties(resume-gate PROPERTIES TIMEOUT 25)
+
+# Build separately when preparing a package for a target Qt runtime. This
+# probe deliberately is not an automatic CTest: it loads installed plugins.
+option(POCKETDS_BUILD_QML_LOAD_PROBE "Build the explicit installed-QML smoke test" OFF)
+if(POCKETDS_BUILD_QML_LOAD_PROBE)
+    find_package(Qt6 REQUIRED COMPONENTS Qml)
+    add_executable(qml-plugin-load qml-plugin-load.cpp)
+    target_link_libraries(qml-plugin-load PRIVATE Qt6::Core Qt6::Qml)
+endif()

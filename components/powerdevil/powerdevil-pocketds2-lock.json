@@ -1,0 +1,142 @@
+{
+  "build_runtime": {
+    "frameworks": "6.28.0-1.fc44",
+    "plasma_workspace": "6.7.3-1.fc44",
+    "qtbase": "6.11.1-1.fc44",
+    "qtdeclarative": "6.11.1-3.fc44"
+  },
+  "candidate": "powerdevil-6.7.3-1.fc44.pocketds2.aarch64",
+  "elf_files": [
+    {
+      "path": "/usr/lib64/libpowerdevilcore.so.6.7.3",
+      "sha256": "b471b95f936a3190c812738952db0524efb67f4fa2f0abc197af25926bd23d91",
+      "size": 813408
+    },
+    {
+      "path": "/usr/lib64/qt6/plugins/kf6/krunner/krunner_powerdevil.so",
+      "sha256": "f914fae9e6cb13cdc5cc88b4a02818fb23d47e777d352624639ee40403cae7c0",
+      "size": 72104
+    },
+    {
+      "path": "/usr/lib64/qt6/plugins/plasma/applets/org.kde.plasma.battery.so",
+      "sha256": "d98282f98f9debcd46b56ab6b038361f7050aa8f2aa389221adaed41452e0832",
+      "size": 479024
+    },
+    {
+      "path": "/usr/lib64/qt6/plugins/plasma/applets/org.kde.plasma.brightness.so",
+      "sha256": "4e8f2b8931d95501a98ba02a6fb8c5b0b8b2416f02a307da40ee45bc334e6821",
+      "size": 478000
+    },
+    {
+      "path": "/usr/lib64/qt6/plugins/plasma/kcms/systemsettings/kcm_mobile_power.so",
+      "sha256": "4fbb684a13abdc4ecc401cc857689b0eca7c54159669aaf0c9282aea3a6a05b6",
+      "size": 143912
+    },
+    {
+      "path": "/usr/lib64/qt6/plugins/plasma/kcms/systemsettings/kcm_powerdevilprofilesconfig.so",
+      "sha256": "0a1e25f50ceae4a507f7127e6342ac6e6a04e05edc258982babab558bcd734df",
+      "size": 212960
+    },
+    {
+      "path": "/usr/lib64/qt6/plugins/powerdevil/action/powerdevil_brightnesscontrolaction.so",
+      "sha256": "104ed524603f20d610ffa06c8a1c3f007f90f7232f0c08e5fd02e4ed14a0f46c",
+      "size": 72776
+    },
+    {
+      "path": "/usr/lib64/qt6/plugins/powerdevil/action/powerdevil_dimdisplayaction.so",
+      "sha256": "6b87fbb1ab703e72143c5c99a149f84533ad3a5364950f0f496375bf23d6888d",
+      "size": 72928
+    },
+    {
+      "path": "/usr/lib64/qt6/plugins/powerdevil/action/powerdevil_dpmsaction.so",
+      "sha256": "fe6fe3635c5d3239ca3044806185eef56f04f69d6b43e6abcfbc4a4da8a2b48a",
+      "size": 73496
+    },
+    {
+      "path": "/usr/lib64/qt6/plugins/powerdevil/action/powerdevil_handlebuttoneventsaction.so",
+      "sha256": "fde59523e3043a55e5e00e2bf821243bbb920052fd6986c20bb7fcd077f7eaf5",
+      "size": 73896
+    },
+    {
+      "path": "/usr/lib64/qt6/plugins/powerdevil/action/powerdevil_keyboardbrightnesscontrolaction.so",
+      "sha256": "4caafa77aa552b4f81f222b0ff6e9ddc309dec15b69f07a7bead2f1e223d85b9",
+      "size": 73112
+    },
+    {
+      "path": "/usr/lib64/qt6/plugins/powerdevil/action/powerdevil_powerprofileaction.so",
+      "sha256": "19ef12d7b84692afd38cc214f7ad3ef10f57af07f6881e1a584589dc09d55d83",
+      "size": 142120
+    },
+    {
+      "path": "/usr/lib64/qt6/plugins/powerdevil/action/powerdevil_runscriptaction.so",
+      "sha256": "dc6709c96217a3586d11a2110b9756a62b2bae2754e0777b93f7e31640322dc1",
+      "size": 71912
+    },
+    {
+      "path": "/usr/lib64/qt6/plugins/powerdevil/action/powerdevil_screenbrightnesscontrolaction.so",
+      "sha256": "a999d7b9234e2d8ec58115c0c8cf1c2eb66cd36f5a5efffa5999ab282a6ace19",
+      "size": 72208
+    },
+    {
+      "path": "/usr/lib64/qt6/plugins/powerdevil/action/powerdevil_suspendsessionaction.so",
+      "sha256": "c2d8a0b8ff4fa88388ec2a55aed41a791a15f9634cc18910a0932c8942cf11e1",
+      "size": 72568
+    },
+    {
+      "path": "/usr/lib64/qt6/qml/org/kde/plasma/private/batterymonitor/libbatterymonitorplugin.so",
+      "sha256": "cd602cac63bbff9d00a0da9d45c960ba730f753c1d64ad78793913598582c50b",
+      "size": 275584
+    },
+    {
+      "path": "/usr/lib64/qt6/qml/org/kde/plasma/private/brightnesscontrolplugin/libbrightnesscontrolplugin.so",
+      "sha256": "34dcca6f64766bc50af6c5c4a0dcdfcf5aeecac99c3771824f0ca60d734dd727",
+      "size": 208000
+    },
+    {
+      "path": "/usr/libexec/kf6/kauth/backlighthelper",
+      "sha256": "5b4972ddfdc9bff7adc3837bb6793413f635a290c0c347d833c8aa2d0efd8f7c",
+      "size": 70344
+    },
+    {
+      "path": "/usr/libexec/kf6/kauth/chargethresholdhelper",
+      "sha256": "0c91cf8fdc78867a2c8cdf88c49e604ca1f2cc7315506352a59859346cbe6523",
+      "size": 70480
+    },
+    {
+      "path": "/usr/libexec/kf6/kauth/discretegpuhelper",
+      "sha256": "f9de647a492f7ff74751f772b4c5f5e9ba489f261ebe073887adedf0d60dd780",
+      "size": 69872
+    },
+    {
+      "path": "/usr/libexec/kf6/kauth/wakeupsourcehelper",
+      "sha256": "1590634747155dac9a316474108ee6117db00ffade541e6e593b88104dbe34ad",
+      "size": 69944
+    },
+    {
+      "path": "/usr/libexec/org_kde_powerdevil",
+      "sha256": "202c9262f184439c64db996b319a4859cde0b396c047be15a2837df528c0f3a7",
+      "size": 139376
+    }
+  ],
+  "expected_elf_count": 22,
+  "hardware_sleep_reboot_tested": false,
+  "known_incompatible_pair": {
+    "package": "powerdevil-6.7.3-1.fc44.pocketds1.aarch64",
+    "qml_modules": [
+      "org.kde.plasma.private.batterymonitor",
+      "org.kde.plasma.private.brightnesscontrolplugin"
+    ],
+    "qtbase": "6.11.1-1.fc44"
+  },
+  "qml_probe": {
+    "binary_sha256": "32fe1547da8ff4275d891a0ee65bb40ce30f38c94091d4a9b0a6c57fe87dbfe0",
+    "binary_size": 75984,
+    "explicit_argument": "--check-installed",
+    "source_sha256": "85979cb5c1270996b6b4490ce79c4286ca80ce01e991426cfd8593c2b4537dd2"
+  },
+  "rpm_sha256": "e1e0b84a976e80e98080959f4407ddf34d65074ef0212543df21383f7d7359ff",
+  "schema": "pocketds.powerdevil-candidate.v1",
+  "scope": "Pinned candidate identity; actual target runtime compatibility requires full ELF relocation checks and an explicit cold QML probe. This is not a declaration that other packages fail on every runtime.",
+  "spec_sha256": "ff03d5a4b80a383293314f6b469a69e74d95cce855c91b5ed09f7a1c87efbbf1",
+  "srpm_sha256": "6245df3ad918219b6062a09b90e13d41ed071a6ae46a9c7e9c457c7d0773a073"
+}

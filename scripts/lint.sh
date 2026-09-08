@@ -18,6 +18,8 @@ PYTHONPYCACHEPREFIX="$build_dir/pycache" \
     "$repo_root/scripts/render-update-protection.py" \
     "$repo_root/scripts/export-source-preview.py" \
     "$repo_root/tests/source-preview.py" \
+    "$repo_root/scripts/powerdevil-runtime-abi.py" \
+    "$repo_root/tests/powerdevil-runtime-abi.py" \
     "$repo_root/tests/third-party-source-pins.py" \
     "$repo_root/tests/inputplumber-mouse-clear-contract.py" \
     "$repo_root/tests/boot-switch-result.py" \

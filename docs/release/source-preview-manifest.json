@@ -1,7 +1,7 @@
 {
   "archive": {
     "path": "source.tar.gz",
-    "sha256": "1556920a2e891a8cc2051fbfffbb979682fcd947bbea668562067d442d92562e"
+    "sha256": "cc356298d628b2f7eb8e3232e7905ca61cac472e4dd237d67f9c50341555d87a"
   },
   "draft_only": true,
   "excluded_files": [
@@ -88,8 +88,8 @@
     {
       "mode": "0644",
       "path": "README.md",
-      "sha256": "e7192168898f24d1c155593cdb8e801123cd1cabe5f5873e27e940204ca9e358",
-      "size": 5828
+      "sha256": "7700a101856be494a79969823e879706c23cbe61deb57076c56444b917ef328d",
+      "size": 7110
     },
     {
       "mode": "0644",
@@ -910,8 +910,8 @@
     {
       "mode": "0644",
       "path": "components/powerdevil/README.md",
-      "sha256": "436b90b1339b8367ef6d037295c7c5eea6f0ce884e9ee216153acb87ba5cfaf3",
-      "size": 8389
+      "sha256": "564c5c4c0249ca95f99aff8100a465f65ae0b394f449a674b424796e63d87268",
+      "size": 7619
     },
     {
       "mode": "0644",
@@ -921,9 +921,33 @@
     },
     {
       "mode": "0644",
+      "path": "components/powerdevil/powerdevil-pocketds2-lock.json",
+      "sha256": "79522313ed4c9a3b61a77d9b352fd79c72ebe29860791fbc0a88029f28131d38",
+      "size": 5769
+    },
+    {
+      "mode": "0644",
+      "path": "components/powerdevil/powerdevil-pocketds2.spec",
+      "sha256": "ff03d5a4b80a383293314f6b469a69e74d95cce855c91b5ed09f7a1c87efbbf1",
+      "size": 33455
+    },
+    {
+      "mode": "0644",
+      "path": "components/powerdevil/qt6111-core-identity.json",
+      "sha256": "beb223630277fa120d1938c50588dfc93b452a3c294e2e295274785532ab1ae4",
+      "size": 428
+    },
+    {
+      "mode": "0644",
       "path": "components/powerdevil/tests/CMakeLists.txt",
-      "sha256": "b64e49ad76fba29e34301d93af24f8f79b474f818e323739ebbe9a08a827df71",
-      "size": 578
+      "sha256": "c9c6690f55be061fd40c91a3cbb541d0c0d1d8a36069cb6a7ce87c4f293fda14",
+      "size": 1031
+    },
+    {
+      "mode": "0644",
+      "path": "components/powerdevil/tests/qml-plugin-load.cpp",
+      "sha256": "85979cb5c1270996b6b4490ce79c4286ca80ce01e991426cfd8593c2b4537dd2",
+      "size": 2410
     },
     {
       "mode": "0644",
@@ -1150,8 +1174,8 @@
     {
       "mode": "0644",
       "path": "components/system/pocketds-daily-suspend.py",
-      "sha256": "27023cbeadae9211458baa0caa8f63603d3beff86703418eba088b4558e83e59",
-      "size": 19992
+      "sha256": "1374e63231737f202cd41d6e3ad1ab85e120d1b0d1f9bd53950af37aebf7fac0",
+      "size": 23557
     },
     {
       "mode": "0755",
@@ -1416,6 +1440,18 @@
       "path": "docs/release/SOURCE-RELEASE.md",
       "sha256": "2816642414cd0501c8d8a2cfba2008709ab7ae94a551cbd5ec63b670c8f80d14",
       "size": 4337
+    },
+    {
+      "mode": "0644",
+      "path": "docs/release/alpha3-powerdevil-abi-20260908.json",
+      "sha256": "c668b04ee459619931232283d004fd5bdb1db8a37e80e3fbf0ecf2484293543e",
+      "size": 3805
+    },
+    {
+      "mode": "0644",
+      "path": "docs/release/alpha3-powerdevil-abi-20260908.md",
+      "sha256": "e0b361fddef1b827600fc63c559484dfb2e63d450077c455675f21c4d2ceda3a",
+      "size": 2008
     },
     {
       "mode": "0644",
@@ -2374,8 +2410,8 @@
     {
       "mode": "0644",
       "path": "packaging/sd-image/README.md",
-      "sha256": "39e079ccbe39c4d087d60540411b38bc9cca57f5fd9a1753b510b8aa7edb38c0",
-      "size": 5409
+      "sha256": "9f1f226b367cd2dca54af5b87f8b226d4569f1990378096a04599cb7ca84b128",
+      "size": 6277
     },
     {
       "mode": "0644",
@@ -6820,8 +6856,8 @@
     {
       "mode": "0755",
       "path": "scripts/lint.sh",
-      "sha256": "ec763041d8933a2b97f67174b1808d68cd4371d4c451d63aa4945d5c6b5ef318",
-      "size": 17564
+      "sha256": "7a1d77d361bbe059d0e0979f8ffab73ccec55b1eeb233f741c27b167d86fa94b",
+      "size": 17668
     },
     {
       "mode": "0755",
@@ -7191,6 +7227,12 @@
     },
     {
       "mode": "0644",
+      "path": "scripts/powerdevil-runtime-abi.py",
+      "sha256": "cc324fd32e5147538b3f93ff778c361d238cbf0e68b28cc4cbc84d69848a5d1b",
+      "size": 13726
+    },
+    {
+      "mode": "0644",
       "path": "scripts/render-update-protection.py",
       "sha256": "e905a9f1cdbf83df4251a2351db53afd530a9a457bb97d4d10cf5e873251805a",
       "size": 549
@@ -7204,8 +7246,8 @@
     {
       "mode": "0755",
       "path": "scripts/test.sh",
-      "sha256": "0cadcd016672f954e1a1a2ab1dd06d9c2c906470e545264ac3c21e21457fc7e5",
-      "size": 16238
+      "sha256": "82f2817359262b6fed4f7c823a6beaa360c292ca9ca4e4a269be494b20b0b201",
+      "size": 16291
     },
     {
       "mode": "0644",
@@ -7396,8 +7438,8 @@
     {
       "mode": "0644",
       "path": "tests/daily-suspend.py",
-      "sha256": "0d14c1a955c8ca03a9649bc512e78943aa6a7f9414f76bc55b9c118ace4907d2",
-      "size": 34725
+      "sha256": "62196efc4202c64b9521c08e9f0ad8f670fa78307001130bb5b51f88c3d60699",
+      "size": 40387
     },
     {
       "mode": "0755",
@@ -8144,6 +8186,12 @@
       "size": 4659
     },
     {
+      "mode": "0644",
+      "path": "tests/powerdevil-runtime-abi.py",
+      "sha256": "31a179b2578188badb55c80d91a2dc8f4a2bc6c954a2598951825347abb7b904",
+      "size": 10396
+    },
+    {
       "mode": "0755",
       "path": "tests/retroarch-launcher-mock.sh",
       "sha256": "685f869174ef8d0f2fbf03b0b1ce02a8d072246cc910e517b17bf417345e15d0",
@@ -8733,6 +8781,6 @@
   "publication_authorized": false,
   "scan_limitations": "Pattern scan only; arbitrary, encoded or split secrets may be missed. Licensing and publication approval are not assessed.",
   "schema": 1,
-  "source_commit": "b7f5e71f03a9a37acab4813ecbd1a9c7c0b3ef75",
-  "source_commit_time": 1788806959
+  "source_commit": "68d0dea21f495b0266e8ced4c79dbd6f3cbe7d5f",
+  "source_commit_time": 1788875619
 }
