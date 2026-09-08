@@ -1,0 +1,29 @@
+name: Import reviewed TuneD PPD bridge source update
+on:
+  workflow_dispatch:
+permissions: {}
+concurrency:
+  group: pocketds-reviewed-source-import
+  cancel-in-progress: false
+jobs:
+  import:
+    if: github.repository == 'bobsixsixsix-boop/pocketds-linux-kit' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 1
+      - name: Verify the reviewed importer
+        run: echo 'c5faa05b524d8acdf8b7dc0e62aee717eed5d7a6c1c87583166d379e3c138853  import-tuned-ppd-source.py' | sha256sum --check --strict
+      - name: Verify predecessor and import the fixed TuneD bridge archive
+        run: python3 import-tuned-ppd-source.py
+      - name: Commit the reviewed TuneD bridge source
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git -c core.fileMode=true add --all
+          git commit -m 'Connect KDE power profiles to TuneD with reviewed source fcdd1fe'
+          git push origin HEAD:main
