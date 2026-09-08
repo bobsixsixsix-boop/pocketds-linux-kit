@@ -1,0 +1,26 @@
+name: Import reviewed PowerDevil ABI source update
+on:
+  workflow_dispatch:
+permissions: {}
+jobs:
+  import:
+    if: github.repository == 'bobsixsixsix-boop/pocketds-linux-kit' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 1
+      - name: Verify the reviewed importer
+        run: echo '3be346c8006de6786fd43aadbbdb27fbffabf9b7f4744b09c2a9dfc00a2c88b8  import-powerdevil-abi-source.py' | sha256sum --check --strict
+      - name: Verify and import the fixed PowerDevil ABI archive
+        run: python3 import-powerdevil-abi-source.py
+      - name: Commit the reviewed PowerDevil ABI source
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add --all
+          git commit -m 'Update PowerDevil ABI checks and Qt compatibility documentation 68d0dea'
+          git push origin HEAD:main
