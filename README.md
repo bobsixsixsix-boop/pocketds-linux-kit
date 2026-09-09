@@ -53,6 +53,10 @@ Steam、ES-DE、Moonlight 等集成入口不代表这些应用已随项目分发
 
 具备依赖的 Linux 开发环境可运行 `make lint`、`make test`。完整检查包含 Linux 专用 C/C++ 代码；macOS 可运行安装指南列出的最小 Python／模拟测试。实际触摸、音频和睡眠行为仍需设备验证。
 
+## 电池健康度源码更新 · 2026-09-10
+
+[本次电池修复](docs/research/2026-09-10-battery-health.md)恢复驱动容量读取，并修正 KDE 将未知健康度显示为 0% 的问题。已有维护设备完成重启、健康度显示与拔电确认。源码包含补丁、测试和版本说明；现有 SD Alpha3 镜像未更新，安装 Kit 不会自动替换内核或 PowerDevil 包。
+
 ## SD Alpha3 测试镜像
 
 Alpha3 包含完整 KDE 系统、上述桌面组件和已选定的系统适配。它从干净系统构建，首次进入桌面提示设置本机密码，保留本地自动登录，SSH 和深度睡眠默认关闭。需要 **16 GB 或更大的备用 SD 卡**，以及预先安装的 ROCKNIX ABL；单独写卡不会安装 ABL。
@@ -75,4 +79,4 @@ Alpha3 包含完整 KDE 系统、上述桌面组件和已选定的系统适配�
 
 `docs/release/` 和嵌入构建材料中的源码快照保留了准备过程与当时的发布状态；当前可用内容以本页及 Releases 实际附件为准。镜像对应的冻结源码以 Release 源码附件和逐文件清单为准；本页的发布说明更新不改变镜像内的源码快照。Alpha 发布不代表稳定版验收完成。
 
-电源管理的兼容性说明见 [PowerDevil Qt ABI 检查](components/powerdevil/README.md)。已发布的 Alpha3 保持原有 Qt 6.11.2 / pocketds1 软件包；pocketds2 是 Qt 6.11.1 日用系统的独立候选，不能直接替换 Alpha3 的电源管理软件包。
+电源管理的兼容性说明见 [PowerDevil Qt ABI 检查](components/powerdevil/README.md)。已发布的 Alpha3 保持原有 Qt 6.11.2 / pocketds1 软件包；pocketds2 / pocketds3 是 Qt 6.11.1 日用系统的独立候选，不能直接替换 Alpha3 的电源管理软件包。

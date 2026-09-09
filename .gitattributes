@@ -14,3 +14,6 @@
 *.cpp text eol=lf
 *.qml text eol=lf
 *.yaml text eol=lf
+
+# Unified diff context for an empty source line contains one space.
+*.patch whitespace=-blank-at-eol

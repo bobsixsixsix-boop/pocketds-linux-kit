@@ -643,6 +643,27 @@ class PowerDevilResumeTests(unittest.TestCase):
                 M.powerdevil_artifact()  # pocketds1 with the daily Qt 6.11.1 runtime.
         self.bus.assert_not_called()
 
+    def test_two_daily_packages_share_only_the_reviewed_daily_qt(self):
+        daily_qt = self.directory / 'libQt6Core.so.6.11.1'
+        daily_qt.write_bytes(b'fixture reviewed daily QtCore ABI')
+        packages = (b'fixture pocketds2', b'fixture pocketds3')
+        pairs = self.pairs + tuple(
+            {'name': f'daily-{index}', 'dpms_sha256': M.sha(content),
+             'qtcore_path': str(daily_qt), 'qtcore_size': daily_qt.stat().st_size,
+             'qtcore_sha256': M.sha(daily_qt.read_bytes())}
+            for index, content in enumerate(packages))
+        with mock.patch.object(M, 'POWERDEVIL_RUNTIME_PAIRS', pairs):
+            for index, content in enumerate(packages):
+                self.plugin.write_bytes(content)
+                self.qt_alias.unlink()
+                self.qt_alias.symlink_to(self.qtcore)
+                with self.assertRaisesRegex(RuntimeError, 'runtime pair is not verified'):
+                    M.powerdevil_artifact()
+                self.qt_alias.unlink()
+                self.qt_alias.symlink_to(daily_qt)
+                self.assertEqual(M.powerdevil_artifact()['runtime_pair'], f'daily-{index}')
+        self.bus.assert_not_called()
+
     def test_same_qt_filename_with_changed_bytes_is_rejected(self):
         self.qtcore.write_bytes(b'changed QtCore despite same version filename')
         with self.assertRaisesRegex(RuntimeError, 'QtCore runtime differs'):

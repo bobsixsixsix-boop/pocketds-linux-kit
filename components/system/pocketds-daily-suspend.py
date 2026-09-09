@@ -21,7 +21,7 @@ LID_QUIRK = Path('/usr/share/libinput/99-pocketds-lid.quirks')
 LID_QUIRK_SHA = '552cb3a61fdd2505cbd8d60acbb58d263a793b1f52c334fc3108d28821b938ad'
 DPMS_PLUGIN = Path('/usr/lib64/qt6/plugins/powerdevil/action/powerdevil_dpmsaction.so')
 # Each pair was checked as a whole package against this exact QtCore binary.
-# The two cross-pairs fail QML ABI checks; a version label is not acceptance.
+# Qt 6.11.1 and 6.11.2 packages are not interchangeable; pin exact binaries.
 POWERDEVIL_RUNTIME_PAIRS = (
     {'name': 'published-alpha3-qt6112-pocketds1',
      'dpms_sha256': '49358da688b5c2a661af11c3a2f3533a68973584d9a8bb2c4dfe7c2a0a713744',
@@ -29,6 +29,10 @@ POWERDEVIL_RUNTIME_PAIRS = (
      'qtcore_sha256': '945beb4bb99aad4ce333ee6d406ad72eec913f87e34a0b86c81f36775a2fcb17'},
     {'name': 'daily-qt6111-pocketds2',
      'dpms_sha256': 'fe6fe3635c5d3239ca3044806185eef56f04f69d6b43e6abcfbc4a4da8a2b48a',
+     'qtcore_path': '/usr/lib64/libQt6Core.so.6.11.1', 'qtcore_size': 7423408,
+     'qtcore_sha256': '2a7e86dbcbf0bd63585d64c8b43347e6e55a32f404b29d16a260c3a9a2f4f403'},
+    {'name': 'daily-qt6111-pocketds3',
+     'dpms_sha256': '178015727fb444d1bfb47fad7e7f9c48c1d86c8ba29fd01f456f5caae118e7fa',
      'qtcore_path': '/usr/lib64/libQt6Core.so.6.11.1', 'qtcore_size': 7423408,
      'qtcore_sha256': '2a7e86dbcbf0bd63585d64c8b43347e6e55a32f404b29d16a260c3a9a2f4f403'},
 )

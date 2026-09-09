@@ -116,9 +116,9 @@ cmp daemon/actions/bundled/pocketds-resume-gate.h \
   /path/to/components/powerdevil/pocketds-resume-gate.h
 ```
 
-The daily deep-sleep gate accepts two exact DPMS/QtCore hash pairs: the published
-Alpha3 `pocketds1` with its Qt 6.11.2 binary, and the `pocketds2` candidate with
-its Qt 6.11.1 binary. Installing this source on unchanged Alpha3 therefore
+The daily deep-sleep gate accepts three exact DPMS/QtCore hash pairs: the published
+Alpha3 `pocketds1` with its Qt 6.11.2 binary, and the `pocketds2` / `pocketds3` candidates with
+their reviewed Qt 6.11.1 binary. Installing this source on unchanged Alpha3 therefore
 preserves its known compatible pair; it does not install the Qt 6.11.1 package
 or enable deep sleep. Both cross-pairs and an unreviewed Qt binary with the same
 filename are refused. The small artifact check reads bounded DPMS and QtCore
@@ -137,3 +137,39 @@ physical acceptance.
 
 The published-image positive test and the cross-runtime negative test are recorded in
 [the Alpha3 ABI addendum](../../docs/release/alpha3-powerdevil-abi-20260908.md).
+
+## Battery health update · 2026-09-10
+
+`0002-hide-unknown-battery-health.patch` applies to PowerDevil 6.7.3 after the
+existing lid-gate patch. It changes the health-row condition from comparing an
+integer to an empty string to requiring a positive capacity. Unknown health is
+hidden; the existing low-health warning remains unchanged.
+
+The matched-runtime build is `powerdevil-6.7.3-1.fc44.pocketds3.aarch64`.
+Its RPM SHA-256 is `f3fdf2db437ad51837e40b8cb9f413aaffbdf6189402e8ec16b9177795bc8457`;
+DPMS SHA-256 is `178015727fb444d1bfb47fad7e7f9c48c1d86c8ba29fd01f456f5caae118e7fa`.
+The build retained all 711 development-package versions and 70 runtime requirements
+from pocketds2. All 22 installed ELF files and cold loading of both QML modules
+passed on the maintenance device's Qt 6.11.1. Package release metadata changes the
+DPMS file hash; its code/data sections and the lid-gate patch are unchanged.
+The new accepted pair preserves the two existing pairs and all runtime checks.
+
+This source update provides patches and tests, not an automatic package or kernel
+installer. Rebuild for the exact target runtime, then repeat the package ABI and
+cold-QML checks before deployment. Alpha3 retains Qt 6.11.2 / pocketds1; neither
+its image nor its release assets are replaced by this update.
+
+```sh
+patch --dry-run -p1 < /path/to/0002-hide-unknown-battery-health.patch
+patch -p1 < /path/to/0002-hide-unknown-battery-health.patch
+cmake -S /path/to/components/powerdevil/tests/battery-health -B /tmp/pds-health-test \
+  -DBATTERY_ITEM_SOURCE=/path/to/powerdevil-6.7.3/applets/batterymonitor/BatteryItem.qml
+cmake --build /tmp/pds-health-test
+ctest --test-dir /tmp/pds-health-test --output-on-failure
+```
+
+The fixture evaluates the actual upstream bindings without creating power
+controllers. On Qt 6.11.1, the old source failed the zero/negative cases and the
+patched source passed all nine cases. The separate kernel capacity correction,
+observed health result and remaining limits are described in the
+[battery health report](../../docs/research/2026-09-10-battery-health.md).

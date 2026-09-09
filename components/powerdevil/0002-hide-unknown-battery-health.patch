@@ -1,0 +1,11 @@
+--- a/applets/batterymonitor/BatteryItem.qml
++++ b/applets/batterymonitor/BatteryItem.qml
+@@ -213,7 +213,7 @@
+                 }
+ 
+                 readonly property bool healthRowVisible: root.batteryIsPowerSupply
+-                    && root.batteryCapacity !== ""
++                    && root.batteryCapacity > 0
+                     && !root.isBroken
+ 
+                 LeftLabel {

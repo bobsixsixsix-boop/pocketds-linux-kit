@@ -1,7 +1,7 @@
 {
   "archive": {
     "path": "source.tar.gz",
-    "sha256": "11305f3b3a9f05d53ca696aef8d441f045320bab61e90e24b99133ee8966bad2"
+    "sha256": "ad64a490ec00414957ffff2b4d885d46f21a08dcf72eb16c4d25a379d808f67a"
   },
   "draft_only": true,
   "excluded_files": [
@@ -28,8 +28,8 @@
     {
       "mode": "0644",
       "path": ".gitattributes",
-      "sha256": "2653ffc5df8c466d87ebd284d2d7bf149e201a22f5a235b1a0d8864b3e1bfe46",
-      "size": 265
+      "sha256": "2c84f8d788dac8c6bdd1aa9c2a0692a94f9a79f202c0f50dca91971181c6ba48",
+      "size": 367
     },
     {
       "mode": "0644",
@@ -88,8 +88,8 @@
     {
       "mode": "0644",
       "path": "README.md",
-      "sha256": "8631e0a12c86cdc3fa505e61579ab2af3bb5d4b20765af5e6cecc49e0d027d04",
-      "size": 7406
+      "sha256": "379f10a6f307c374fc8cfcbe43d126c54104a8bbbb8498bd69e3eef1a1363a74",
+      "size": 7816
     },
     {
       "mode": "0644",
@@ -939,9 +939,15 @@
     },
     {
       "mode": "0644",
+      "path": "components/powerdevil/0002-hide-unknown-battery-health.patch",
+      "sha256": "d561008cee61b6263256b5790d1d4512d8ff4b1accab3f936d25df9c4b899195",
+      "size": 386
+    },
+    {
+      "mode": "0644",
       "path": "components/powerdevil/README.md",
-      "sha256": "564c5c4c0249ca95f99aff8100a465f65ae0b394f449a674b424796e63d87268",
-      "size": 7619
+      "sha256": "2b7f00d333586746dc05b3a33db341346eeec564552eb04b70ac179b75d34451",
+      "size": 9725
     },
     {
       "mode": "0644",
@@ -972,6 +978,18 @@
       "path": "components/powerdevil/tests/CMakeLists.txt",
       "sha256": "c9c6690f55be061fd40c91a3cbb541d0c0d1d8a36069cb6a7ce87c4f293fda14",
       "size": 1031
+    },
+    {
+      "mode": "0644",
+      "path": "components/powerdevil/tests/battery-health/CMakeLists.txt",
+      "sha256": "5aedd0a9d7632e2c36943d06f1079d299b7ec4290d6f5c29f2ab5351461f9e11",
+      "size": 652
+    },
+    {
+      "mode": "0644",
+      "path": "components/powerdevil/tests/battery-health/battery-health.cpp",
+      "sha256": "597aec4e38aef281e701f4a7f7d2daaa26ea1666157bc35a68226aae146e491c",
+      "size": 2835
     },
     {
       "mode": "0644",
@@ -1204,8 +1222,8 @@
     {
       "mode": "0644",
       "path": "components/system/pocketds-daily-suspend.py",
-      "sha256": "1374e63231737f202cd41d6e3ad1ab85e120d1b0d1f9bd53950af37aebf7fac0",
-      "size": 23557
+      "sha256": "3676fd119fbedad4a8edc19a8d190f01f10e4b37c676081a8459ba00d6f986ea",
+      "size": 23853
     },
     {
       "mode": "0755",
@@ -2142,6 +2160,12 @@
       "path": "docs/research/2026-09-08-tuned-ppd-bridge.md",
       "sha256": "868d58e762bb3017890470b5763a8901ad48756be15d775a3588f8d1624a5e64",
       "size": 6086
+    },
+    {
+      "mode": "0644",
+      "path": "docs/research/2026-09-10-battery-health.md",
+      "sha256": "0b7631adbf2039b501127fd2e6412097a2b3fb0cc6441318bef62994f299c2fd",
+      "size": 3109
     },
     {
       "mode": "0644",
@@ -7474,8 +7498,8 @@
     {
       "mode": "0644",
       "path": "tests/daily-suspend.py",
-      "sha256": "62196efc4202c64b9521c08e9f0ad8f670fa78307001130bb5b51f88c3d60699",
-      "size": 40387
+      "sha256": "18434f4b96f108f29a55eb2cc3aa590a6d70ab6d400d2134e4eab2439810b782",
+      "size": 41575
     },
     {
       "mode": "0755",
@@ -8823,6 +8847,6 @@
   "publication_authorized": false,
   "scan_limitations": "Pattern scan only; arbitrary, encoded or split secrets may be missed. Licensing and publication approval are not assessed.",
   "schema": 1,
-  "source_commit": "fcdd1febec755bfabdad169c2b4e863c0af6cca5",
-  "source_commit_time": 1788881450
+  "source_commit": "02a40377bcaf0ff1ce12927fee72f34eb1ed8ea1",
+  "source_commit_time": 1788983269
 }
